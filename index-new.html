@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#21150d">
+  <title>The Meltdown Room</title>
+
+  <style>
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #21150d;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: #fff;
+    }
+
+    body { overflow-x: hidden; }
+
+    .screen {
+      display: none;
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background: #21150d;
+    }
+
+    .screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .scene-wrap {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 0;
+    }
+
+    .scene {
+      display: block;
+      width: 100%;
+      height: auto;
+      max-height: calc(100vh - 118px);
+      object-fit: contain;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 30;
+      text-align: center;
+      padding: 9px 12px;
+      background: rgba(24, 15, 9, 0.94);
+      border-bottom: 1px solid #8b6f47;
+      color: #f7e3bd;
+      font-weight: 700;
+    }
+
+    .controls {
+      position: sticky;
+      bottom: 0;
+      z-index: 30;
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      padding: 11px 12px calc(11px + env(safe-area-inset-bottom));
+      background: rgba(24, 15, 9, 0.96);
+      border-top: 1px solid #8b6f47;
+    }
+
+    button {
+      appearance: none;
+      border: 1px solid #b08a5f;
+      border-radius: 999px;
+      min-height: 48px;
+      padding: 13px 18px;
+      font-size: 16px;
+      font-weight: 800;
+      color: #fff;
+      background: #5c7c8a;
+      cursor: pointer;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: rgba(255,255,255,.18);
+    }
+
+    button.primary {
+      background: #e07a3d;
+      border-color: #f0a26f;
+    }
+
+    button:active { transform: scale(.98); }
+
+    @media (min-width: 900px) {
+      button { font-size: 17px; padding: 14px 24px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <section class="screen active" id="home">
+    <div class="topbar">The Meltdown Room • Home</div>
+    <div class="scene-wrap">
+      <img class="scene" src="home.png" alt="The Meltdown Room Home">
+    </div>
+    <div class="controls">
+      <button class="primary" type="button" onclick="showScreen('entrance')">ENTER PROPERTY</button>
+    </div>
+  </section>
+
+  <section class="screen" id="entrance">
+    <div class="topbar">The Meltdown Room • Entrance</div>
+    <div class="scene-wrap">
+      <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <button class="primary" type="button" onclick="showScreen('great')">ENTER</button>
+    </div>
+  </section>
+
+  <section class="screen" id="great">
+    <div class="topbar">The Meltdown Room • Great Room</div>
+    <div class="scene-wrap">
+      <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('entrance')">BACK</button>
+      <button class="primary" type="button" onclick="showScreen('rant')">RANT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+  <section class="screen" id="rant">
+    <div class="topbar">The Meltdown Room • Rant Room</div>
+    <div class="scene-wrap">
+      <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+  <script>
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(function(screen) {
+        screen.classList.remove("active");
+      });
+
+      var target = document.getElementById(id);
+      if (!target) return;
+
+      target.classList.add("active");
+
+      if (history.replaceState) {
+        history.replaceState(null, "", "#" + id);
+      }
+
+      window.scrollTo(0, 0);
+    }
+
+    var start = window.location.hash.replace("#", "");
+    if (["home", "entrance", "great", "rant"].includes(start)) {
+      showScreen(start);
+    }
+  </script>
+
+</body>
+</html>
