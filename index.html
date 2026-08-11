@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <title>The Meltdown Room</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      width: 100%;
+      min-height: 100%;
+      background: #21150d;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    body {
+      overflow-x: hidden;
+    }
+
+    .screen {
+      display: none;
+      position: relative;
+      width: 100%;
+      min-height: 100vh;
+      background: #21150d;
+    }
+
+    .screen.active {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+
+    .scene {
+      width: 100%;
+      height: auto;
+      max-height: 100vh;
+      object-fit: contain;
+      display: block;
+    }
+
+    .hotspot {
+      position: absolute;
+      background: transparent;
+      border: none;
+      cursor: pointer;
+    }
+
+    /* HOME */
+    #homeHouse {
+      left: 37%;
+      top: 12%;
+      width: 47%;
+      height: 45%;
+    }
+
+    #homeEntrance {
+      left: 0;
+      bottom: 0;
+      width: 15%;
+      height: 25%;
+    }
+
+    /* ENTRANCE */
+    #porchEnter {
+      left: 35%;
+      top: 66%;
+      width: 31%;
+      height: 17%;
+    }
+
+    #porchHome {
+      left: 0;
+      bottom: 0;
+      width: 15%;
+      height: 22%;
+    }
+
+    /* GREAT ROOM */
+    #greatBack {
+      left: 0;
+      bottom: 0;
+      width: 15%;
+      height: 12%;
+    }
+
+    #greatHome {
+      right: 0;
+      bottom: 0;
+      width: 15%;
+      height: 12%;
+    }
+
+    .status {
+      position: fixed;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 20;
+      background: rgba(33, 21, 13, 0.85);
+      color: #f7e3bd;
+      border: 1px solid #9a774b;
+      padding: 7px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+    }
+
+    @media (max-width: 700px) {
+      .scene {
+        height: 100vh;
+        object-fit: contain;
+      }
+
+      #homeHouse {
+        left: 29%;
+        top: 18%;
+        width: 65%;
+        height: 37%;
+      }
+
+      #homeEntrance {
+        width: 28%;
+        height: 24%;
+      }
+
+      #porchEnter {
+        left: 26%;
+        top: 64%;
+        width: 48%;
+        height: 19%;
+      }
+
+      #porchHome {
+        width: 28%;
+        height: 20%;
+      }
+
+      #greatBack {
+        width: 27%;
+        height: 12%;
+      }
+
+      #greatHome {
+        width: 27%;
+        height: 12%;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="status" id="status">Home • v0.2</div>
+
+  <section class="screen active" id="home">
+    <img class="scene" src="home.png" alt="The Meltdown Room Home">
+
+    <button
+      class="hotspot"
+      id="homeHouse"
+      aria-label="Go to entrance"
+      onclick="showScreen('entrance')">
+    </button>
+
+    <button
+      class="hotspot"
+      id="homeEntrance"
+      aria-label="Go to entrance"
+      onclick="showScreen('entrance')">
+    </button>
+  </section>
+
+  <section class="screen" id="entrance">
+    <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
+
+    <button
+      class="hotspot"
+      id="porchEnter"
+      aria-label="Enter Great Room"
+      onclick="showScreen('great')">
+    </button>
+
+    <button
+      class="hotspot"
+      id="porchHome"
+      aria-label="Return Home"
+      onclick="showScreen('home')">
+    </button>
+  </section>
+
+  <section class="screen" id="great">
+    <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
+
+    <button
+      class="hotspot"
+      id="greatBack"
+      aria-label="Back to Entrance"
+      onclick="showScreen('entrance')">
+    </button>
+
+    <button
+      class="hotspot"
+      id="greatHome"
+      aria-label="Return Home"
+      onclick="showScreen('home')">
+    </button>
+  </section>
+
+  <script>
+    const labels = {
+      home: "Home",
+      entrance: "Entrance",
+      great: "Great Room"
+    };
+
+    function showScreen(id) {
+      document.querySelectorAll(".screen").forEach(screen => {
+        screen.classList.remove("active");
+      });
+
+      document.getElementById(id).classList.add("active");
+      document.getElementById("status").textContent = labels[id] + " • v0.2";
+      location.hash = id;
+    }
+
+    const startScreen = location.hash.replace("#", "");
+
+    if (["home", "entrance", "great"].includes(startScreen)) {
+      showScreen(startScreen);
+    }
+  </script>
+
+</body>
+</html>
