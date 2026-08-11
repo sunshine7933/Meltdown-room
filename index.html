@@ -96,6 +96,25 @@
 
     button:active { transform: scale(.98); }
 
+    .rant-stage { position: relative; width: min(100%, 1400px); margin: auto; }
+    .rant-stage .scene { max-height: calc(100vh - 176px); }
+    .rant-journal {
+      position: absolute; left: 29.8%; top: 29.5%; width: 39.8%; height: 24.5%;
+      resize: none; border: 1px solid rgba(212,171,111,.38); border-radius: 14px;
+      padding: 16px 18px; color: #f8e6c5; background: rgba(8,17,23,.78);
+      box-shadow: inset 0 0 30px rgba(0,0,0,.52);
+      font: 500 clamp(15px,1.45vw,22px)/1.55 Georgia,serif; outline: none;
+    }
+    .rant-journal::placeholder { color: rgba(248,230,197,.62); }
+    .rant-journal:focus { border-color: #e0a96a; }
+    .status { width: 100%; min-height: 20px; margin: 0; text-align: center; color: #f7e3bd; font-size: 14px; }
+    button.danger { background: #8a3f28; border-color: #c7734e; }
+    button.secondary { background: #664777; border-color: #9a72ad; }
+
+    @media (max-width: 700px) {
+      .rant-journal { left: 21%; top: 27%; width: 58%; height: 28%; padding: 10px; }
+    }
+
     @media (min-width: 900px) {
       button { font-size: 17px; padding: 14px 24px; }
     }
@@ -105,7 +124,7 @@
 <body>
 
   <section class="screen active" id="home">
-    <div class="topbar">The Meltdown Room • Home</div>
+    <div class="topbar">The Meltdown Room â€¢ Home</div>
     <div class="scene-wrap">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
     </div>
@@ -115,7 +134,7 @@
   </section>
 
   <section class="screen" id="entrance">
-    <div class="topbar">The Meltdown Room • Entrance</div>
+    <div class="topbar">The Meltdown Room â€¢ Entrance</div>
     <div class="scene-wrap">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
     </div>
@@ -126,7 +145,7 @@
   </section>
 
   <section class="screen" id="great">
-    <div class="topbar">The Meltdown Room • Great Room</div>
+    <div class="topbar">The Meltdown Room â€¢ Great Room</div>
     <div class="scene-wrap">
       <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
     </div>
@@ -138,13 +157,21 @@
   </section>
 
   <section class="screen" id="rant">
-    <div class="topbar">The Meltdown Room • Rant Room</div>
+    <div class="topbar">The Meltdown Room â€¢ Rant Room</div>
     <div class="scene-wrap">
-      <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
+      <div class="rant-stage">
+        <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
+        <textarea class="rant-journal" id="rantText" aria-label="Private rant" placeholder="This is your space. Say it exactly how you feel.&#10;&#10;No judgment. No fixing. Just let it out."></textarea>
+      </div>
     </div>
     <div class="controls">
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="danger" type="button" onclick="releaseRant()">RELEASE IT</button>
+      <button class="primary" type="button" onclick="saveRant()">SAVE PRIVATELY</button>
+      <button class="secondary" type="button" onclick="shareRant()">SHARE ANONYMOUSLY</button>
+      <button type="button" onclick="newRant()">WRITE NEW RANT</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
+      <p class="status" id="rantStatus" role="status" aria-live="polite"></p>
     </div>
   </section>
 
@@ -166,6 +193,58 @@
       window.scrollTo(0, 0);
     }
 
+    var rantText = document.getElementById("rantText");
+    var rantStatus = document.getElementById("rantStatus");
+    var statusTimer;
+
+    function setRantStatus(message) {
+      rantStatus.textContent = message;
+      clearTimeout(statusTimer);
+      statusTimer = setTimeout(function() { rantStatus.textContent = ""; }, 3500);
+    }
+
+    function storeDraft() {
+      localStorage.setItem("meltdownRantDraft", rantText.value);
+    }
+
+    function saveRant() {
+      var text = rantText.value.trim();
+      if (!text) {
+        setRantStatus("Write something first â€” this space is yours.");
+        rantText.focus();
+        return;
+      }
+      var saved = JSON.parse(localStorage.getItem("meltdownPrivateRants") || "[]");
+      saved.push({ text: text, savedAt: new Date().toISOString() });
+      localStorage.setItem("meltdownPrivateRants", JSON.stringify(saved));
+      storeDraft();
+      setRantStatus("Saved privately on this device.");
+    }
+
+    function releaseRant() {
+      if (!rantText.value.trim()) { setRantStatus("There is nothing to release yet."); return; }
+      if (!window.confirm("Are you sure you want to release this rant?")) return;
+      rantText.value = "";
+      localStorage.removeItem("meltdownRantDraft");
+      setRantStatus("Released. Take a breath.");
+      rantText.focus();
+    }
+
+    function newRant() {
+      if (rantText.value.trim() && !window.confirm("Start fresh and clear this draft?")) return;
+      rantText.value = "";
+      localStorage.removeItem("meltdownRantDraft");
+      setRantStatus("A fresh page is ready.");
+      rantText.focus();
+    }
+
+    function shareRant() {
+      setRantStatus("Anonymous sharing is coming soon. Nothing was posted.");
+    }
+
+    rantText.value = localStorage.getItem("meltdownRantDraft") || "";
+    rantText.addEventListener("input", storeDraft);
+
     var start = window.location.hash.replace("#", "");
     if (["home", "entrance", "great", "rant"].includes(start)) {
       showScreen(start);
@@ -174,3 +253,4 @@
 
 </body>
 </html>
+
