@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -313,7 +312,7 @@
   <button class="still-toggle" id="stillModeButton" type="button" onclick="toggleStillMode()" aria-pressed="false">STILL MODE</button>
 
   <section class="screen active" id="home">
-    <div class="topbar">The Meltdown Room â€¢ Home</div>
+    <div class="topbar">The Meltdown Room • Home</div>
     <div class="scene-wrap">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
     </div>
@@ -323,7 +322,7 @@
   </section>
 
   <section class="screen" id="entrance">
-    <div class="topbar">The Meltdown Room â€¢ Entrance</div>
+    <div class="topbar">The Meltdown Room • Entrance</div>
     <div class="scene-wrap">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
     </div>
@@ -345,7 +344,184 @@
           <button class="primary" type="button" onclick="showScreen('great')">GREAT ROOM</button>
           <button type="button" onclick="showScreen('rant')">RANT ROOM</button>
           <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
-          …2666 tokens truncated…leNote()">NEW PAPER</button>
+          <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+          <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="goBackRoom()">BACK</button>
+      <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
+    </div>
+  </section>
+
+  <section class="screen" id="great">
+    <div class="topbar">The Meltdown Room • Great Room</div>
+    <div class="scene-wrap">
+      <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('entrance')">BACK</button>
+      <button class="primary" type="button" onclick="showScreen('rant')">RANT ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
+    </div>
+  </section>
+
+  <section class="screen" id="rant">
+    <div class="topbar">The Meltdown Room • Rant Room</div>
+    <div class="scene-wrap">
+      <div class="rant-stage">
+        <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
+        <textarea class="rant-journal" id="rantText" aria-label="Private rant" placeholder="This is your space. Say it exactly how you feel.&#10;&#10;No judgment. No fixing. Just let it out."></textarea>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="danger" type="button" onclick="releaseRant()">RELEASE IT</button>
+      <button class="primary" type="button" onclick="saveRant()">SAVE PRIVATELY</button>
+      <button class="secondary" type="button" onclick="shareRant()">SHARE ANONYMOUSLY</button>
+      <button type="button" onclick="newRant()">WRITE NEW RANT</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <p class="status" id="rantStatus" role="status" aria-live="polite"></p>
+    </div>
+  </section>
+
+  <section class="screen" id="meltdown">
+    <div class="topbar">The Meltdown Room • Release &amp; Recover</div>
+    <div class="scene-wrap">
+      <div class="meltdown-stage" id="meltdownStage">
+        <img class="scene" src="meltdown-room.jpg?v=repair2" alt="Meltdown Room with Release and Recover areas">
+        <canvas class="scribble-canvas" id="scribbleCanvas" aria-label="Release scribble board"></canvas>
+        <button class="room-hotspot release-hotspot" type="button" onclick="letItOut()" aria-label="Let it out"></button>
+        <button class="room-hotspot recover-hotspot" type="button" onclick="findMyCalm()" aria-label="Find my calm"></button>
+        <div class="calm-orb" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="danger" type="button" onclick="letItOut()">LET IT OUT</button>
+      <button class="primary" type="button" onclick="findMyCalm()">FIND MY CALM</button>
+      <button type="button" onclick="clearScribble()">CLEAR BOARD</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <p class="status" id="meltdownStatus" role="status" aria-live="polite">Scribble on the board, then release when you are ready.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="thinking">
+    <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
+    <div class="scene-wrap">
+      <div class="thinking-stage" id="thinkingStage">
+        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with decision and brainstorm boards">
+        <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="primary" type="button" onclick="addThinkingNote()">+ ADD NOTE</button>
+      <button class="secondary" type="button" onclick="clearMyHead()">CLEAR MY HEAD</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <p class="status" id="thinkingStatus" role="status" aria-live="polite">Move the notes, write what is on your mind, and sort your thoughts.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="smash">
+    <div class="topbar">The Meltdown Room &bull; Smash &amp; Release</div>
+    <div class="scene-wrap">
+      <div class="smash-stage" id="smashStage">
+        <img class="scene" src="https://raw.githubusercontent.com/sunshine7933/Meltdown-room/main/smash-release-room.png?v=complete6" alt="Smash and Release Room with nine release activities">
+        <button class="smash-choice" type="button" onclick="showScreen('axe')" aria-label="Open Axe Throwing"></button>
+        <button class="smash-choice" type="button" onclick="showScreen('plate')" aria-label="Open Plate Throwing"></button>
+        <button class="smash-choice" type="button" onclick="showScreen('crumple')" aria-label="Open Crumple and Throw"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Rip It Up')" aria-label="Choose Rip It Up"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Stress Bubbles')" aria-label="Choose Stress Bubbles"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Smash Box')" aria-label="Choose Smash Box"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Virtual Throw')" aria-label="Choose Virtual Throw"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Scribble and Destroy')" aria-label="Choose Scribble and Destroy"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Check In')" aria-label="Choose How Are You Feeling"></button>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
+      <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <p class="status" id="smashStatus" role="status" aria-live="polite">Choose a safe release activity from the room.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="axe">
+    <div class="topbar">The Meltdown Room &bull; Axe Throwing</div>
+    <div class="scene-wrap">
+      <div class="axe-game">
+        <h2>Axe Throwing</h2>
+        <p>Stand back, hold the axe, then swipe upward toward the target to throw.</p>
+        <div class="axe-score" aria-label="Axe throwing score">
+          <span>THROWS: <span id="axeThrows">0</span></span>
+          <span>SCORE: <span id="axeScore">0</span></span>
+        </div>
+        <div class="axe-range" id="axeRange">
+          <div class="axe-target" id="axeTarget" aria-label="Axe target"></div>
+          <img class="axe-mark" id="axeMark" src="axe-real.png" alt="Realistic virtual axe" draggable="false">
+        </div>
+        <p class="status" id="axeStatus" role="status" aria-live="polite">Take a breath. Hold the axe and swipe upward to throw.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
+      <button type="button" onclick="resetAxeGame()">RESET SCORE</button>
+      <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+  <section class="screen" id="plate">
+    <div class="topbar">The Meltdown Room &bull; Plate Throwing</div>
+    <div class="scene-wrap">
+      <div class="plate-game">
+        <h2>Plate Throwing</h2>
+        <p>Hold the virtual plate and swipe upward to throw it safely into the smash wall.</p>
+        <div class="plate-score"><span>PLATES SMASHED: <span id="plateSmashes">0</span></span></div>
+        <div class="plate-lane" id="plateLane">
+          <div class="plate-wall" id="plateWall" aria-label="Plate smash wall"></div>
+          <img class="throw-plate" id="throwPlate" src="plate-real.png" alt="Virtual ceramic plate" draggable="false">
+        </div>
+        <p class="status" id="plateStatus" role="status" aria-live="polite">Take a breath. Hold the plate and swipe upward.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
+      <button type="button" onclick="resetPlateGame()">RESET PLATES</button>
+      <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+
+  <section class="screen" id="crumple">
+    <div class="topbar">The Meltdown Room &bull; Crumple &amp; Throw</div>
+    <div class="scene-wrap">
+      <div class="crumple-game">
+        <h2>Crumple &amp; Throw</h2>
+        <p>Write what you want to release, crumple it, then swipe the paper ball into the bin.</p>
+        <div class="crumple-count">RELEASED: <span id="crumpleCount">0</span></div>
+        <div class="crumple-desk" id="crumpleDesk">
+          <div class="rustic-bin" id="rusticBin" aria-label="Release bin"></div>
+          <textarea class="crumple-note" id="crumpleNote" placeholder="Write it here. This stays on your device until you release it."></textarea>
+          <span class="paper-ball" id="paperBall" role="button" tabindex="0" aria-label="Swipe paper ball into the release bin"></span>
+        </div>
+        <p class="status" id="crumpleStatus" role="status" aria-live="polite">Write what you want to let go.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button class="primary" type="button" onclick="crumplePaper()">CRUMPLE IT</button>
+      <button type="button" onclick="newCrumpleNote()">NEW PAPER</button>
       <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
@@ -409,7 +585,7 @@
     function saveRant() {
       var text = rantText.value.trim();
       if (!text) {
-        setRantStatus("Write something first â€” this space is yours.");
+        setRantStatus("Write something first — this space is yours.");
         rantText.focus();
         return;
       }
@@ -751,4 +927,3 @@
 
 </body>
 </html>
-
