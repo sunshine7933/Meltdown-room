@@ -249,6 +249,27 @@
     .smash-choice:nth-of-type(8) { left: 42.8%; top: 74.6%; }
     .smash-choice:nth-of-type(9) { left: 56.2%; top: 74.6%; }
     .smash-stage.releasing { animation: safeShake .42s ease-in-out 2; }
+    .smash-stage { width:min(100%,calc(100vh * 2 / 3)); }
+    .smash-stage .scene { max-height:100vh; }
+    .smash-choice { height:15.2%; }
+    .smash-choice:nth-of-type(1){left:15%;top:65.2%}.smash-choice:nth-of-type(2){left:30.5%;top:65.2%}.smash-choice:nth-of-type(3){left:46%;top:65.2%}.smash-choice:nth-of-type(4){left:61.5%;top:65.2%}.smash-choice:nth-of-type(5){left:77%;top:65.2%}
+    .smash-choice:nth-of-type(6){left:15%;top:81%}.smash-choice:nth-of-type(7){left:30.5%;top:81%}.smash-choice:nth-of-type(8){left:46%;top:81%}.smash-choice:nth-of-type(9){left:62%;top:81%;width:34%;height:12.5%}
+    .smash-top-choice,.smash-nav-choice { position:absolute;z-index:3;min-height:0;padding:0;border:0;border-radius:8px;opacity:0;background:#fff; }
+    .smash-top-choice:focus-visible,.smash-nav-choice:focus-visible{opacity:.24;outline:3px solid #fff}
+    .smash-letout{left:2%;top:36.5%;width:24%;height:24%}.smash-release{left:26%;top:36.5%;width:24%;height:24%}.smash-support{left:50%;top:36.5%;width:24%;height:24%}.smash-quiet{left:74%;top:36.5%;width:24%;height:24%}
+    .smash-nav-choice{left:1%;top:95%;width:98%;height:4%}
+    .smash-tool { position:absolute;inset:3% 5%;z-index:14;display:none;overflow:auto;padding:clamp(18px,4vw,34px);color:#f7e3bd;background:rgba(28,18,11,.97);border:3px solid #9c7047;border-radius:20px;box-shadow:0 15px 50px rgba(0,0,0,.82);text-align:center }
+    .smash-tool.open{display:block}.smash-tool h2{margin:0 48px 10px;font:700 clamp(25px,4vw,42px) Georgia,serif}.smash-close{position:absolute;top:10px;right:10px;min-height:42px;padding:8px 14px}
+    .smash-tool textarea{width:min(100%,650px);min-height:150px;padding:15px;border:2px solid #a87b4f;border-radius:10px;color:#3a281b;background:#efe1c1;font:600 16px/1.45 Georgia,serif}
+    .smash-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:14px}.smash-tool-status{min-height:24px;color:#f3d39a}
+    .rip-paper{width:min(80%,420px);min-height:180px;margin:15px auto;padding:20px;color:#49331f;background:#ead8aa;border:2px solid #9d7c4d;font:600 18px Georgia,serif;transition:.6s}
+    .rip-paper.ripped{transform:rotate(7deg) scale(.8);opacity:0;clip-path:polygon(0 0,45% 0,55% 100%,0 100%)}
+    .bubble-board{display:grid;grid-template-columns:repeat(6,42px);justify-content:center;gap:9px;margin:18px auto}.stress-bubble{width:42px;min-height:42px;padding:0;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#7db6c4 35%,#477a86);border:2px solid #b9e2e7}.stress-bubble.popped{opacity:.18;transform:scale(.55)}
+    .smash-box-game{width:min(80%,360px);height:210px;margin:18px auto;border:8px solid #57371f;background:repeating-linear-gradient(90deg,#8a5b31 0 40px,#6e4425 40px 45px);display:flex;align-items:center;justify-content:center;font:800 24px Georgia,serif}.smash-box-game.hit{animation:safeShake .32s ease-in-out}
+    .virtual-object{width:120px;height:120px;margin:25px auto;border-radius:16px;background:#6b4930;display:flex;align-items:center;justify-content:center;font-weight:800;touch-action:none;cursor:grab}.virtual-object.thrown{animation:virtualRelease .7s ease-out forwards}
+    .destroy-canvas{width:min(100%,650px);height:260px;background:#efe1c1;border:3px solid #8b6038;border-radius:12px;touch-action:none}.destroy-canvas.destroyed{animation:safeShake .3s 2;opacity:.15}
+    @keyframes virtualRelease{to{transform:translateY(-260px) rotate(420deg) scale(.3);opacity:0}}
+    @media(max-width:700px){.smash-tool{inset:1.5% 2%}.bubble-board{grid-template-columns:repeat(5,38px)}.stress-bubble{width:38px;min-height:38px}}
 
     .axe-game {
       width: min(94vw, 760px); margin: 22px auto; padding: clamp(18px, 4vw, 34px);
@@ -523,27 +544,28 @@
   </section>
 
   <section class="screen" id="smash">
-    <div class="topbar">The Meltdown Room &bull; Smash &amp; Release</div>
     <div class="scene-wrap">
       <div class="smash-stage" id="smashStage">
         <img class="scene" src="https://raw.githubusercontent.com/sunshine7933/Meltdown-room/main/smash-release-room.png?v=complete6" alt="Smash and Release Room with nine release activities">
+        <button class="smash-top-choice smash-letout" type="button" onclick="showScreen('rant')" aria-label="Go to Let It Out Room"></button>
+        <button class="smash-top-choice smash-release" type="button" onclick="openSmashTool('menu')" aria-label="Choose Smash and Release activity"></button>
+        <button class="smash-top-choice smash-support" type="button" onclick="openSmashTool('support')" aria-label="I need someone who gets it"></button>
+        <button class="smash-top-choice smash-quiet" type="button" onclick="openSmashTool('quiet')" aria-label="I just need quiet"></button>
         <button class="smash-choice" type="button" onclick="showScreen('axe')" aria-label="Open Axe Throwing"></button>
         <button class="smash-choice" type="button" onclick="showScreen('plate')" aria-label="Open Plate Throwing"></button>
         <button class="smash-choice" type="button" onclick="showScreen('crumple')" aria-label="Open Crumple and Throw"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Rip It Up')" aria-label="Choose Rip It Up"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Stress Bubbles')" aria-label="Choose Stress Bubbles"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Smash Box')" aria-label="Choose Smash Box"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Virtual Throw')" aria-label="Choose Virtual Throw"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Scribble and Destroy')" aria-label="Choose Scribble and Destroy"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Check In')" aria-label="Choose How Are You Feeling"></button>
+        <button class="smash-choice" type="button" onclick="openSmashTool('rip')" aria-label="Open Rip It Up"></button>
+        <button class="smash-choice" type="button" onclick="openSmashTool('bubbles')" aria-label="Open Stress Bubbles"></button>
+        <button class="smash-choice" type="button" onclick="openSmashTool('box')" aria-label="Open Smash Box"></button>
+        <button class="smash-choice" type="button" onclick="openSmashTool('throw')" aria-label="Open Virtual Throw"></button>
+        <button class="smash-choice" type="button" onclick="openSmashTool('destroy')" aria-label="Open Scribble and Destroy"></button>
+        <button class="smash-choice" type="button" onclick="openSmashTool('checkin')" aria-label="Open Feeling Check-In"></button>
+        <button class="smash-nav-choice" type="button" onclick="openSmashTool('navigation')" aria-label="Open Smash Room navigation"></button>
+        <div class="smash-tool" id="smashTool" role="dialog" aria-modal="true" aria-labelledby="smashToolTitle">
+          <button class="smash-close" type="button" onclick="closeSmashTool()">CLOSE</button>
+          <h2 id="smashToolTitle"></h2><div id="smashToolBody"></div>
+        </div>
       </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
-      <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <p class="status" id="smashStatus" role="status" aria-live="polite">Choose a safe release activity from the room.</p>
     </div>
   </section>
 
@@ -880,17 +902,32 @@
       toolStatus("Checked in: " + feeling + ". Thank you for noticing how you feel.");
     }
 
-    var smashStage = document.getElementById("smashStage");
-    var smashStatus = document.getElementById("smashStatus");
-    function chooseSmash(button, activity) {
-      document.querySelectorAll(".smash-choice").forEach(function(choice) { choice.classList.remove("active"); });
-      button.classList.add("active");
-      smashStage.classList.remove("releasing");
-      void smashStage.offsetWidth;
-      smashStage.classList.add("releasing");
-      smashStatus.textContent = activity + " selected. Let the pressure move through and out safely.";
-      setTimeout(function() { smashStage.classList.remove("releasing"); }, 900);
-    }
+    var smashStage=document.getElementById("smashStage"),smashTool=document.getElementById("smashTool"),smashToolTitle=document.getElementById("smashToolTitle"),smashToolBody=document.getElementById("smashToolBody");
+    var destroyCanvas,destroyContext,destroyDrawing=false,boxHits=0;
+    function closeSmashTool(){smashTool.classList.remove("open");smashToolBody.innerHTML="";}
+    function smashButton(label,action,kind){return '<button type="button" class="'+(kind||"")+'" onclick="'+action+'">'+label+'</button>';}
+    function openSmashTool(tool){smashTool.classList.add("open");var title="",body="";
+      if(tool==="menu"){title="Choose Your Release";body='<div class="smash-actions">'+smashButton("AXE THROWING","showScreen(\'axe\');closeSmashTool()","primary")+smashButton("PLATE THROWING","showScreen(\'plate\');closeSmashTool()")+smashButton("CRUMPLE & THROW","showScreen(\'crumple\');closeSmashTool()")+smashButton("RIP IT UP","openSmashTool(\'rip\')")+smashButton("STRESS BUBBLES","openSmashTool(\'bubbles\')")+smashButton("SMASH BOX","openSmashTool(\'box\')")+smashButton("VIRTUAL THROW","openSmashTool(\'throw\')")+smashButton("SCRIBBLE & DESTROY","openSmashTool(\'destroy\')")+'</div>';}
+      else if(tool==="rip"){title="Rip It Up";body='<p>Write it out. Rip it up. Feel the release.</p><textarea id="ripText" placeholder="Write what you want to release..."></textarea><div class="rip-paper" id="ripPaper">Your words will appear here.</div><div class="smash-actions">'+smashButton("PUT IT ON PAPER","prepareRip()","primary")+smashButton("RIP IT UP","ripItUp()","danger")+'</div><p class="smash-tool-status" id="smashToolStatus"></p>';}
+      else if(tool==="bubbles"){title="Stress Bubbles";body='<p>Pop the bubbles, one at a time.</p><div class="bubble-board">'+Array.from({length:30},(_,i)=>'<button class="stress-bubble" type="button" onclick="popStressBubble(this)" aria-label="Pop bubble '+(i+1)+'"></button>').join("")+'</div><p class="smash-tool-status" id="smashToolStatus">30 bubbles ready.</p>';}
+      else if(tool==="box"){title="Smash Box";body='<p>Tap the box to safely break it apart.</p><button class="smash-box-game" id="smashBoxGame" type="button" onclick="hitSmashBox()">SMASH ME</button><p class="smash-tool-status" id="smashToolStatus">Hits: 0</p>';}
+      else if(tool==="throw"){title="Virtual Throw";body='<p>Hold the object and swipe upward to throw it away.</p><div class="virtual-object" id="virtualObject" role="button" tabindex="0">THROW ME</div><p class="smash-tool-status" id="smashToolStatus">Ready to release.</p>';}
+      else if(tool==="destroy"){title="Scribble & Destroy";body='<p>Scribble it out, then destroy it and clear your mind.</p><canvas class="destroy-canvas" id="destroyCanvas" width="700" height="300" aria-label="Scribble canvas"></canvas><div class="smash-actions">'+smashButton("DESTROY SCRIBBLE","destroyScribble()","danger")+smashButton("FRESH BOARD","freshDestroyCanvas()")+'</div><p class="smash-tool-status" id="smashToolStatus"></p>';}
+      else if(tool==="checkin"){title="How Are You Feeling Now?";body='<p>Check in with yourself.</p><div class="smash-actions">'+["A LITTLE LIGHTER","STILL FRUSTRATED","MEH","OVERWHELMED","I DON'T KNOW"].map(x=>smashButton(x,"saveSmashFeeling('"+x.replace("'","\\'")+"')")).join("")+'</div><p class="smash-tool-status" id="smashToolStatus"></p>';}
+      else if(tool==="support"){title="I Need Someone Who Gets It";body='<p>You are not alone. Choose the kind of support you need.</p><div class="smash-actions">'+smashButton("LEAVE A SUPPORT NOTE","showScreen(\'meltdown\');closeSmashTool()","primary")+smashButton("RETURN TO GREAT ROOM","showScreen(\'great\');closeSmashTool()")+'</div>';}
+      else if(tool==="quiet"){title="I Just Need Quiet";body='<p>No advice. No prompts. No pressure. Just quiet.</p><div class="smash-actions">'+smashButton("ENTER STILL MODE","setStillMode(true)","primary")+smashButton("RETURN WHEN READY","closeSmashTool()")+'</div>';}
+      else if(tool==="navigation"){title="Room Navigation";body='<div class="smash-actions">'+smashButton("GREAT ROOM","showScreen(\'great\');closeSmashTool()","primary")+smashButton("CALM DOWN CORNER","showScreen(\'meltdown\');closeSmashTool()")+smashButton("THINKING ROOM","showScreen(\'thinking\');closeSmashTool()")+smashButton("PROPERTY MAP","showScreen(\'map\');closeSmashTool()")+smashButton("HOME","showScreen(\'home\');closeSmashTool()")+'</div>';}
+      smashToolTitle.textContent=title;smashToolBody.innerHTML=body;if(tool==="throw")setupVirtualThrow();if(tool==="destroy")setupDestroyCanvas();}
+    function smashToolStatus(message){var s=document.getElementById("smashToolStatus");if(s)s.textContent=message;}
+    function prepareRip(){var t=document.getElementById("ripText"),p=document.getElementById("ripPaper");if(!t.value.trim()){smashToolStatus("Write something first.");return;}p.classList.remove("ripped");p.textContent=t.value;}
+    function ripItUp(){var p=document.getElementById("ripPaper"),t=document.getElementById("ripText");if(!t.value.trim()){smashToolStatus("Write something first.");return;}p.classList.add("ripped");setTimeout(function(){t.value="";p.textContent="Released.";p.classList.remove("ripped");smashToolStatus("Ripped up and released.");},700);}
+    function popStressBubble(b){if(b.classList.contains("popped"))return;b.classList.add("popped");var left=document.querySelectorAll(".stress-bubble:not(.popped)").length;smashToolStatus(left?left+" bubbles left.":"All popped. Take one slow breath.");}
+    function hitSmashBox(){boxHits++;var b=document.getElementById("smashBoxGame");b.classList.remove("hit");void b.offsetWidth;b.classList.add("hit");b.textContent=boxHits>=8?"RELEASED":"SMASH AGAIN";smashToolStatus("Hits: "+boxHits+(boxHits>=8?" — pressure released.":""));if(boxHits>=8)boxHits=0;}
+    function setupVirtualThrow(){var o=document.getElementById("virtualObject"),start=null;o.addEventListener("pointerdown",function(e){start={x:e.clientX,y:e.clientY,t:Date.now()};o.setPointerCapture(e.pointerId);});o.addEventListener("pointerup",function(e){if(!start)return;if(start.y-e.clientY>60){o.classList.add("thrown");smashToolStatus("Thrown and released.");setTimeout(function(){o.classList.remove("thrown");},900);}else smashToolStatus("Swipe upward to throw.");start=null;});}
+    function setupDestroyCanvas(){destroyCanvas=document.getElementById("destroyCanvas");destroyContext=destroyCanvas.getContext("2d");destroyContext.lineWidth=5;destroyContext.lineCap="round";destroyContext.strokeStyle="#352319";destroyCanvas.addEventListener("pointerdown",function(e){destroyDrawing=true;destroyCanvas.setPointerCapture(e.pointerId);var r=destroyCanvas.getBoundingClientRect();destroyContext.beginPath();destroyContext.moveTo((e.clientX-r.left)*destroyCanvas.width/r.width,(e.clientY-r.top)*destroyCanvas.height/r.height);});destroyCanvas.addEventListener("pointermove",function(e){if(!destroyDrawing)return;var r=destroyCanvas.getBoundingClientRect();destroyContext.lineTo((e.clientX-r.left)*destroyCanvas.width/r.width,(e.clientY-r.top)*destroyCanvas.height/r.height);destroyContext.stroke();});destroyCanvas.addEventListener("pointerup",function(){destroyDrawing=false;});}
+    function destroyScribble(){destroyCanvas.classList.add("destroyed");setTimeout(function(){freshDestroyCanvas();smashToolStatus("Destroyed. Your board is clear.");},700);}
+    function freshDestroyCanvas(){if(!destroyContext)return;destroyContext.clearRect(0,0,destroyCanvas.width,destroyCanvas.height);destroyCanvas.classList.remove("destroyed");}
+    function saveSmashFeeling(feeling){localStorage.setItem("smashFeelingCheckIn",JSON.stringify({feeling:feeling,date:new Date().toISOString()}));smashToolStatus("Checked in: "+feeling+". Thank you for noticing.");}
 
     var axeThrows = 0;
     var axeScore = 0;
