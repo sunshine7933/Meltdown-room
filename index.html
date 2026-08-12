@@ -656,9 +656,6 @@
       if (id !== currentRoom) { previousRoom = currentRoom; currentRoom = id; }
       target.classList.add("active");
 
-      if (id === "meltdown") {
-        setTimeout(sizeScribbleCanvas, 0);
-      }
 
       if (history.replaceState) {
         history.replaceState(null, "", "#" + id);
@@ -1131,8 +1128,6 @@
     function setThinkingAmbience(mode){thinkingStage.classList.remove("thinking-rain","thinking-night","thinking-warm");if(mode!=="natural")thinkingStage.classList.add("thinking-"+mode);localStorage.setItem("thinkingAmbience",mode);thinkingStatus("Atmosphere set to "+mode+".");}
     var savedThinkingAmbience=localStorage.getItem("thinkingAmbience")||"natural";if(savedThinkingAmbience!=="natural")thinkingStage.classList.add("thinking-"+savedThinkingAmbience);
 
-    window.addEventListener("resize", sizeScribbleCanvas);
-    window.addEventListener("load", sizeScribbleCanvas);
 
     var start = window.location.hash.replace("#", "");
     if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
