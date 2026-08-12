@@ -201,21 +201,39 @@
     .meltdown-room-status { position:absolute; left:15%; right:15%; bottom:1%; z-index:6; margin:0; padding:7px; border-radius:10px; background:rgba(28,18,11,.82); }
     @media (max-width:700px) { .meltdown-tool { inset:2% 3%; } .meltdown-tool textarea { min-height:130px; } }
 
-    .thinking-stage { position: relative; width: min(100%, 1664px); margin: auto; overflow: hidden; }
-    .thinking-stage .scene { max-height: calc(100vh - 118px); }
-    .thinking-board {
-      position: absolute; left: 30.4%; top: 69.1%; width: 29.4%; height: 15.8%;
-      z-index: 2; overflow: hidden; border-radius: 5px;
-    }
-    .thought-note {
-      position: absolute; width: 28%; min-height: 24%; padding: 5px;
-      border: 0; border-radius: 3px; resize: none; overflow: hidden;
-      color: #38271b; background: rgba(232,205,159,.94); box-shadow: 0 3px 8px rgba(0,0,0,.38);
-      font: 700 clamp(8px, .78vw, 13px)/1.25 Georgia, serif; cursor: grab; touch-action: none;
-    }
-    .thought-note:focus { outline: 2px solid #f2c676; cursor: text; }
-    .thought-note.dragging { cursor: grabbing; opacity: .86; z-index: 4; }
-    .thinking-pool-glow { display: none; }
+    .thinking-stage { position:relative; width:min(100%,calc((100vh - 12px) * 2 / 3)); margin:auto; overflow:hidden; }
+    .thinking-stage .scene { width:100%; max-height:100vh; margin:auto; }
+    .thinking-hotspot { position:absolute; z-index:4; min-height:0; padding:0; border:0; border-radius:8px; opacity:0; background:#fff; }
+    .thinking-hotspot:focus-visible { opacity:.25; outline:3px solid #fff; }
+    .think-clear { left:1.7%; top:40.2%; width:15.1%; height:24.3%; }
+    .think-decide { left:17.5%; top:40.2%; width:15.1%; height:24.3%; }
+    .think-write { left:33.3%; top:40.2%; width:15.1%; height:24.3%; }
+    .think-questions { left:49.1%; top:40.2%; width:15.1%; height:24.3%; }
+    .think-brainstorm { left:64.9%; top:40.2%; width:15.1%; height:24.3%; }
+    .think-quiet { left:80.7%; top:40.2%; width:17.5%; height:24.3%; }
+    .think-decision-board { left:1.7%; top:65.6%; width:38%; height:19.3%; }
+    .think-brainstorm-board { left:40.6%; top:65.6%; width:34.7%; height:19.3%; }
+    .think-hourglass { left:76.2%; top:65.6%; width:22%; height:19.3%; }
+    .think-ambience { left:1.7%; top:88.8%; width:54%; height:6.2%; }
+    .think-navigation { left:1.7%; top:95%; width:96.5%; height:4.5%; }
+    .thinking-tool { position:absolute; inset:3% 5%; z-index:12; display:none; overflow:auto; padding:clamp(18px,4vw,34px); color:#f7e3bd; background:rgba(28,18,11,.97); border:3px solid #9c7047; border-radius:20px; box-shadow:0 15px 50px rgba(0,0,0,.82),inset 0 0 30px rgba(0,0,0,.5); text-align:center; }
+    .thinking-tool.open { display:block; }
+    .thinking-tool h2 { margin:0 48px 10px; font:700 clamp(25px,4vw,42px) Georgia,serif; }
+    .thinking-close { position:absolute; top:10px; right:10px; min-height:42px; padding:8px 14px; }
+    .thinking-tool textarea,.thinking-tool input { width:min(100%,650px); padding:14px; border:2px solid #a87b4f; border-radius:10px; color:#3a281b; background:#efe1c1; font:600 16px/1.45 Georgia,serif; }
+    .thinking-tool textarea { min-height:150px; resize:vertical; }
+    .thinking-fields { display:grid; gap:10px; max-width:700px; margin:auto; }
+    .thinking-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:14px; }
+    .thinking-status { min-height:24px; color:#f3d39a; }
+    .thinking-note-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; max-width:720px; margin:14px auto; }
+    .thinking-note-card { min-height:90px; padding:10px; color:#49331f; background:#ead8aa; border-radius:6px; box-shadow:0 5px 10px rgba(0,0,0,.35); }
+    .hourglass-visual { width:90px; height:150px; margin:15px auto; border:8px solid #825b36; border-radius:45px; background:linear-gradient(to bottom,transparent 0 45%,#79aeb2 46% 54%,transparent 55%); animation:none; }
+    .hourglass-visual.running { animation:hourglassTurn 1s ease, breathe 8s 1s ease-in-out infinite; }
+    .thinking-stage.thinking-rain .scene { filter:saturate(.75) brightness(.78) hue-rotate(12deg); }
+    .thinking-stage.thinking-night .scene { filter:brightness(.55) saturate(.8) hue-rotate(15deg); }
+    .thinking-stage.thinking-warm .scene { filter:sepia(.18) saturate(1.18) brightness(1.04); }
+    @keyframes hourglassTurn { to { transform:rotate(180deg); } }
+    @media(max-width:700px){.thinking-tool{inset:1.5% 2%;}.thinking-tool textarea{min-height:110px;}}
 
     .smash-stage { position: relative; width: min(100%, calc((100vh - 118px) * 2 / 3)); margin: auto; overflow: hidden; }
     .smash-stage .scene { width: 100%; max-height: calc(100vh - 118px); margin: auto; }
@@ -481,20 +499,26 @@
   </section>
 
   <section class="screen" id="thinking">
-    <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
     <div class="scene-wrap">
       <div class="thinking-stage" id="thinkingStage">
-        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with decision and brainstorm boards">
-        <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
+        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with six thinking paths, Decision Board, Brainstorm Board, Water Hourglass, atmosphere controls, and navigation">
+        <button class="thinking-hotspot think-clear" type="button" onclick="openThinkingTool('clear')" aria-label="Clear My Head"></button>
+        <button class="thinking-hotspot think-decide" type="button" onclick="openThinkingTool('decide')" aria-label="Help Me Decide"></button>
+        <button class="thinking-hotspot think-write" type="button" onclick="openThinkingTool('write')" aria-label="Write It Out"></button>
+        <button class="thinking-hotspot think-questions" type="button" onclick="openThinkingTool('questions')" aria-label="Ask Myself Questions"></button>
+        <button class="thinking-hotspot think-brainstorm" type="button" onclick="openThinkingTool('brainstorm')" aria-label="Brainstorm"></button>
+        <button class="thinking-hotspot think-quiet" type="button" onclick="openThinkingTool('quiet')" aria-label="Just Think"></button>
+        <button class="thinking-hotspot think-decision-board" type="button" onclick="openThinkingTool('decide')" aria-label="Open Decision Board"></button>
+        <button class="thinking-hotspot think-brainstorm-board" type="button" onclick="openThinkingTool('brainstorm')" aria-label="Open Brainstorm Board"></button>
+        <button class="thinking-hotspot think-hourglass" type="button" onclick="openThinkingTool('hourglass')" aria-label="Start Water Hourglass"></button>
+        <button class="thinking-hotspot think-ambience" type="button" onclick="openThinkingTool('ambience')" aria-label="Set Thinking Room atmosphere"></button>
+        <button class="thinking-hotspot think-navigation" type="button" onclick="openThinkingTool('navigation')" aria-label="Open Thinking Room navigation"></button>
+        <div class="thinking-tool" id="thinkingTool" role="dialog" aria-modal="true" aria-labelledby="thinkingToolTitle">
+          <button class="thinking-close" type="button" onclick="closeThinkingTool()">CLOSE</button>
+          <h2 id="thinkingToolTitle"></h2>
+          <div id="thinkingToolBody"></div>
+        </div>
       </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button class="primary" type="button" onclick="addThinkingNote()">+ ADD NOTE</button>
-      <button class="secondary" type="button" onclick="clearMyHead()">CLEAR MY HEAD</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <p class="status" id="thinkingStatus" role="status" aria-live="polite">Move the notes, write what is on your mind, and sort your thoughts.</p>
     </div>
   </section>
 
@@ -1013,83 +1037,62 @@
       crumpleStatus.textContent = "Fresh paper ready."; crumpleNote.focus();
     }
 
-    var thinkingBoard = document.getElementById("thinkingBoard");
-    var thinkingStatus = document.getElementById("thinkingStatus");
-    var thinkingNotes = [];
-    var thinkingSaveTimer;
+    var thinkingStage = document.getElementById("thinkingStage");
+    var thinkingTool = document.getElementById("thinkingTool");
+    var thinkingToolTitle = document.getElementById("thinkingToolTitle");
+    var thinkingToolBody = document.getElementById("thinkingToolBody");
+    var thinkingTimer;
+    var thinkingQuestionIndex = 0;
+    var thinkingQuestions = ["What do I really want?","What is holding me back?","What can I control?","What can I let go of?","What is the next small step?"];
 
-    function saveThinkingNotes() {
-      localStorage.setItem("meltdownThinkingNotes", JSON.stringify(thinkingNotes));
-      clearTimeout(thinkingSaveTimer);
-      thinkingSaveTimer = setTimeout(function() {
-        thinkingStatus.textContent = "Saved privately on this device.";
-      }, 250);
+    function closeThinkingTool(){ thinkingTool.classList.remove("open"); thinkingToolBody.innerHTML=""; clearInterval(thinkingTimer); }
+    function thinkButton(label,action,kind){ return '<button type="button" class="'+(kind||"")+'" onclick="'+action+'">'+label+'</button>'; }
+    function openThinkingTool(tool){
+      clearInterval(thinkingTimer); thinkingTool.classList.add("open"); var title="",body="";
+      if(tool==="clear"){
+        title="Clear My Head"; body='<p>Quiet the noise. Release the stress. Let your mind slow down.</p><div class="hourglass-visual" id="clearHeadVisual"></div><p id="clearHeadWords">Tap Start and follow one slow breath at a time.</p><div class="thinking-actions">'+thinkButton("START 2-MINUTE RESET","startClearHead()","primary")+thinkButton("I FEEL CLEARER","finishClearHead()")+'</div>';
+      }else if(tool==="decide"){
+        title="Help Me Decide"; body='<p>This room helps you hear yourself. It does not decide for you.</p><div class="thinking-fields"><input id="decisionA" placeholder="Option A"><input id="decisionB" placeholder="Option B"><input id="decisionOther" placeholder="Other possibility"><textarea id="decisionNotes" placeholder="What do I gain? What worries me? What matters most? What can wait?"></textarea></div><div class="thinking-actions">'+thinkButton("SAVE MY DECISION BOARD","saveDecisionBoard()","primary")+thinkButton("CLEAR BOARD","clearDecisionBoard()","danger")+'</div><p class="thinking-status" id="thinkingToolStatus"></p>';
+      }else if(tool==="write"){
+        title="Write It Out"; body='<p>Put your thoughts on paper. Get them out of your head and onto the page.</p><textarea id="thinkingWriting" placeholder="Write whatever is on your mind..."></textarea><div class="thinking-actions">'+thinkButton("SAVE PRIVATELY","saveThinkingWriting()","primary")+thinkButton("RELEASE & CLEAR","clearThinkingWriting()","danger")+'</div><p class="thinking-status" id="thinkingToolStatus"></p>';
+      }else if(tool==="questions"){
+        title="Ask Myself Questions"; body='<p class="thinking-question" id="thinkingQuestion">'+thinkingQuestions[thinkingQuestionIndex]+'</p><textarea id="thinkingAnswer" placeholder="Your answer..."></textarea><div class="thinking-actions">'+thinkButton("SAVE ANSWER & NEXT","saveThinkingAnswer()","primary")+thinkButton("NEXT QUESTION","nextThinkingQuestion()")+'</div><p class="thinking-status" id="thinkingToolStatus"></p>';
+      }else if(tool==="brainstorm"){
+        title="Brainstorm"; body='<p>Let ideas flow. Organize, move, group, save, or let go of ideas.</p><input id="brainstormInput" placeholder="New idea"><div class="thinking-actions">'+thinkButton("ADD IDEA","addBrainstormIdea()","primary")+thinkButton("CLEAR IDEAS","clearBrainstormIdeas()","danger")+'</div><div class="thinking-note-grid" id="brainstormGrid"></div><p class="thinking-status" id="thinkingToolStatus"></p>';
+      }else if(tool==="quiet"){
+        title="Just Think"; body='<p>No prompts. No pressure. Just you and your thoughts.</p><div class="hourglass-visual" id="quietVisual"></div><p id="quietWords">Choose a quiet pause.</p><div class="thinking-actions">'+thinkButton("1 MINUTE","startQuiet(60)","primary")+thinkButton("3 MINUTES","startQuiet(180)")+thinkButton("END QUIET TIME","finishQuiet()")+'</div>';
+      }else if(tool==="hourglass"){
+        title="Water Hourglass"; body='<p>Use the hourglass for calming prompts and reflection.</p><div class="hourglass-visual" id="hourglassVisual"></div><p id="hourglassWords">Ready when you are.</p><div class="thinking-actions">'+thinkButton("START HOURGLASS","startHourglass()","primary")+thinkButton("STOP","stopHourglass()")+'</div>';
+      }else if(tool==="ambience"){
+        title="Set Your Space"; body='<p>Choose an atmosphere from the pictured room controls.</p><div class="thinking-actions">'+thinkButton("SUNSHINE","setThinkingAmbience(\'warm\')","primary")+thinkButton("RAIN","setThinkingAmbience(\'rain\')")+thinkButton("NIGHT","setThinkingAmbience(\'night\')")+thinkButton("NATURAL","setThinkingAmbience(\'natural\')")+thinkButton("STILL MODE","toggleStillMode()")+'</div><p class="thinking-status" id="thinkingToolStatus"></p>';
+      }else if(tool==="navigation"){
+        title="Thinking Room Navigation"; body='<div class="thinking-actions">'+thinkButton("BACK TO GREAT ROOM","showScreen(\'great\');closeThinkingTool()","primary")+thinkButton("MELTDOWN ROOM","showScreen(\'meltdown\');closeThinkingTool()")+thinkButton("RANT ROOM","showScreen(\'rant\');closeThinkingTool()")+thinkButton("PROPERTY MAP","showScreen(\'map\');closeThinkingTool()")+thinkButton("HOME","showScreen(\'home\');closeThinkingTool()")+'</div>';
+      }
+      thinkingToolTitle.textContent=title; thinkingToolBody.innerHTML=body;
+      if(tool==="decide")loadDecisionBoard(); if(tool==="write")document.getElementById("thinkingWriting").value=localStorage.getItem("thinkingPrivateWriting")||""; if(tool==="brainstorm")renderBrainstormIdeas();
     }
-
-    function notePosition(index) {
-      var defaults = [
-        { x: 3, y: 8 }, { x: 38, y: 8 }, { x: 70, y: 36 },
-        { x: 5, y: 58 }, { x: 40, y: 58 }, { x: 70, y: 8 }
-      ];
-      return defaults[index % defaults.length];
-    }
-
-    function createThinkingNote(note, index) {
-      var fallback = notePosition(index);
-      var area = document.createElement("textarea");
-      area.className = "thought-note";
-      area.value = note.text || "";
-      area.setAttribute("aria-label", "Thought note");
-      area.style.left = (Number.isFinite(note.x) ? note.x : fallback.x) + "%";
-      area.style.top = (Number.isFinite(note.y) ? note.y : fallback.y) + "%";
-      area.addEventListener("input", function() { note.text = area.value; saveThinkingNotes(); });
-      area.addEventListener("pointerdown", function(event) {
-        if (event.pointerType === "mouse" && event.detail > 1) return;
-        var boardBox = thinkingBoard.getBoundingClientRect();
-        var noteBox = area.getBoundingClientRect();
-        var offsetX = event.clientX - noteBox.left;
-        var offsetY = event.clientY - noteBox.top;
-        area.classList.add("dragging");
-        area.setPointerCapture(event.pointerId);
-        function move(moveEvent) {
-          var x = Math.max(0, Math.min(boardBox.width - noteBox.width, moveEvent.clientX - boardBox.left - offsetX));
-          var y = Math.max(0, Math.min(boardBox.height - noteBox.height, moveEvent.clientY - boardBox.top - offsetY));
-          note.x = x / boardBox.width * 100; note.y = y / boardBox.height * 100;
-          area.style.left = note.x + "%"; area.style.top = note.y + "%";
-        }
-        function stop() {
-          area.classList.remove("dragging"); area.removeEventListener("pointermove", move);
-          area.removeEventListener("pointerup", stop); area.removeEventListener("pointercancel", stop); saveThinkingNotes();
-        }
-        area.addEventListener("pointermove", move); area.addEventListener("pointerup", stop); area.addEventListener("pointercancel", stop);
-      });
-      thinkingBoard.appendChild(area);
-      return area;
-    }
-
-    function renderThinkingNotes() {
-      thinkingBoard.innerHTML = "";
-      thinkingNotes.forEach(createThinkingNote);
-    }
-
-    function addThinkingNote() {
-      var position = notePosition(thinkingNotes.length);
-      var note = { text: "New Note", x: position.x, y: position.y };
-      thinkingNotes.push(note); renderThinkingNotes(); saveThinkingNotes();
-      var newest = thinkingBoard.lastElementChild; if (newest) { newest.focus(); newest.select(); }
-      thinkingStatus.textContent = "New thought added. Drag it anywhere on the board.";
-    }
-
-    function clearMyHead() {
-      if (thinkingNotes.some(function(note) { return note.text.trim(); }) && !window.confirm("Clear every note from your Thinking Board?")) return;
-      thinkingNotes = [{ text: "Clear My Head", x: 5, y: 8 }];
-      renderThinkingNotes(); saveThinkingNotes();
-      thinkingStatus.textContent = "Your board has a fresh starting point.";
-    }
-
-    try { thinkingNotes = JSON.parse(localStorage.getItem("meltdownThinkingNotes") || "[]"); } catch (error) { thinkingNotes = []; }
-    if (!Array.isArray(thinkingNotes) || !thinkingNotes.length) thinkingNotes = [{ text: "Clear My Head", x: 5, y: 8 }];
-    renderThinkingNotes();
+    function thinkingStatus(message){var el=document.getElementById("thinkingToolStatus");if(el)el.textContent=message;}
+    function startClearHead(){var v=document.getElementById("clearHeadVisual"),w=document.getElementById("clearHeadWords");v.classList.add("running");var inhale=true,remaining=120;w.textContent="Breathe in slowly…";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;if(remaining<=0){finishClearHead();return;}if(remaining%4===0){inhale=!inhale;w.textContent=(inhale?"Breathe in slowly…":"Breathe out gently…")+" "+remaining+" seconds";}},1000);}
+    function finishClearHead(){clearInterval(thinkingTimer);var w=document.getElementById("clearHeadWords");if(w)w.textContent="Take your time. Notice what feels a little lighter.";}
+    function getDecision(){try{return JSON.parse(localStorage.getItem("thinkingDecisionBoard")||"{}");}catch(e){return {};}}
+    function loadDecisionBoard(){var d=getDecision();decisionA.value=d.a||"";decisionB.value=d.b||"";decisionOther.value=d.other||"";decisionNotes.value=d.notes||"";}
+    function saveDecisionBoard(){localStorage.setItem("thinkingDecisionBoard",JSON.stringify({a:decisionA.value,b:decisionB.value,other:decisionOther.value,notes:decisionNotes.value}));thinkingStatus("Decision Board saved privately on this device.");}
+    function clearDecisionBoard(){localStorage.removeItem("thinkingDecisionBoard");decisionA.value=decisionB.value=decisionOther.value=decisionNotes.value="";thinkingStatus("Decision Board cleared.");}
+    function saveThinkingWriting(){localStorage.setItem("thinkingPrivateWriting",thinkingWriting.value);thinkingStatus("Writing saved privately on this device.");}
+    function clearThinkingWriting(){thinkingWriting.value="";localStorage.removeItem("thinkingPrivateWriting");thinkingStatus("Released. The page is clear.");}
+    function nextThinkingQuestion(){thinkingQuestionIndex=(thinkingQuestionIndex+1)%thinkingQuestions.length;thinkingQuestion.textContent=thinkingQuestions[thinkingQuestionIndex];thinkingAnswer.value="";}
+    function saveThinkingAnswer(){var answers=[];try{answers=JSON.parse(localStorage.getItem("thinkingAnswers")||"[]");}catch(e){}answers.push({question:thinkingQuestions[thinkingQuestionIndex],answer:thinkingAnswer.value,date:new Date().toISOString()});localStorage.setItem("thinkingAnswers",JSON.stringify(answers));thinkingStatus("Answer saved privately.");nextThinkingQuestion();}
+    function getBrainstormIdeas(){try{return JSON.parse(localStorage.getItem("thinkingBrainstormIdeas")||"[]");}catch(e){return [];}}
+    function renderBrainstormIdeas(){var g=document.getElementById("brainstormGrid");if(!g)return;var ideas=getBrainstormIdeas();g.innerHTML=ideas.length?ideas.map(function(x,i){return '<button type="button" class="thinking-note-card" onclick="removeBrainstormIdea('+i+')" aria-label="Remove idea">'+x.replace(/[&<>"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch];})+'</button>';}).join(""):"<p>Your board is ready for ideas.</p>";}
+    function addBrainstormIdea(){if(!brainstormInput.value.trim()){thinkingStatus("Write an idea first.");return;}var ideas=getBrainstormIdeas();ideas.push(brainstormInput.value.trim());localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));brainstormInput.value="";renderBrainstormIdeas();thinkingStatus("Idea added. Tap an idea to remove it.");}
+    function removeBrainstormIdea(i){var ideas=getBrainstormIdeas();ideas.splice(i,1);localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));renderBrainstormIdeas();}
+    function clearBrainstormIdeas(){localStorage.removeItem("thinkingBrainstormIdeas");renderBrainstormIdeas();thinkingStatus("Brainstorm Board cleared.");}
+    function startQuiet(seconds){var v=document.getElementById("quietVisual"),w=document.getElementById("quietWords"),remaining=seconds;v.classList.add("running");w.textContent="Quiet time: "+remaining+" seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;w.textContent=remaining>0?"Quiet time: "+remaining+" seconds":"Quiet time complete. Take your next step gently.";if(remaining<=0)clearInterval(thinkingTimer);},1000);}
+    function finishQuiet(){clearInterval(thinkingTimer);var w=document.getElementById("quietWords");if(w)w.textContent="Quiet time ended. Keep what helped.";}
+    function startHourglass(){var v=document.getElementById("hourglassVisual"),w=document.getElementById("hourglassWords"),prompts=["What do I really want?","What can I control?","What can I let go of?","What is one small next step?"],i=0;v.classList.add("running");w.textContent=prompts[0];clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){i=(i+1)%prompts.length;w.textContent=prompts[i];},15000);}
+    function stopHourglass(){clearInterval(thinkingTimer);var w=document.getElementById("hourglassWords");if(w)w.textContent="Hourglass paused. Take your time.";}
+    function setThinkingAmbience(mode){thinkingStage.classList.remove("thinking-rain","thinking-night","thinking-warm");if(mode!=="natural")thinkingStage.classList.add("thinking-"+mode);localStorage.setItem("thinkingAmbience",mode);thinkingStatus("Atmosphere set to "+mode+".");}
+    var savedThinkingAmbience=localStorage.getItem("thinkingAmbience")||"natural";if(savedThinkingAmbience!=="natural")thinkingStage.classList.add("thinking-"+savedThinkingAmbience);
 
     window.addEventListener("resize", sizeScribbleCanvas);
     window.addEventListener("load", sizeScribbleCanvas);
