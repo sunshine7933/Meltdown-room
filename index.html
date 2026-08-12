@@ -314,6 +314,28 @@
     @keyframes virtualRelease{to{transform:translateY(-260px) rotate(420deg) scale(.3);opacity:0}}
     @media(max-width:700px){.smash-tool{inset:1.5% 2%}.bubble-wrap{width:100%;padding:11px}.bubble-board{grid-template-columns:repeat(5,minmax(38px,52px));gap:8px;padding:11px}.stress-bubble{min-height:38px}}
 
+
+    .calm-stage{position:relative;width:min(100%,1536px);margin:auto;overflow:hidden}
+    .calm-stage .scene{max-height:calc(100vh - 176px)}
+    .calm-glow{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .6s;background:radial-gradient(circle at 51% 55%,rgba(113,171,194,.22),transparent 34%)}
+    .calm-stage.breathing .calm-glow{opacity:1;animation:calmBreathe 8s ease-in-out infinite}
+    .calm-panel{width:min(94%,760px);margin:16px auto;padding:clamp(16px,3vw,28px);border:3px solid #705033;border-radius:18px;color:#f4dfba;background:linear-gradient(rgba(30,21,15,.94),rgba(18,13,10,.97)),repeating-linear-gradient(90deg,#62442d 0 45px,#503620 45px 49px);box-shadow:inset 0 0 32px rgba(0,0,0,.62),0 12px 28px rgba(0,0,0,.45);text-align:center}
+    .calm-panel h2{margin:0 0 6px;font:700 clamp(27px,4.5vw,44px) Georgia,serif}
+    .calm-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:11px;margin:15px 0}
+    .calm-tool{min-height:112px;border-radius:14px;background:rgba(79,104,108,.78);border:2px solid #9ab9b9}
+    .calm-breath-orb{width:150px;aspect-ratio:1;margin:18px auto;border-radius:50%;display:none;align-items:center;justify-content:center;color:#173039;background:radial-gradient(circle,#dff5ef 0 18%,#8fc1c3 45%,#456f78 78%);border:4px solid #b9dadd;box-shadow:0 0 25px rgba(151,211,215,.55);font:800 18px Georgia,serif}
+    .calm-breath-orb.active{display:flex;animation:calmBreathe 8s ease-in-out infinite}
+    .calm-reflection{display:none;margin:14px auto;max-width:650px}
+    .calm-reflection.open{display:block}
+    .calm-reflection textarea{width:100%;min-height:130px;padding:14px;border:2px solid #a07a4e;border-radius:10px;color:#3b291d;background:#efe1c1;font:600 16px/1.45 Georgia,serif}
+    .calm-sound-wave{display:none;height:55px;margin:12px auto;align-items:center;justify-content:center;gap:6px}
+    .calm-sound-wave.active{display:flex}
+    .calm-sound-wave span{width:7px;height:20px;border-radius:6px;background:#8ebdc3;animation:calmWave 1.2s ease-in-out infinite}
+    .calm-sound-wave span:nth-child(2),.calm-sound-wave span:nth-child(5){animation-delay:.2s}.calm-sound-wave span:nth-child(3){animation-delay:.4s}.calm-sound-wave span:nth-child(4){animation-delay:.6s}
+    @keyframes calmBreathe{0%,100%{transform:scale(.82);filter:brightness(.85)}50%{transform:scale(1.08);filter:brightness(1.16)}}
+    @keyframes calmWave{0%,100%{height:13px}50%{height:46px}}
+    @media(max-width:700px){.calm-stage .scene{max-height:calc(100vh - 230px)}.calm-tools{grid-template-columns:repeat(2,minmax(130px,1fr))}.calm-tool{min-height:98px;padding:10px}}
+
     .axe-game {
       width: min(94vw, 760px); margin: 22px auto; padding: clamp(18px, 4vw, 34px);
       border: 3px solid #8b6038; border-radius: 22px; text-align: center;
@@ -490,6 +512,7 @@
           <button type="button" onclick="showScreen('rant')">RANT ROOM</button>
           <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
           <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+          <button type="button" onclick="showScreen('calm')">CALM ROOM</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -510,9 +533,51 @@
       <button class="primary" type="button" onclick="showScreen('rant')">RANT ROOM</button>
       <button class="primary" type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('calm')">CALM ROOM</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
+    </div>
+  </section>
+
+
+  <section class="screen" id="calm">
+    <div class="topbar">The Meltdown Room &bull; Calm Room</div>
+    <div class="scene-wrap">
+      <div class="calm-stage" id="calmStage">
+        <img class="scene" src="calm-room.png" alt="Blue-hour Calm Room with bay windows, water wheel, stream, lanterns, rocking chair, and quiet seating">
+        <div class="calm-glow" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="calm-panel">
+      <h2>Calm Room</h2>
+      <p>Slow down. Breathe. Stay as long as you need.</p>
+      <div class="calm-tools">
+        <button class="calm-tool primary" type="button" onclick="startCalmBreathing()">GUIDED BREATHING<br><small>Follow the quiet light</small></button>
+        <button class="calm-tool" type="button" onclick="startCalmQuiet(60)">ONE QUIET MINUTE<br><small>Rest without pressure</small></button>
+        <button class="calm-tool" type="button" onclick="setCalmSound('stream')">STREAM SOUNDS<br><small>Water and soft night air</small></button>
+        <button class="calm-tool" type="button" onclick="setCalmSound('rain')">GENTLE RAIN<br><small>Steady calming rhythm</small></button>
+        <button class="calm-tool" type="button" onclick="openCalmReflection()">PRIVATE REFLECTION<br><small>Write what you need</small></button>
+        <button class="calm-tool" type="button" onclick="setCalmSound('off')">QUIET THE ROOM<br><small>Stop sound and timer</small></button>
+      </div>
+      <div class="calm-breath-orb" id="calmBreathOrb" aria-hidden="true">BREATHE IN</div>
+      <div class="calm-sound-wave" id="calmSoundWave" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="calm-reflection" id="calmReflection">
+        <textarea id="calmReflectionText" placeholder="What would help you feel a little steadier right now?"></textarea>
+        <div class="tool-actions">
+          <button class="primary" type="button" onclick="saveCalmReflection()">SAVE PRIVATELY</button>
+          <button type="button" onclick="clearCalmReflection()">CLEAR</button>
+          <button type="button" onclick="closeCalmReflection()">CLOSE</button>
+        </div>
+      </div>
+      <p class="status" id="calmStatus" role="status" aria-live="polite">Choose what feels supportive right now.</p>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
+      <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
     </div>
   </section>
 
@@ -1271,8 +1336,38 @@
     var savedThinkingAmbience=localStorage.getItem("thinkingAmbience")||"natural";if(savedThinkingAmbience!=="natural")thinkingStage.classList.add("thinking-"+savedThinkingAmbience);
 
 
+
+    var calmStage=document.getElementById("calmStage"),calmBreathOrb=document.getElementById("calmBreathOrb"),calmStatus=document.getElementById("calmStatus"),calmTimer=null,calmAudioContext=null,calmSoundNodes=[];
+    function stopCalmTimer(){clearInterval(calmTimer);calmTimer=null;}
+    function startCalmBreathing(){
+      stopCalmTimer();calmStage.classList.add("breathing");calmBreathOrb.classList.add("active");
+      var inhale=true,cycles=0;calmBreathOrb.textContent="BREATHE IN";calmStatus.textContent="Breathe in slowly as the light expands.";
+      calmTimer=setInterval(function(){inhale=!inhale;if(!inhale)cycles++;calmBreathOrb.textContent=inhale?"BREATHE IN":"BREATHE OUT";calmStatus.textContent=inhale?"Breathe in slowly.":"Let the breath out gently.";if(cycles>=4){stopCalmTimer();calmStage.classList.remove("breathing");calmBreathOrb.classList.remove("active");calmStatus.textContent="Four calm breaths complete. Stay here as long as you need."; }},4000);
+    }
+    function startCalmQuiet(seconds){
+      stopCalmTimer();calmStage.classList.remove("breathing");calmBreathOrb.classList.remove("active");var remaining=seconds;calmStatus.textContent="Quiet time: "+remaining+" seconds.";
+      calmTimer=setInterval(function(){remaining--;calmStatus.textContent=remaining>0?"Quiet time: "+remaining+" seconds.":"Quiet minute complete. Notice how you feel now.";if(remaining<=0)stopCalmTimer();},1000);
+    }
+    function stopCalmSound(){
+      calmSoundNodes.forEach(function(node){try{node.stop?node.stop():node.disconnect();}catch(error){}});calmSoundNodes=[];
+      document.getElementById("calmSoundWave").classList.remove("active");
+    }
+    function setCalmSound(mode){
+      stopCalmSound();if(mode==="off"){stopCalmTimer();calmStage.classList.remove("breathing");calmBreathOrb.classList.remove("active");calmStatus.textContent="The room is quiet.";return;}
+      try{
+        calmAudioContext=calmAudioContext||new (window.AudioContext||window.webkitAudioContext)();var length=calmAudioContext.sampleRate*2,buffer=calmAudioContext.createBuffer(1,length,calmAudioContext.sampleRate),data=buffer.getChannelData(0);
+        for(var i=0;i<length;i++)data[i]=(Math.random()*2-1)*(mode==="rain"?.22:.12);
+        var source=calmAudioContext.createBufferSource(),filter=calmAudioContext.createBiquadFilter(),gain=calmAudioContext.createGain();source.buffer=buffer;source.loop=true;filter.type="lowpass";filter.frequency.value=mode==="rain"?1200:520;gain.gain.value=.16;source.connect(filter);filter.connect(gain);gain.connect(calmAudioContext.destination);source.start();calmSoundNodes=[source,filter,gain];
+        document.getElementById("calmSoundWave").classList.add("active");calmStatus.textContent=mode==="rain"?"Gentle rain is playing.":"The stream and soft night air are playing.";
+      }catch(error){calmStatus.textContent="Sound is unavailable on this device. The room can stay quiet.";}
+    }
+    function openCalmReflection(){document.getElementById("calmReflection").classList.add("open");document.getElementById("calmReflectionText").value=localStorage.getItem("calmRoomReflection")||"";document.getElementById("calmReflectionText").focus();calmStatus.textContent="This reflection stays privately on this device.";}
+    function closeCalmReflection(){document.getElementById("calmReflection").classList.remove("open");}
+    function saveCalmReflection(){localStorage.setItem("calmRoomReflection",document.getElementById("calmReflectionText").value);calmStatus.textContent="Reflection saved privately on this device.";}
+    function clearCalmReflection(){document.getElementById("calmReflectionText").value="";localStorage.removeItem("calmRoomReflection");calmStatus.textContent="Reflection cleared.";}
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
