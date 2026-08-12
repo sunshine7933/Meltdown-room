@@ -1,3 +1,6 @@
+Exit code: 0
+Wall time: 3.1 seconds
+Output:
 <!doctype html>
 <html lang="en">
 <head>
@@ -193,7 +196,7 @@
   <button class="still-toggle" id="stillModeButton" type="button" onclick="toggleStillMode()" aria-pressed="false">STILL MODE</button>
 
   <section class="screen active" id="home">
-    <div class="topbar">The Meltdown Room • Home</div>
+    <div class="topbar">The Meltdown Room â€¢ Home</div>
     <div class="scene-wrap">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
     </div>
@@ -203,7 +206,7 @@
   </section>
 
   <section class="screen" id="entrance">
-    <div class="topbar">The Meltdown Room • Entrance</div>
+    <div class="topbar">The Meltdown Room â€¢ Entrance</div>
     <div class="scene-wrap">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
     </div>
@@ -236,7 +239,7 @@
   </section>
 
   <section class="screen" id="great">
-    <div class="topbar">The Meltdown Room • Great Room</div>
+    <div class="topbar">The Meltdown Room â€¢ Great Room</div>
     <div class="scene-wrap">
       <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
     </div>
@@ -251,7 +254,7 @@
   </section>
 
   <section class="screen" id="rant">
-    <div class="topbar">The Meltdown Room • Rant Room</div>
+    <div class="topbar">The Meltdown Room â€¢ Rant Room</div>
     <div class="scene-wrap">
       <div class="rant-stage">
         <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
@@ -271,10 +274,10 @@
   </section>
 
   <section class="screen" id="meltdown">
-    <div class="topbar">The Meltdown Room • Release &amp; Recover</div>
+    <div class="topbar">The Meltdown Room â€¢ Release &amp; Recover</div>
     <div class="scene-wrap">
       <div class="meltdown-stage" id="meltdownStage">
-        <img class="scene" src="meltdown-room.png?v=476f12e" alt="Meltdown Room with Release and Recover areas">
+        <img class="scene" src="meltdown-room.jpg?v=repair1" alt="Meltdown Room with Release and Recover areas">
         <canvas class="scribble-canvas" id="scribbleCanvas" aria-label="Release scribble board"></canvas>
         <button class="room-hotspot release-hotspot" type="button" onclick="letItOut()" aria-label="Let it out"></button>
         <button class="room-hotspot recover-hotspot" type="button" onclick="findMyCalm()" aria-label="Find my calm"></button>
@@ -296,7 +299,7 @@
     <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
     <div class="scene-wrap">
       <div class="thinking-stage" id="thinkingStage">
-        <img class="scene" src="thinking-room.png" alt="Thinking Room with decision and brainstorm boards">
+        <img class="scene" src="thinking-room.jpg?v=repair1" alt="Thinking Room with decision and brainstorm boards">
         <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
       </div>
     </div>
@@ -367,7 +370,7 @@
     function saveRant() {
       var text = rantText.value.trim();
       if (!text) {
-        setRantStatus("Write something first — this space is yours.");
+        setRantStatus("Write something first â€” this space is yours.");
         rantText.focus();
         return;
       }
@@ -552,3 +555,4 @@
 
 </body>
 </html>
+
