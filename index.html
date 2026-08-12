@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -249,6 +250,23 @@
     .plate-shard { position:absolute; z-index:7; width:18px; height:25px; background:#eee0c6; border:2px solid #9a673d; clip-path:polygon(50% 0,100% 100%,0 72%); pointer-events:none; animation:shardFall .8s ease-out forwards; }
     .plate-score { display:flex; justify-content:center; gap:24px; font-weight:800; color:#f7e3bd; }
 
+    .crumple-game { width:min(94vw,760px); margin:22px auto; padding:clamp(18px,4vw,34px); border:3px solid #8b6038; border-radius:22px; text-align:center; background:linear-gradient(rgba(31,19,11,.86),rgba(20,12,7,.96)),repeating-linear-gradient(90deg,#684629 0 42px,#54351f 42px 45px); box-shadow:inset 0 0 30px #000,0 14px 35px rgba(0,0,0,.45); }
+    .crumple-game h2 { margin:0 0 6px; color:#f7e3bd; font:700 clamp(28px,5vw,46px) Georgia,serif; }
+    .crumple-game p { color:#dcc39c; }
+    .crumple-desk { position:relative; width:min(88vw,560px); height:min(62vh,620px); min-height:480px; margin:14px auto 4px; overflow:hidden; border:3px solid #4a301d; border-radius:18px; touch-action:none; background:linear-gradient(#3e2a1b 0 58%,#684424 58% 100%); box-shadow:inset 0 0 50px rgba(0,0,0,.72); }
+    .crumple-note { position:absolute; left:12%; right:12%; top:7%; height:40%; z-index:3; resize:none; padding:18px; border:2px solid #b28a55; border-radius:8px; color:#49311f; background:#eee0bf; box-shadow:0 8px 18px rgba(0,0,0,.45),inset 0 0 18px rgba(129,91,43,.18); font:700 clamp(15px,3vw,20px)/1.45 Georgia,serif; }
+    .crumple-note.crumpling { animation:paperCrumple .55s ease-in forwards; }
+    .paper-ball { position:absolute; left:50%; bottom:10%; z-index:6; width:82px; aspect-ratio:1; border-radius:46% 54% 42% 58%; transform:translateX(-50%) rotate(-8deg); cursor:grab; touch-action:none; background:radial-gradient(circle at 32% 26%,#fff7df 0 7%,transparent 8%),repeating-linear-gradient(35deg,#dfcea7 0 4px,#f0e2c0 4px 9px); border:2px solid #b7a27b; box-shadow:inset 8px -9px 14px rgba(87,63,32,.25),0 8px 12px rgba(0,0,0,.48); display:none; }
+    .paper-ball.ready { display:block; animation:ballAppear .3s ease-out; }
+    .paper-ball.flying { display:block; pointer-events:none; animation:paperThrow .65s cubic-bezier(.14,.78,.27,1) forwards; }
+    .rustic-bin { position:absolute; left:50%; top:8%; width:145px; height:135px; transform:translateX(-50%); border:8px solid #392417; border-radius:15px 15px 42px 42px; background:repeating-linear-gradient(90deg,#714925 0 20px,#553419 20px 24px); box-shadow:inset 0 0 22px rgba(0,0,0,.55),0 7px 13px rgba(0,0,0,.45); }
+    .rustic-bin::before { content:"RELEASE BIN"; position:absolute; left:50%; top:35%; transform:translateX(-50%) rotate(-2deg); width:max-content; padding:5px 9px; color:#f0d49c; background:#5b371e; border:2px solid #2c1a0f; font:800 13px Georgia,serif; }
+    .rustic-bin::after { content:""; position:absolute; left:-15px; right:-15px; top:-13px; height:18px; border:6px solid #302014; border-radius:50%; background:#17100b; }
+    .crumple-count { font-weight:800; color:#f7e3bd; }
+    @keyframes paperCrumple { to { left:43%; right:43%; top:65%; height:10%; opacity:0; transform:rotate(180deg); border-radius:50%; } }
+    @keyframes ballAppear { from { opacity:0; transform:translateX(-50%) scale(.2) rotate(-90deg); } }
+    @keyframes paperThrow { from { left:50%; bottom:10%; transform:translateX(-50%) rotate(-8deg) scale(1); } to { left:var(--paper-x); bottom:69%; transform:translateX(-50%) rotate(900deg) scale(.42); opacity:.25; } }
+
     .map-stage { position: relative; width: min(100%, 1536px); margin: auto; }
     .map-stage .scene { filter: saturate(.72) brightness(.72); }
     .map-panel {
@@ -295,7 +313,7 @@
   <button class="still-toggle" id="stillModeButton" type="button" onclick="toggleStillMode()" aria-pressed="false">STILL MODE</button>
 
   <section class="screen active" id="home">
-    <div class="topbar">The Meltdown Room • Home</div>
+    <div class="topbar">The Meltdown Room â€¢ Home</div>
     <div class="scene-wrap">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
     </div>
@@ -305,7 +323,7 @@
   </section>
 
   <section class="screen" id="entrance">
-    <div class="topbar">The Meltdown Room • Entrance</div>
+    <div class="topbar">The Meltdown Room â€¢ Entrance</div>
     <div class="scene-wrap">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
     </div>
@@ -327,160 +345,8 @@
           <button class="primary" type="button" onclick="showScreen('great')">GREAT ROOM</button>
           <button type="button" onclick="showScreen('rant')">RANT ROOM</button>
           <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
-          <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
-          <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
-        </div>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="goBackRoom()">BACK</button>
-      <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
-    </div>
-  </section>
-
-  <section class="screen" id="great">
-    <div class="topbar">The Meltdown Room • Great Room</div>
-    <div class="scene-wrap">
-      <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('entrance')">BACK</button>
-      <button class="primary" type="button" onclick="showScreen('rant')">RANT ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
-    </div>
-  </section>
-
-  <section class="screen" id="rant">
-    <div class="topbar">The Meltdown Room • Rant Room</div>
-    <div class="scene-wrap">
-      <div class="rant-stage">
-        <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
-        <textarea class="rant-journal" id="rantText" aria-label="Private rant" placeholder="This is your space. Say it exactly how you feel.&#10;&#10;No judgment. No fixing. Just let it out."></textarea>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button class="danger" type="button" onclick="releaseRant()">RELEASE IT</button>
-      <button class="primary" type="button" onclick="saveRant()">SAVE PRIVATELY</button>
-      <button class="secondary" type="button" onclick="shareRant()">SHARE ANONYMOUSLY</button>
-      <button type="button" onclick="newRant()">WRITE NEW RANT</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <p class="status" id="rantStatus" role="status" aria-live="polite"></p>
-    </div>
-  </section>
-
-  <section class="screen" id="meltdown">
-    <div class="topbar">The Meltdown Room • Release &amp; Recover</div>
-    <div class="scene-wrap">
-      <div class="meltdown-stage" id="meltdownStage">
-        <img class="scene" src="meltdown-room.jpg?v=repair2" alt="Meltdown Room with Release and Recover areas">
-        <canvas class="scribble-canvas" id="scribbleCanvas" aria-label="Release scribble board"></canvas>
-        <button class="room-hotspot release-hotspot" type="button" onclick="letItOut()" aria-label="Let it out"></button>
-        <button class="room-hotspot recover-hotspot" type="button" onclick="findMyCalm()" aria-label="Find my calm"></button>
-        <div class="calm-orb" aria-hidden="true"></div>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button class="danger" type="button" onclick="letItOut()">LET IT OUT</button>
-      <button class="primary" type="button" onclick="findMyCalm()">FIND MY CALM</button>
-      <button type="button" onclick="clearScribble()">CLEAR BOARD</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <p class="status" id="meltdownStatus" role="status" aria-live="polite">Scribble on the board, then release when you are ready.</p>
-    </div>
-  </section>
-
-  <section class="screen" id="thinking">
-    <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
-    <div class="scene-wrap">
-      <div class="thinking-stage" id="thinkingStage">
-        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with decision and brainstorm boards">
-        <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button class="primary" type="button" onclick="addThinkingNote()">+ ADD NOTE</button>
-      <button class="secondary" type="button" onclick="clearMyHead()">CLEAR MY HEAD</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <p class="status" id="thinkingStatus" role="status" aria-live="polite">Move the notes, write what is on your mind, and sort your thoughts.</p>
-    </div>
-  </section>
-
-  <section class="screen" id="smash">
-    <div class="topbar">The Meltdown Room &bull; Smash &amp; Release</div>
-    <div class="scene-wrap">
-      <div class="smash-stage" id="smashStage">
-        <img class="scene" src="https://raw.githubusercontent.com/sunshine7933/Meltdown-room/main/smash-release-room.png?v=complete6" alt="Smash and Release Room with nine release activities">
-        <button class="smash-choice" type="button" onclick="showScreen('axe')" aria-label="Open Axe Throwing"></button>
-        <button class="smash-choice" type="button" onclick="showScreen('plate')" aria-label="Open Plate Throwing"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Crumple and Throw')" aria-label="Choose Crumple and Throw"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Rip It Up')" aria-label="Choose Rip It Up"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Stress Bubbles')" aria-label="Choose Stress Bubbles"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Smash Box')" aria-label="Choose Smash Box"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Virtual Throw')" aria-label="Choose Virtual Throw"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Scribble and Destroy')" aria-label="Choose Scribble and Destroy"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Check In')" aria-label="Choose How Are You Feeling"></button>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
-      <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <p class="status" id="smashStatus" role="status" aria-live="polite">Choose a safe release activity from the room.</p>
-    </div>
-  </section>
-
-  <section class="screen" id="axe">
-    <div class="topbar">The Meltdown Room &bull; Axe Throwing</div>
-    <div class="scene-wrap">
-      <div class="axe-game">
-        <h2>Axe Throwing</h2>
-        <p>Stand back, hold the axe, then swipe upward toward the target to throw.</p>
-        <div class="axe-score" aria-label="Axe throwing score">
-          <span>THROWS: <span id="axeThrows">0</span></span>
-          <span>SCORE: <span id="axeScore">0</span></span>
-        </div>
-        <div class="axe-range" id="axeRange">
-          <div class="axe-target" id="axeTarget" aria-label="Axe target"></div>
-          <img class="axe-mark" id="axeMark" src="axe-real.png" alt="Realistic virtual axe" draggable="false">
-        </div>
-        <p class="status" id="axeStatus" role="status" aria-live="polite">Take a breath. Hold the axe and swipe upward to throw.</p>
-      </div>
-    </div>
-    <div class="controls">
+          …2666 tokens truncated…leNote()">NEW PAPER</button>
       <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
-      <button type="button" onclick="resetAxeGame()">RESET SCORE</button>
-      <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-    </div>
-  </section>
-
-  <section class="screen" id="plate">
-    <div class="topbar">The Meltdown Room &bull; Plate Throwing</div>
-    <div class="scene-wrap">
-      <div class="plate-game">
-        <h2>Plate Throwing</h2>
-        <p>Hold the virtual plate and swipe upward to throw it safely into the smash wall.</p>
-        <div class="plate-score"><span>PLATES SMASHED: <span id="plateSmashes">0</span></span></div>
-        <div class="plate-lane" id="plateLane">
-          <div class="plate-wall" id="plateWall" aria-label="Plate smash wall"></div>
-          <img class="throw-plate" id="throwPlate" src="plate-real.png" alt="Virtual ceramic plate" draggable="false">
-        </div>
-        <p class="status" id="plateStatus" role="status" aria-live="polite">Take a breath. Hold the plate and swipe upward.</p>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
-      <button type="button" onclick="resetPlateGame()">RESET PLATES</button>
       <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
     </div>
@@ -543,7 +409,7 @@
     function saveRant() {
       var text = rantText.value.trim();
       if (!text) {
-        setRantStatus("Write something first — this space is yours.");
+        setRantStatus("Write something first â€” this space is yours.");
         rantText.focus();
         return;
       }
@@ -764,6 +630,38 @@
       plateStatus.textContent = "Fresh stack ready. Hold the plate and swipe upward.";
     }
 
+    var crumpleNote = document.getElementById("crumpleNote");
+    var paperBall = document.getElementById("paperBall");
+    var crumpleDesk = document.getElementById("crumpleDesk");
+    var crumpleStatus = document.getElementById("crumpleStatus");
+    var crumpleStart = null;
+    var releasedPapers = 0;
+    function crumplePaper() {
+      if (!crumpleNote.value.trim()) { crumpleStatus.textContent = "Write something you want to release first."; crumpleNote.focus(); return; }
+      crumpleNote.classList.remove("crumpling"); void crumpleNote.offsetWidth; crumpleNote.classList.add("crumpling");
+      crumpleStatus.textContent = "Crumpling it up...";
+      setTimeout(function() { paperBall.classList.add("ready"); crumpleStatus.textContent = "Now swipe the paper ball upward into the release bin."; }, 520);
+    }
+    function releasePaper(endX) {
+      var desk = crumpleDesk.getBoundingClientRect();
+      var landX = Math.max(38, Math.min(62, (endX - desk.left) / desk.width * 100));
+      paperBall.style.setProperty("--paper-x", landX + "%");
+      paperBall.classList.remove("ready", "flying"); void paperBall.offsetWidth; paperBall.classList.add("flying");
+      setTimeout(function() {
+        releasedPapers += 1; document.getElementById("crumpleCount").textContent = releasedPapers;
+        crumpleNote.value = ""; crumpleNote.classList.remove("crumpling"); paperBall.classList.remove("flying", "ready");
+        crumpleStatus.textContent = "Released. Take one slow breath.";
+      }, 650);
+    }
+    paperBall.addEventListener("pointerdown", function(event) { if (!paperBall.classList.contains("ready")) return; crumpleStart = { y:event.clientY }; paperBall.setPointerCapture(event.pointerId); crumpleStatus.textContent = "Swipe upward toward the bin."; });
+    paperBall.addEventListener("pointermove", function(event) { if (!crumpleStart || crumpleStart.y - event.clientY < 70) return; crumpleStart = null; releasePaper(event.clientX); });
+    paperBall.addEventListener("pointerup", function(event) { if (!crumpleStart) return; if (crumpleStart.y - event.clientY >= 55) releasePaper(event.clientX); else crumpleStatus.textContent = "Swipe upward faster toward the bin."; crumpleStart = null; });
+    paperBall.addEventListener("pointercancel", function() { crumpleStart = null; });
+    function newCrumpleNote() {
+      crumpleNote.value = ""; crumpleNote.classList.remove("crumpling"); paperBall.classList.remove("ready", "flying");
+      crumpleStatus.textContent = "Fresh paper ready."; crumpleNote.focus();
+    }
+
     var thinkingBoard = document.getElementById("thinkingBoard");
     var thinkingStatus = document.getElementById("thinkingStatus");
     var thinkingNotes = [];
@@ -846,10 +744,11 @@
     window.addEventListener("load", sizeScribbleCanvas);
 
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe", "plate"].includes(start)) {
+    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
 
 </body>
 </html>
+
