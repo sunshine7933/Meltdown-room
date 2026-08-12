@@ -140,6 +140,33 @@
     .meltdown-stage.recovering .calm-orb { opacity: 1; animation: breathe 8s ease-in-out infinite; }
     .meltdown-stage.recovering::after { opacity: .12; animation-duration: 2.4s; }
 
+    .thinking-stage { position: relative; width: min(100%, 1664px); margin: auto; overflow: hidden; }
+    .thinking-stage .scene { max-height: calc(100vh - 118px); }
+    .thinking-stage::after {
+      content: ""; position: absolute; inset: 0; pointer-events: none; opacity: .18;
+      background: repeating-linear-gradient(105deg, transparent 0 22px, rgba(165,210,228,.18) 23px 25px, transparent 26px 44px);
+      animation: rainDrift 1.8s linear infinite;
+      clip-path: polygon(37% 18%, 64% 18%, 64% 57%, 37% 57%);
+    }
+    .thinking-board {
+      position: absolute; left: 7.1%; top: 26.5%; width: 25.2%; height: 27.5%;
+      z-index: 2; overflow: hidden; border-radius: 5px;
+    }
+    .thought-note {
+      position: absolute; width: 28%; min-height: 24%; padding: 5px;
+      border: 0; border-radius: 3px; resize: none; overflow: hidden;
+      color: #38271b; background: rgba(232,205,159,.94); box-shadow: 0 3px 8px rgba(0,0,0,.38);
+      font: 700 clamp(8px, .78vw, 13px)/1.25 Georgia, serif; cursor: grab; touch-action: none;
+    }
+    .thought-note:focus { outline: 2px solid #f2c676; cursor: text; }
+    .thought-note.dragging { cursor: grabbing; opacity: .86; z-index: 4; }
+    .thinking-pool-glow {
+      position: absolute; left: 68.2%; top: 57.2%; width: 22%; height: 20%; border-radius: 50%;
+      pointer-events: none; background: rgba(105,207,225,.08); box-shadow: inset 0 0 25px rgba(166,239,250,.28);
+      animation: poolGlow 5s ease-in-out infinite;
+    }
+    @keyframes poolGlow { 50% { opacity: .55; transform: scale(.97); } }
+
     @keyframes rainDrift { from { transform: translate(-18px,-20px); } to { transform: translate(18px,25px); } }
     @keyframes safeShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
     @keyframes breathe {
@@ -148,7 +175,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .meltdown-stage::after, .meltdown-stage.releasing, .meltdown-stage.recovering .calm-orb { animation: none; }
+      .meltdown-stage::after, .meltdown-stage.releasing, .meltdown-stage.recovering .calm-orb,
+      .thinking-stage::after, .thinking-pool-glow { animation: none; }
     }
 
     @media (max-width: 700px) {
@@ -193,6 +221,7 @@
       <button type="button" onclick="showScreen('entrance')">BACK</button>
       <button class="primary" type="button" onclick="showScreen('rant')">RANT ROOM</button>
       <button class="primary" type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
     </div>
   </section>
@@ -234,6 +263,24 @@
       <button type="button" onclick="clearScribble()">CLEAR BOARD</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
       <p class="status" id="meltdownStatus" role="status" aria-live="polite">Scribble on the board, then release when you are ready.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="thinking">
+    <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
+    <div class="scene-wrap">
+      <div class="thinking-stage" id="thinkingStage">
+        <img class="scene" src="thinking-room.png" alt="Thinking Room with a thought board, journal, and reflection pool">
+        <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
+        <div class="thinking-pool-glow" aria-hidden="true"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="primary" type="button" onclick="addThinkingNote()">+ ADD NOTE</button>
+      <button class="secondary" type="button" onclick="clearMyHead()">CLEAR MY HEAD</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <p class="status" id="thinkingStatus" role="status" aria-live="polite">Move the notes, write what is on your mind, and sort your thoughts.</p>
     </div>
   </section>
 
@@ -372,11 +419,89 @@
       meltdownStatus.textContent = "Breathe in as the light grows. Breathe out as it softens.";
     }
 
+    var thinkingBoard = document.getElementById("thinkingBoard");
+    var thinkingStatus = document.getElementById("thinkingStatus");
+    var thinkingNotes = [];
+    var thinkingSaveTimer;
+
+    function saveThinkingNotes() {
+      localStorage.setItem("meltdownThinkingNotes", JSON.stringify(thinkingNotes));
+      clearTimeout(thinkingSaveTimer);
+      thinkingSaveTimer = setTimeout(function() {
+        thinkingStatus.textContent = "Saved privately on this device.";
+      }, 250);
+    }
+
+    function notePosition(index) {
+      var defaults = [
+        { x: 3, y: 8 }, { x: 38, y: 8 }, { x: 70, y: 36 },
+        { x: 5, y: 58 }, { x: 40, y: 58 }, { x: 70, y: 8 }
+      ];
+      return defaults[index % defaults.length];
+    }
+
+    function createThinkingNote(note, index) {
+      var fallback = notePosition(index);
+      var area = document.createElement("textarea");
+      area.className = "thought-note";
+      area.value = note.text || "";
+      area.setAttribute("aria-label", "Thought note");
+      area.style.left = (Number.isFinite(note.x) ? note.x : fallback.x) + "%";
+      area.style.top = (Number.isFinite(note.y) ? note.y : fallback.y) + "%";
+      area.addEventListener("input", function() { note.text = area.value; saveThinkingNotes(); });
+      area.addEventListener("pointerdown", function(event) {
+        if (event.pointerType === "mouse" && event.detail > 1) return;
+        var boardBox = thinkingBoard.getBoundingClientRect();
+        var noteBox = area.getBoundingClientRect();
+        var offsetX = event.clientX - noteBox.left;
+        var offsetY = event.clientY - noteBox.top;
+        area.classList.add("dragging");
+        area.setPointerCapture(event.pointerId);
+        function move(moveEvent) {
+          var x = Math.max(0, Math.min(boardBox.width - noteBox.width, moveEvent.clientX - boardBox.left - offsetX));
+          var y = Math.max(0, Math.min(boardBox.height - noteBox.height, moveEvent.clientY - boardBox.top - offsetY));
+          note.x = x / boardBox.width * 100; note.y = y / boardBox.height * 100;
+          area.style.left = note.x + "%"; area.style.top = note.y + "%";
+        }
+        function stop() {
+          area.classList.remove("dragging"); area.removeEventListener("pointermove", move);
+          area.removeEventListener("pointerup", stop); area.removeEventListener("pointercancel", stop); saveThinkingNotes();
+        }
+        area.addEventListener("pointermove", move); area.addEventListener("pointerup", stop); area.addEventListener("pointercancel", stop);
+      });
+      thinkingBoard.appendChild(area);
+      return area;
+    }
+
+    function renderThinkingNotes() {
+      thinkingBoard.innerHTML = "";
+      thinkingNotes.forEach(createThinkingNote);
+    }
+
+    function addThinkingNote() {
+      var position = notePosition(thinkingNotes.length);
+      var note = { text: "New Note", x: position.x, y: position.y };
+      thinkingNotes.push(note); renderThinkingNotes(); saveThinkingNotes();
+      var newest = thinkingBoard.lastElementChild; if (newest) { newest.focus(); newest.select(); }
+      thinkingStatus.textContent = "New thought added. Drag it anywhere on the board.";
+    }
+
+    function clearMyHead() {
+      if (thinkingNotes.some(function(note) { return note.text.trim(); }) && !window.confirm("Clear every note from your Thinking Board?")) return;
+      thinkingNotes = [{ text: "Clear My Head", x: 5, y: 8 }];
+      renderThinkingNotes(); saveThinkingNotes();
+      thinkingStatus.textContent = "Your board has a fresh starting point.";
+    }
+
+    try { thinkingNotes = JSON.parse(localStorage.getItem("meltdownThinkingNotes") || "[]"); } catch (error) { thinkingNotes = []; }
+    if (!Array.isArray(thinkingNotes) || !thinkingNotes.length) thinkingNotes = [{ text: "Clear My Head", x: 5, y: 8 }];
+    renderThinkingNotes();
+
     window.addEventListener("resize", sizeScribbleCanvas);
     window.addEventListener("load", sizeScribbleCanvas);
 
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "great", "rant", "meltdown"].includes(start)) {
+    if (["home", "entrance", "great", "rant", "meltdown", "thinking"].includes(start)) {
       showScreen(start);
     }
   </script>
