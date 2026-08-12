@@ -262,8 +262,16 @@
     .smash-tool.open{display:block}.smash-tool h2{margin:0 48px 10px;font:700 clamp(25px,4vw,42px) Georgia,serif}.smash-close{position:absolute;top:10px;right:10px;min-height:42px;padding:8px 14px}
     .smash-tool textarea{width:min(100%,650px);min-height:150px;padding:15px;border:2px solid #a87b4f;border-radius:10px;color:#3a281b;background:#efe1c1;font:600 16px/1.45 Georgia,serif}
     .smash-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin-top:14px}.smash-tool-status{min-height:24px;color:#f3d39a}
-    .rip-paper{width:min(80%,420px);min-height:180px;margin:15px auto;padding:20px;color:#49331f;background:#ead8aa;border:2px solid #9d7c4d;font:600 18px Georgia,serif;transition:.6s}
-    .rip-paper.ripped{transform:rotate(7deg) scale(.8);opacity:0;clip-path:polygon(0 0,45% 0,55% 100%,0 100%)}
+    .rip-workbench{width:min(94%,560px);margin:15px auto;padding:16px;border:3px solid #5b381f;border-radius:14px;background:repeating-linear-gradient(90deg,#684426 0 44px,#55351e 44px 48px);box-shadow:inset 0 0 24px rgba(0,0,0,.55)}
+    .rip-paper{position:relative;width:min(88%,420px);min-height:190px;margin:8px auto;padding:25px;color:#49331f;background:linear-gradient(102deg,#f1e3bf,#dfc99a);border:2px solid #9d7c4d;box-shadow:5px 8px 12px rgba(0,0,0,.42);font:600 18px/1.45 Georgia,serif;white-space:pre-wrap;overflow-wrap:anywhere;transition:.28s}
+    .rip-paper::before{content:"";position:absolute;inset:8px;border:1px dashed rgba(102,70,35,.28);pointer-events:none}
+    .rip-paper.ready{transform:rotate(-1deg)}
+    .rip-paper.tearing{animation:ripPaperShake .46s ease-in-out 2}
+    .rip-paper.released{opacity:0;transform:scale(.3) rotate(12deg)}
+    .rip-scraps{position:relative;width:min(92%,480px);height:180px;margin:0 auto;overflow:hidden;pointer-events:none}
+    .rip-scrap{position:absolute;left:calc(50% - 48px);top:4px;width:96px;height:72px;border:2px solid #9d7c4d;color:#5a4029;background:linear-gradient(125deg,#f1e3bf,#d8bf8c);clip-path:polygon(0 7%,18% 0,36% 10%,54% 1%,72% 9%,100% 2%,94% 94%,73% 87%,55% 100%,34% 89%,12% 98%);box-shadow:3px 5px 8px rgba(0,0,0,.35);font:700 12px Georgia,serif;overflow:hidden;opacity:0;animation:ripScrapFall 1.35s cubic-bezier(.18,.72,.25,1) forwards;animation-delay:var(--rip-delay);transform:translate(0,0) rotate(0)}
+    @keyframes ripPaperShake{0%,100%{transform:rotate(-1deg) translateX(0)}25%{transform:rotate(2deg) translateX(-8px)}75%{transform:rotate(-3deg) translateX(8px)}}
+    @keyframes ripScrapFall{0%{opacity:1;transform:translate(0,0) rotate(0)}75%{opacity:1}100%{opacity:0;transform:translate(var(--rip-x),145px) rotate(var(--rip-r))}}
     .bubble-board{display:grid;grid-template-columns:repeat(6,42px);justify-content:center;gap:9px;margin:18px auto}.stress-bubble{width:42px;min-height:42px;padding:0;border-radius:50%;background:radial-gradient(circle at 30% 25%,#fff,#7db6c4 35%,#477a86);border:2px solid #b9e2e7}.stress-bubble.popped{opacity:.18;transform:scale(.55)}
     .smash-box-area{position:relative;width:min(92%,520px);height:340px;margin:16px auto;overflow:hidden;border-radius:16px;background:radial-gradient(ellipse at 50% 100%,rgba(0,0,0,.72),transparent 58%),linear-gradient(#2e2118,#19120d);box-shadow:inset 0 0 45px #000}
     .smash-box-game{position:absolute;left:50%;bottom:34px;width:245px;height:175px;min-height:0;padding:0;transform:translateX(-50%);border:4px solid #583a21;border-radius:4px;background:linear-gradient(105deg,transparent 0 47%,rgba(72,42,20,.28) 48% 51%,transparent 52%),repeating-linear-gradient(90deg,#a46e3d 0 34px,#956033 34px 37px);box-shadow:inset 12px -12px 25px rgba(69,39,18,.32),0 18px 20px rgba(0,0,0,.62);overflow:visible;transition:transform .2s,filter .2s}
@@ -914,7 +922,7 @@
     function smashButton(label,action,kind){return '<button type="button" class="'+(kind||"")+'" onclick="'+action+'">'+label+'</button>';}
     function openSmashTool(tool){smashTool.classList.add("open");var title="",body="";
       if(tool==="menu"){title="Choose Your Release";body='<div class="smash-actions">'+smashButton("AXE THROWING","showScreen(\'axe\');closeSmashTool()","primary")+smashButton("PLATE THROWING","showScreen(\'plate\');closeSmashTool()")+smashButton("CRUMPLE & THROW","showScreen(\'crumple\');closeSmashTool()")+smashButton("RIP IT UP","openSmashTool(\'rip\')")+smashButton("STRESS BUBBLES","openSmashTool(\'bubbles\')")+smashButton("SMASH BOX","openSmashTool(\'box\')")+smashButton("VIRTUAL THROW","openSmashTool(\'throw\')")+smashButton("SCRIBBLE & DESTROY","openSmashTool(\'destroy\')")+'</div>';}
-      else if(tool==="rip"){title="Rip It Up";body='<p>Write it out. Rip it up. Feel the release.</p><textarea id="ripText" placeholder="Write what you want to release..."></textarea><div class="rip-paper" id="ripPaper">Your words will appear here.</div><div class="smash-actions">'+smashButton("PUT IT ON PAPER","prepareRip()","primary")+smashButton("RIP IT UP","ripItUp()","danger")+'</div><p class="smash-tool-status" id="smashToolStatus"></p>';}
+      else if(tool==="rip"){title="Rip It Up";body='<p>Write it out. Put it on the paper. Rip it into pieces and let it go.</p><textarea id="ripText" placeholder="Write what you want to release..."></textarea><div class="rip-workbench"><div class="rip-paper" id="ripPaper">Your words will appear here.</div><div class="rip-scraps" id="ripScraps" aria-hidden="true"></div></div><div class="smash-actions">'+smashButton("PUT IT ON PAPER","prepareRip()","primary")+smashButton("RIP IT UP","ripItUp()","danger")+smashButton("FRESH PAPER","resetRipPaper()")+'</div><p class="smash-tool-status" id="smashToolStatus" role="status" aria-live="polite">Write what you want to release.</p>';}
       else if(tool==="bubbles"){title="Stress Bubbles";body='<p>Pop the bubbles, one at a time.</p><div class="bubble-board">'+Array.from({length:30},(_,i)=>'<button class="stress-bubble" type="button" onclick="popStressBubble(this)" aria-label="Pop bubble '+(i+1)+'"></button>').join("")+'</div><p class="smash-tool-status" id="smashToolStatus">30 bubbles ready.</p>';}
       else if(tool==="box"){title="Smash Box";boxHits=0;body='<p>Break it. Smash it. Feel lighter. Tap the cardboard box repeatedly.</p><div class="smash-box-area" id="smashBoxArea"><button class="smash-box-game" id="smashBoxGame" type="button" onclick="hitSmashBox()" aria-label="Smash the cardboard box"><span class="smash-box-label">SMASH BOX</span><span class="smash-box-crack"></span></button></div><div class="smash-actions">'+smashButton("RESET BOX","resetSmashBox()")+'</div><p class="smash-tool-status" id="smashToolStatus">The box is ready. Tap to smash.</p>';}
       else if(tool==="throw"){title="Virtual Throw";body='<p>Hold the object and swipe upward to throw it away.</p><div class="virtual-object" id="virtualObject" role="button" tabindex="0">THROW ME</div><p class="smash-tool-status" id="smashToolStatus">Ready to release.</p>';}
@@ -925,8 +933,33 @@
       else if(tool==="navigation"){title="Room Navigation";body='<div class="smash-actions">'+smashButton("GREAT ROOM","showScreen(\'great\');closeSmashTool()","primary")+smashButton("CALM DOWN CORNER","showScreen(\'meltdown\');closeSmashTool()")+smashButton("THINKING ROOM","showScreen(\'thinking\');closeSmashTool()")+smashButton("PROPERTY MAP","showScreen(\'map\');closeSmashTool()")+smashButton("HOME","showScreen(\'home\');closeSmashTool()")+'</div>';}
       smashToolTitle.textContent=title;smashToolBody.innerHTML=body;if(tool==="throw")setupVirtualThrow();if(tool==="destroy")setupDestroyCanvas();}
     function smashToolStatus(message){var s=document.getElementById("smashToolStatus");if(s)s.textContent=message;}
-    function prepareRip(){var t=document.getElementById("ripText"),p=document.getElementById("ripPaper");if(!t.value.trim()){smashToolStatus("Write something first.");return;}p.classList.remove("ripped");p.textContent=t.value;}
-    function ripItUp(){var p=document.getElementById("ripPaper"),t=document.getElementById("ripText");if(!t.value.trim()){smashToolStatus("Write something first.");return;}p.classList.add("ripped");setTimeout(function(){t.value="";p.textContent="Released.";p.classList.remove("ripped");smashToolStatus("Ripped up and released.");},700);}
+    function prepareRip(){
+      var t=document.getElementById("ripText"),p=document.getElementById("ripPaper"),scraps=document.getElementById("ripScraps");
+      if(!t.value.trim()){smashToolStatus("Write something first.");t.focus();return;}
+      scraps.innerHTML="";p.classList.remove("tearing","released");p.classList.add("ready");p.textContent=t.value.trim();
+      smashToolStatus("Your words are on the paper. Tap RIP IT UP when you are ready.");
+    }
+    function ripItUp(){
+      var p=document.getElementById("ripPaper"),t=document.getElementById("ripText"),scraps=document.getElementById("ripScraps");
+      if(!t.value.trim()){smashToolStatus("Write something first.");t.focus();return;}
+      if(!p.classList.contains("ready"))prepareRip();
+      scraps.innerHTML="";p.classList.remove("tearing");void p.offsetWidth;p.classList.add("tearing");
+      var words=t.value.trim().split(/\s+/),pieceCount=Math.min(10,Math.max(7,Math.ceil(words.length/3)));
+      for(var i=0;i<pieceCount;i++){
+        var piece=document.createElement("span");piece.className="rip-scrap";
+        piece.textContent=words.slice(i,Math.min(words.length,i+2)).join(" ")||"release";
+        piece.style.setProperty("--rip-x",((i-(pieceCount-1)/2)*42+(i%2?18:-18))+"px");
+        piece.style.setProperty("--rip-r",((i%2?1:-1)*(35+i*17))+"deg");
+        piece.style.setProperty("--rip-delay",(i*.075)+"s");scraps.appendChild(piece);
+      }
+      setTimeout(function(){p.classList.add("released");smashToolStatus("Torn into pieces. Let it go.");},430);
+      setTimeout(function(){t.value="";p.textContent="Released.";p.classList.remove("ready","tearing","released");scraps.innerHTML="";smashToolStatus("Ripped up and released. Take one slow breath.");},1800);
+    }
+    function resetRipPaper(){
+      var p=document.getElementById("ripPaper"),t=document.getElementById("ripText"),scraps=document.getElementById("ripScraps");
+      t.value="";p.textContent="Your words will appear here.";p.classList.remove("ready","tearing","released");scraps.innerHTML="";
+      smashToolStatus("Fresh paper ready.");t.focus();
+    }
     function popStressBubble(b){if(b.classList.contains("popped"))return;b.classList.add("popped");var left=document.querySelectorAll(".stress-bubble:not(.popped)").length;smashToolStatus(left?left+" bubbles left.":"All popped. Take one slow breath.");}
     function scatterCardboard(){var area=document.getElementById("smashBoxArea");for(var i=0;i<5;i++){var piece=document.createElement("span");piece.className="cardboard-piece";piece.style.setProperty("--piece-x",(Math.random()*360-180)+"px");piece.style.setProperty("--piece-y",(-80-Math.random()*180)+"px");piece.style.setProperty("--piece-r",(Math.random()*720-360)+"deg");area.appendChild(piece);setTimeout(function(p){p.remove();},900,piece);}}
     function hitSmashBox(){var b=document.getElementById("smashBoxGame");if(!b||b.classList.contains("collapsed"))return;boxHits++;b.classList.remove("hit");void b.offsetWidth;b.classList.add("hit");scatterCardboard();b.classList.remove("damage-1","damage-2","damage-3");if(boxHits<=2)b.classList.add("damage-1");else if(boxHits<=4)b.classList.add("damage-2");else if(boxHits<=6)b.classList.add("damage-3");else{b.classList.add("collapsed");smashToolStatus("The box collapsed. Pressure released.");return;}smashToolStatus("Hit "+boxHits+" — keep smashing until it collapses.");}
