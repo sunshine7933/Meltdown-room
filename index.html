@@ -336,6 +336,29 @@
     @keyframes calmWave{0%,100%{height:13px}50%{height:46px}}
     @media(max-width:700px){.calm-stage .scene{max-height:calc(100vh - 230px)}.calm-tools{grid-template-columns:repeat(2,minmax(130px,1fr))}.calm-tool{min-height:98px;padding:10px}}
 
+
+    .hope-stage{position:relative;width:min(100%,1536px);margin:auto;overflow:hidden}
+    .hope-stage .scene{max-height:calc(100vh - 176px)}
+    .hope-panel{width:min(95%,860px);margin:16px auto;padding:clamp(16px,3vw,28px);border:3px solid #755233;border-radius:18px;color:#f5dfb6;background:linear-gradient(rgba(33,23,15,.94),rgba(19,13,9,.98)),repeating-linear-gradient(90deg,#67462b 0 45px,#53371f 45px 49px);box-shadow:inset 0 0 34px rgba(0,0,0,.62),0 12px 28px rgba(0,0,0,.45);text-align:center}
+    .hope-panel h2{margin:0 0 5px;font:700 clamp(28px,4.5vw,46px) Georgia,serif}
+    .hope-tools{display:grid;grid-template-columns:repeat(auto-fit,minmax(145px,1fr));gap:10px;margin:15px 0}
+    .hope-tool{min-height:108px;border-radius:13px;background:#5e704a;border:2px solid #9eac77}
+    .hope-workspace{display:none;max-width:700px;margin:14px auto;padding:16px;border:2px solid #9a7046;border-radius:13px;background:rgba(30,20,12,.86)}
+    .hope-workspace.open{display:block}
+    .hope-workspace textarea{width:100%;min-height:120px;padding:13px;border:2px solid #a07a4e;border-radius:9px;color:#3c2a1c;background:#f0e1ba;font:600 16px/1.45 Georgia,serif}
+    .hope-notes{display:grid;gap:9px;margin:12px auto;max-height:300px;overflow:auto}
+    .hope-note{padding:12px;color:#4a321e;background:#ead7a8;border:1px solid #a47b4b;border-radius:7px;box-shadow:2px 4px 7px rgba(0,0,0,.35);font:600 15px/1.4 Georgia,serif}
+    .hope-plant{position:relative;width:170px;height:210px;margin:15px auto}
+    .hope-pot{position:absolute;left:43px;bottom:0;width:84px;height:70px;background:linear-gradient(90deg,#714627,#a66d3d,#5c361f);clip-path:polygon(8% 0,92% 0,78% 100%,22% 100%);box-shadow:0 8px 12px rgba(0,0,0,.5)}
+    .hope-stem{position:absolute;left:82px;bottom:60px;width:7px;height:0;background:#4f7438;border-radius:6px;transition:height .6s}
+    .hope-leaf{position:absolute;width:48px;height:27px;opacity:0;background:linear-gradient(135deg,#829a3d,#456a2f);border-radius:100% 0 100% 0;transition:opacity .5s,transform .5s}
+    .hope-plant.stage-1 .hope-stem{height:55px}.hope-plant.stage-2 .hope-stem{height:100px}.hope-plant.stage-3 .hope-stem{height:145px}
+    .hope-plant.stage-1 .leaf-1,.hope-plant.stage-2 .leaf-1,.hope-plant.stage-3 .leaf-1{opacity:1}.hope-plant.stage-2 .leaf-2,.hope-plant.stage-3 .leaf-2{opacity:1}.hope-plant.stage-3 .leaf-3,.hope-plant.stage-3 .leaf-4{opacity:1}
+    .leaf-1{left:42px;bottom:90px;transform:rotate(-25deg)}.leaf-2{left:82px;bottom:115px;transform:scaleX(-1) rotate(-25deg)}.leaf-3{left:39px;bottom:142px;transform:rotate(-20deg)}.leaf-4{left:84px;bottom:165px;transform:scaleX(-1) rotate(-20deg)}
+    .hope-flower{position:absolute;left:65px;bottom:177px;width:48px;height:48px;opacity:0;border-radius:50%;background:radial-gradient(circle,#553215 0 18%,#efb82f 20% 43%,#d48221 45% 65%,transparent 67%);transition:opacity .6s}
+    .hope-plant.stage-3 .hope-flower{opacity:1}
+    @media(max-width:700px){.hope-stage .scene{max-height:calc(100vh - 230px)}.hope-tools{grid-template-columns:repeat(2,minmax(130px,1fr))}.hope-tool{min-height:98px;padding:10px}}
+
     .axe-game {
       width: min(94vw, 760px); margin: 22px auto; padding: clamp(18px, 4vw, 34px);
       border: 3px solid #8b6038; border-radius: 22px; text-align: center;
@@ -513,6 +536,7 @@
           <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
           <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
           <button type="button" onclick="showScreen('calm')">CALM ROOM</button>
+          <button type="button" onclick="showScreen('hope')">HOPE ROOM</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -534,6 +558,7 @@
       <button class="primary" type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button class="primary" type="button" onclick="showScreen('calm')">CALM ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('hope')">HOPE ROOM</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
@@ -578,6 +603,28 @@
       <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+
+  <section class="screen" id="hope">
+    <div class="topbar">The Meltdown Room &bull; Hope Room</div>
+    <div class="scene-wrap"><div class="hope-stage"><img class="scene" src="founder-locked-assets/hope-room.png" alt="The Hope Room with sunrise windows, Hope Box, flowers, lanterns, and six hope activities"></div></div>
+    <div class="hope-panel">
+      <h2>The Hope Room</h2><p>Hold on. Keep going. Better days are ahead.</p>
+      <div class="hope-tools">
+        <button class="hope-tool primary" type="button" onclick="openHopeTool('box')">OPEN MY HOPE BOX<br><small>Read encouragement</small></button>
+        <button class="hope-tool" type="button" onclick="openHopeTool('write')">LEAVE MYSELF A HOPE NOTE<br><small>Write for your future self</small></button>
+        <button class="hope-tool" type="button" onclick="openHopeTool('send')">SEND HOPE TO SOMEONE<br><small>Share encouragement</small></button>
+        <button class="hope-tool" type="button" onclick="openHopeTool('past')">READ MY PAST HOPE NOTES<br><small>See how far you have come</small></button>
+        <button class="hope-tool" type="button" onclick="openHopeTool('plant')">PLANT A HOPE<br><small>Nurture it over time</small></button>
+        <button class="hope-tool" type="button" onclick="openHopeTool('sit')">SIT WITH HOPE<br><small>Take a quiet moment</small></button>
+      </div>
+      <div class="hope-workspace" id="hopeWorkspace"></div>
+      <p class="status" id="hopeStatus" role="status" aria-live="polite">Choose what might help hope feel possible today.</p>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button><button type="button" onclick="showScreen('calm')">CALM ROOM</button><button type="button" onclick="showScreen('thinking')">THINKING ROOM</button><button type="button" onclick="showScreen('map')">PROPERTY MAP</button><button type="button" onclick="showScreen('home')">HOME</button>
     </div>
   </section>
 
@@ -1388,8 +1435,31 @@
     function saveCalmReflection(){localStorage.setItem("calmRoomReflection",document.getElementById("calmReflectionText").value);calmStatus.textContent="Reflection saved privately on this device.";}
     function clearCalmReflection(){document.getElementById("calmReflectionText").value="";localStorage.removeItem("calmRoomReflection");calmStatus.textContent="Reflection cleared.";}
 
+
+    var hopeWorkspace=document.getElementById("hopeWorkspace"),hopeStatus=document.getElementById("hopeStatus"),hopeQuietTimer=null;
+    var hopeMessages=["You do not have to have it all figured out.","Small steps still move you forward.","Better days can begin with tiny moments.","You are enough, exactly as you are.","You have survived hard days before.","Resting is not giving up.","Hope can be quiet and still be real."];
+    function hopeEscape(text){return String(text).replace(/[&<>"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch];});}
+    function getHopeNotes(){try{return JSON.parse(localStorage.getItem("hopeRoomNotes")||"[]");}catch(error){return [];}}
+    function closeHopeTool(){hopeWorkspace.classList.remove("open");hopeWorkspace.innerHTML="";}
+    function openHopeTool(tool){
+      clearInterval(hopeQuietTimer);hopeWorkspace.classList.add("open");
+      if(tool==="box"){var notes=getHopeNotes(),message=notes.length?notes[Math.floor(Math.random()*notes.length)].text:hopeMessages[Math.floor(Math.random()*hopeMessages.length)];hopeWorkspace.innerHTML='<h3>A Note From Your Hope Box</h3><div class="hope-note">'+hopeEscape(message)+'</div><div class="tool-actions"><button type="button" onclick="openHopeTool(\'box\')">ANOTHER NOTE</button><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent="Keep this note with you for today.";}
+      else if(tool==="write"){hopeWorkspace.innerHTML='<h3>Leave Myself a Hope Note</h3><textarea id="hopeNoteText" placeholder="What do you want your future self to remember?"></textarea><div class="tool-actions"><button class="primary" type="button" onclick="saveHopeNote()">SAVE PRIVATELY</button><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent="This note stays privately on this device.";document.getElementById("hopeNoteText").focus();}
+      else if(tool==="send"){hopeWorkspace.innerHTML='<h3>Send Hope to Someone</h3><textarea id="hopeShareText" placeholder="Write a kind note of hope or encouragement..."></textarea><div class="tool-actions"><button class="primary" type="button" onclick="shareHopeNote()">OPEN PHONE SHARE MENU</button><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent="You choose who receives it. Nothing is sent automatically.";}
+      else if(tool==="past"){renderPastHopeNotes();}
+      else if(tool==="plant"){renderHopePlant();}
+      else if(tool==="sit"){hopeWorkspace.innerHTML='<h3>Sit With Hope</h3><p id="hopeQuietWords">One quiet minute. Breathe normally. Nothing to solve right now.</p><div class="tool-actions"><button class="primary" type="button" onclick="startHopeQuiet()">START ONE MINUTE</button><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent="Sit back. Let the room hold the moment.";}
+    }
+    function saveHopeNote(){var input=document.getElementById("hopeNoteText");if(!input.value.trim()){hopeStatus.textContent="Write a hope note first.";return;}var notes=getHopeNotes();notes.unshift({text:input.value.trim(),date:new Date().toISOString()});localStorage.setItem("hopeRoomNotes",JSON.stringify(notes.slice(0,50)));input.value="";hopeStatus.textContent="Hope note saved privately in your Hope Box.";}
+    function renderPastHopeNotes(){var notes=getHopeNotes();hopeWorkspace.innerHTML='<h3>My Past Hope Notes</h3><div class="hope-notes">'+(notes.length?notes.map(function(note){return '<div class="hope-note">'+hopeEscape(note.text)+'<br><small>'+new Date(note.date).toLocaleDateString()+'</small></div>';}).join(""):'<p>Your first hope note will appear here.</p>')+'</div><div class="tool-actions"><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent=notes.length?"Look how much hope you have carried.":"Your Hope Box is ready for its first note.";}
+    async function shareHopeNote(){var input=document.getElementById("hopeShareText"),text=input.value.trim();if(!text){hopeStatus.textContent="Write a note of hope first.";return;}if(navigator.share){try{await navigator.share({title:"A Note of Hope",text:text});hopeStatus.textContent="Your phone share menu handled the note.";return;}catch(error){if(error.name==="AbortError"){hopeStatus.textContent="Sharing canceled.";return;}}}try{await navigator.clipboard.writeText(text);hopeStatus.textContent="Hope note copied. Paste it wherever you choose.";}catch(error){hopeStatus.textContent="Select and copy your note to share it.";}}
+    function renderHopePlant(){var stage=Math.max(0,Math.min(3,Number(localStorage.getItem("hopePlantStage")||0)));hopeWorkspace.innerHTML='<h3>Plant a Hope</h3><div class="hope-plant stage-'+stage+'" id="hopePlant"><div class="hope-stem"></div><span class="hope-leaf leaf-1"></span><span class="hope-leaf leaf-2"></span><span class="hope-leaf leaf-3"></span><span class="hope-leaf leaf-4"></span><span class="hope-flower"></span><span class="hope-pot"></span></div><p id="hopePlantWords">'+(stage===0?"A seed is waiting.":stage===1?"Your hope has sprouted.":stage===2?"Your hope is growing stronger.":"Your hope is blooming.")+'</p><div class="tool-actions"><button class="primary" type="button" onclick="growHopePlant()">NURTURE MY HOPE</button><button type="button" onclick="resetHopePlant()">PLANT NEW SEED</button><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent="Hope grows in small steps.";}
+    function growHopePlant(){var stage=Math.min(3,Number(localStorage.getItem("hopePlantStage")||0)+1);localStorage.setItem("hopePlantStage",stage);renderHopePlant();hopeStatus.textContent=stage===3?"Your hope is blooming.":"Your hope grew a little today.";}
+    function resetHopePlant(){localStorage.setItem("hopePlantStage","0");renderHopePlant();hopeStatus.textContent="A new hope seed is planted.";}
+    function startHopeQuiet(){var remaining=60,words=document.getElementById("hopeQuietWords");clearInterval(hopeQuietTimer);words.textContent="Quiet hope: "+remaining+" seconds.";hopeQuietTimer=setInterval(function(){remaining--;words.textContent=remaining>0?"Quiet hope: "+remaining+" seconds.":"One quiet minute complete. Hope can be small and still be real.";if(remaining<=0)clearInterval(hopeQuietTimer);},1000);}
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
