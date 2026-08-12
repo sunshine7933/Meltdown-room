@@ -1015,6 +1015,10 @@
       o.style.setProperty("--throw-x",land+"%");o.classList.remove("dragging","thrown");void o.offsetWidth;o.classList.add("thrown");
       virtualThrowCount++;document.getElementById("virtualThrows").textContent=virtualThrowCount;
       var standing=Array.from(document.querySelectorAll(".virtual-can:not(.knocked)"));
+      for(var shuffleIndex=standing.length-1;shuffleIndex>0;shuffleIndex--){
+        var randomIndex=Math.floor(Math.random()*(shuffleIndex+1)),savedTarget=standing[shuffleIndex];
+        standing[shuffleIndex]=standing[randomIndex];standing[randomIndex]=savedTarget;
+      }
       var hitCount=Math.min(standing.length,rise>170?3:rise>105?2:1);
       for(var i=0;i<hitCount;i++){standing[i].classList.add("knocked");}
       var left=document.querySelectorAll(".virtual-can:not(.knocked)").length;document.getElementById("virtualTargetsLeft").textContent=left;
