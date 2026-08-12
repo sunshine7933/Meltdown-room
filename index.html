@@ -1073,9 +1073,36 @@
         crumpleStatus.textContent = "Released. Take one slow breath.";
       }, 650);
     }
-    paperBall.addEventListener("pointerdown", function(event) { if (!paperBall.classList.contains("ready")) return; crumpleStart = { y:event.clientY }; paperBall.setPointerCapture(event.pointerId); crumpleStatus.textContent = "Swipe upward toward the bin."; });
-    paperBall.addEventListener("pointermove", function(event) { if (!crumpleStart || crumpleStart.y - event.clientY < 70) return; crumpleStart = null; releasePaper(event.clientX); });
-    paperBall.addEventListener("pointerup", function(event) { if (!crumpleStart) return; if (crumpleStart.y - event.clientY >= 55) releasePaper(event.clientX); else crumpleStatus.textContent = "Swipe upward faster toward the bin."; crumpleStart = null; });
+    paperBall.addEventListener("pointerdown", function(event) {
+      if (!paperBall.classList.contains("ready")) return;
+      crumpleStart = { y:event.clientY };
+      try { paperBall.setPointerCapture(event.pointerId); } catch (error) {}
+      crumpleStatus.textContent = "Swipe upward toward the bin, or tap the paper ball to throw.";
+    });
+    function moveCrumpleSwipe(event) {
+      if (!crumpleStart || crumpleStart.y - event.clientY < 55) return;
+      crumpleStart = null; releasePaper(event.clientX);
+    }
+    function finishCrumpleSwipe(event) {
+      if (!crumpleStart) return;
+      if (crumpleStart.y - event.clientY >= 45) releasePaper(event.clientX);
+      else crumpleStatus.textContent = "Swipe upward again, or tap the paper ball to throw.";
+      crumpleStart = null;
+    }
+    paperBall.addEventListener("pointermove", moveCrumpleSwipe);
+    crumpleDesk.addEventListener("pointermove", moveCrumpleSwipe);
+    window.addEventListener("pointermove", moveCrumpleSwipe);
+    paperBall.addEventListener("pointerup", finishCrumpleSwipe);
+    crumpleDesk.addEventListener("pointerup", finishCrumpleSwipe);
+    window.addEventListener("pointerup", finishCrumpleSwipe);
+    paperBall.addEventListener("click", function(event) {
+      if (paperBall.classList.contains("ready") && !crumpleStart) releasePaper(event.clientX || crumpleDesk.getBoundingClientRect().left + crumpleDesk.offsetWidth / 2);
+    });
+    paperBall.addEventListener("keydown", function(event) {
+      if ((event.key === "Enter" || event.key === " ") && paperBall.classList.contains("ready")) {
+        event.preventDefault(); releasePaper(crumpleDesk.getBoundingClientRect().left + crumpleDesk.offsetWidth / 2);
+      }
+    });
     paperBall.addEventListener("pointercancel", function() { crumpleStart = null; });
     function newCrumpleNote() {
       crumpleNote.value = ""; crumpleNote.classList.remove("crumpling"); paperBall.classList.remove("ready", "flying");
