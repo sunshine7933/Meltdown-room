@@ -169,6 +169,37 @@
     .meltdown-stage.releasing { animation: safeShake .42s ease-in-out 2; }
     .meltdown-stage.releasing .release-hotspot { opacity: .22; background: #fff; }
     .meltdown-stage.recovering .calm-orb { opacity: 1; animation: breathe 8s ease-in-out infinite; }
+    .meltdown-hotspot {
+      position:absolute; z-index:4; min-height:0; padding:0; border:0; border-radius:12px;
+      opacity:0; background:#fff; cursor:pointer;
+    }
+    .meltdown-hotspot:focus-visible { opacity:.24; outline:3px solid #fff; }
+    .meltdown-menu { left:1.5%; top:1.4%; width:8.5%; height:5.7%; }
+    .meltdown-settings { right:1.5%; top:1.4%; width:10.5%; height:5.7%; }
+    .meltdown-letout { left:40.2%; top:49.3%; width:19.8%; height:15.7%; }
+    .meltdown-journal { left:31.5%; top:66%; width:10.7%; height:15.5%; }
+    .meltdown-calm { left:44.2%; top:66%; width:11.4%; height:15.5%; }
+    .meltdown-notes { left:57.5%; top:66%; width:11.4%; height:15.5%; }
+    .meltdown-checkin { left:1.5%; bottom:2.2%; width:11.4%; height:17.5%; }
+    .meltdown-reminder { right:1.5%; bottom:2.2%; width:11.4%; height:17.5%; }
+    .meltdown-tool {
+      position:absolute; inset:4% 12%; z-index:12; display:none; overflow:auto; padding:clamp(18px,4vw,34px);
+      color:#f7e3bd; background:rgba(28,18,11,.97); border:3px solid #9c7047; border-radius:20px;
+      box-shadow:0 15px 50px rgba(0,0,0,.8),inset 0 0 30px rgba(0,0,0,.5); text-align:center;
+    }
+    .meltdown-tool.open { display:block; }
+    .meltdown-tool h2 { margin:0 42px 10px; font:700 clamp(25px,4vw,42px) Georgia,serif; }
+    .meltdown-close { position:absolute; top:10px; right:10px; min-height:42px; padding:8px 14px; }
+    .meltdown-tool textarea { width:min(100%,650px); min-height:180px; padding:16px; border:2px solid #a87b4f; border-radius:12px; color:#3a281b; background:#efe1c1; font:600 17px/1.5 Georgia,serif; }
+    .tool-actions { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; margin-top:14px; }
+    .calm-circle { width:min(42vw,210px); aspect-ratio:1; margin:20px auto; border-radius:50%; background:rgba(127,191,204,.35); border:5px solid #9ed6df; box-shadow:0 0 25px rgba(137,220,235,.6); }
+    .calm-circle.breathing { animation:breathe 8s ease-in-out infinite; }
+    .note-wall-list { display:grid; gap:10px; max-width:700px; margin:16px auto; }
+    .support-note { padding:12px; color:#49331f; background:#ead8aa; border-radius:6px; transform:rotate(-.5deg); }
+    .feeling-grid { display:flex; flex-wrap:wrap; justify-content:center; gap:10px; }
+    .meltdown-inline-status { min-height:24px; color:#f3d39a; }
+    .meltdown-room-status { position:absolute; left:15%; right:15%; bottom:1%; z-index:6; margin:0; padding:7px; border-radius:10px; background:rgba(28,18,11,.82); }
+    @media (max-width:700px) { .meltdown-tool { inset:2% 3%; } .meltdown-tool textarea { min-height:130px; } }
 
     .thinking-stage { position: relative; width: min(100%, 1664px); margin: auto; overflow: hidden; }
     .thinking-stage .scene { max-height: calc(100vh - 118px); }
@@ -426,24 +457,26 @@
   </section>
 
   <section class="screen" id="meltdown">
-    <div class="topbar">The Meltdown Room • Release &amp; Recover</div>
     <div class="scene-wrap">
       <div class="meltdown-stage" id="meltdownStage">
-        <img class="scene" src="meltdown-room.jpg?v=repair2" alt="Meltdown Room with Release and Recover areas">
-        <canvas class="scribble-canvas" id="scribbleCanvas" aria-label="Release scribble board"></canvas>
-        <button class="room-hotspot release-hotspot" type="button" onclick="letItOut()" aria-label="Let it out"></button>
-        <button class="room-hotspot recover-hotspot" type="button" onclick="findMyCalm()" aria-label="Find my calm"></button>
+        <img class="scene" src="meltdown-room.jpg?v=repair2" alt="Meltdown Room with Private Journal, Calm Down Corner, Note Wall, Daily Check-In, and Reminder">
+        <button class="meltdown-hotspot meltdown-menu" type="button" onclick="openMeltdownTool('menu')" aria-label="Open Meltdown Room menu"></button>
+        <button class="meltdown-hotspot meltdown-settings" type="button" onclick="openMeltdownTool('settings')" aria-label="Open Meltdown Room settings"></button>
+        <button class="meltdown-hotspot meltdown-letout" type="button" onclick="openMeltdownTool('letout')" aria-label="I need to let it out"></button>
+        <button class="meltdown-hotspot meltdown-journal" type="button" onclick="openMeltdownTool('journal')" aria-label="Open My Private Journal"></button>
+        <button class="meltdown-hotspot meltdown-calm" type="button" onclick="openMeltdownTool('calm')" aria-label="Open Calm Down Corner"></button>
+        <button class="meltdown-hotspot meltdown-notes" type="button" onclick="openMeltdownTool('notes')" aria-label="Open Note Wall"></button>
+        <button class="meltdown-hotspot meltdown-checkin" type="button" onclick="openMeltdownTool('checkin')" aria-label="Start Daily Check-In"></button>
+        <button class="meltdown-hotspot meltdown-reminder" type="button" onclick="openMeltdownTool('reminder')" aria-label="Read reminder"></button>
         <div class="calm-orb" aria-hidden="true"></div>
+        <p class="status meltdown-room-status" id="meltdownStatus" role="status" aria-live="polite">Choose what you need from the room.</p>
+
+        <div class="meltdown-tool" id="meltdownTool" role="dialog" aria-modal="true" aria-labelledby="meltdownToolTitle">
+          <button class="meltdown-close" type="button" onclick="closeMeltdownTool()" aria-label="Close">CLOSE</button>
+          <h2 id="meltdownToolTitle"></h2>
+          <div id="meltdownToolBody"></div>
+        </div>
       </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button class="danger" type="button" onclick="letItOut()">LET IT OUT</button>
-      <button class="primary" type="button" onclick="findMyCalm()">FIND MY CALM</button>
-      <button type="button" onclick="clearScribble()">CLEAR BOARD</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <p class="status" id="meltdownStatus" role="status" aria-live="polite">Scribble on the board, then release when you are ready.</p>
     </div>
   </section>
 
@@ -689,63 +722,138 @@
 
     var meltdownStage = document.getElementById("meltdownStage");
     var meltdownStatus = document.getElementById("meltdownStatus");
-    var scribbleCanvas = document.getElementById("scribbleCanvas");
-    var scribbleContext = scribbleCanvas.getContext("2d");
-    var drawing = false;
+    var meltdownTool = document.getElementById("meltdownTool");
+    var meltdownToolTitle = document.getElementById("meltdownToolTitle");
+    var meltdownToolBody = document.getElementById("meltdownToolBody");
+    var calmInterval;
 
-    function sizeScribbleCanvas() {
-      var box = scribbleCanvas.getBoundingClientRect();
-      var ratio = window.devicePixelRatio || 1;
-      scribbleCanvas.width = Math.max(1, Math.round(box.width * ratio));
-      scribbleCanvas.height = Math.max(1, Math.round(box.height * ratio));
-      scribbleContext.setTransform(ratio, 0, 0, ratio, 0, 0);
-      scribbleContext.lineCap = "round";
-      scribbleContext.lineJoin = "round";
-      scribbleContext.lineWidth = 3;
-      scribbleContext.strokeStyle = "rgba(239, 222, 190, .88)";
-    }
-
-    function scribblePoint(event) {
-      var box = scribbleCanvas.getBoundingClientRect();
-      return { x: event.clientX - box.left, y: event.clientY - box.top };
-    }
-
-    scribbleCanvas.addEventListener("pointerdown", function(event) {
-      drawing = true;
-      scribbleCanvas.setPointerCapture(event.pointerId);
-      var point = scribblePoint(event);
-      scribbleContext.beginPath();
-      scribbleContext.moveTo(point.x, point.y);
-    });
-    scribbleCanvas.addEventListener("pointermove", function(event) {
-      if (!drawing) return;
-      var point = scribblePoint(event);
-      scribbleContext.lineTo(point.x, point.y);
-      scribbleContext.stroke();
-    });
-    scribbleCanvas.addEventListener("pointerup", function() { drawing = false; });
-    scribbleCanvas.addEventListener("pointercancel", function() { drawing = false; });
-
-    function clearScribble() {
-      scribbleContext.clearRect(0, 0, scribbleCanvas.width, scribbleCanvas.height);
-      meltdownStatus.textContent = "The board is clear. Take one slow breath.";
-    }
-
-    function letItOut() {
+    function closeMeltdownTool() {
+      meltdownTool.classList.remove("open");
+      meltdownToolBody.innerHTML = "";
+      clearInterval(calmInterval);
       meltdownStage.classList.remove("recovering");
-      meltdownStage.classList.add("releasing");
-      meltdownStatus.textContent = "Let it move through you. You are safe here.";
-      setTimeout(function() {
-        meltdownStage.classList.remove("releasing");
-        clearScribble();
-        meltdownStatus.textContent = "Released. When you are ready, choose Find My Calm.";
-      }, 900);
     }
 
-    function findMyCalm() {
-      meltdownStage.classList.remove("releasing");
+    function toolButton(label, action, kind) {
+      return '<button type="button" class="' + (kind || "") + '" onclick="' + action + '">' + label + '</button>';
+    }
+
+    function openMeltdownTool(tool) {
+      clearInterval(calmInterval);
+      meltdownStage.classList.remove("recovering");
+      meltdownTool.classList.add("open");
+      var title = "";
+      var body = "";
+      if (tool === "menu") {
+        title = "Menu";
+        body = '<p>Where would you like to go?</p><div class="tool-actions">' +
+          toolButton("GREAT ROOM","showScreen(\'great\'); closeMeltdownTool()","primary") +
+          toolButton("RANT ROOM","showScreen(\'rant\'); closeMeltdownTool()") +
+          toolButton("THINKING ROOM","showScreen(\'thinking\'); closeMeltdownTool()") +
+          toolButton("PROPERTY MAP","showScreen(\'map\'); closeMeltdownTool()") +
+          toolButton("HOME","showScreen(\'home\'); closeMeltdownTool()") + '</div>';
+      } else if (tool === "settings") {
+        title = "Settings";
+        var still = document.body.classList.contains("still-mode");
+        body = '<p>Choose the room experience that feels best.</p><div class="tool-actions">' +
+          toolButton(still ? "TURN ANIMATION ON" : "USE STILL MODE","toggleStillMode(); openMeltdownTool(\'settings\')","primary") +
+          toolButton("CLEAR PRIVATE JOURNAL","clearMeltdownJournal()","danger") +
+          toolButton("CLEAR MY NOTES","clearSupportNotes()","danger") + '</div><p class="meltdown-inline-status" id="meltdownToolStatus"></p>';
+      } else if (tool === "letout") {
+        title = "I Need to Let It Out";
+        body = '<p>Choose what feels right. There is no wrong choice.</p><div class="tool-actions">' +
+          toolButton("WRITE IT OUT","openMeltdownTool(\'journal\')","primary") +
+          toolButton("CALM MY BODY","openMeltdownTool(\'calm\')") +
+          toolButton("LEAVE A NOTE","openMeltdownTool(\'notes\')") +
+          toolButton("SMASH & RELEASE","showScreen(\'smash\'); closeMeltdownTool()","danger") + '</div>';
+      } else if (tool === "journal") {
+        title = "My Private Journal";
+        body = '<p>Write, rant, and get it out. This stays on this device.</p><textarea id="meltdownJournal" placeholder="This is your private space..."></textarea><div class="tool-actions">' +
+          toolButton("SAVE PRIVATELY","saveMeltdownJournal()","primary") +
+          toolButton("RELEASE & CLEAR","releaseMeltdownJournal()","danger") + '</div><p class="meltdown-inline-status" id="meltdownToolStatus"></p>';
+      } else if (tool === "calm") {
+        title = "Calm Down Corner";
+        body = '<p id="calmWords">Tap Start Breathing when you are ready.</p><div class="calm-circle" id="calmCircle"></div><div class="tool-actions">' +
+          toolButton("START BREATHING","startCalmBreathing()","primary") +
+          toolButton("STOP","stopCalmBreathing()") + '</div>';
+      } else if (tool === "notes") {
+        title = "Note Wall";
+        body = '<p>Leave a private note of support for yourself.</p><textarea id="supportNoteInput" placeholder="You matter. You are doing your best..."></textarea><div class="tool-actions">' +
+          toolButton("ADD TO WALL","addSupportNote()","primary") + '</div><div class="note-wall-list" id="supportNoteList"></div><p class="meltdown-inline-status" id="meltdownToolStatus"></p>';
+      } else if (tool === "checkin") {
+        title = "Daily Check-In";
+        body = '<p>How are you feeling today?</p><div class="feeling-grid">' +
+          ["CALM","SAD","ANGRY","ANXIOUS","OVERWHELMED","I DON'T KNOW"].map(function(feel){ return toolButton(feel,"saveCheckIn('"+feel.replace("'","\\'")+"')"); }).join("") +
+          '</div><p class="meltdown-inline-status" id="meltdownToolStatus"></p>';
+      } else if (tool === "reminder") {
+        title = "A Reminder for You";
+        body = '<p style="font-size:clamp(22px,4vw,38px);font-family:Georgia,serif">You’re human. Not perfect.</p><p>You do not have to solve everything right now. One breath, one feeling, and one small step at a time is enough.</p><div class="tool-actions">' +
+          toolButton("VISIT CALM DOWN CORNER","openMeltdownTool(\'calm\')","primary") + '</div>';
+      }
+      meltdownToolTitle.textContent = title;
+      meltdownToolBody.innerHTML = body;
+      if (tool === "journal") document.getElementById("meltdownJournal").value = localStorage.getItem("meltdownPrivateJournal") || "";
+      if (tool === "notes") renderSupportNotes();
+      meltdownStatus.textContent = title + " opened.";
+    }
+
+    function toolStatus(message) {
+      var status = document.getElementById("meltdownToolStatus");
+      if (status) status.textContent = message;
+      meltdownStatus.textContent = message;
+    }
+    function saveMeltdownJournal() {
+      var journal = document.getElementById("meltdownJournal");
+      if (!journal.value.trim()) { toolStatus("Write something first. This space is yours."); return; }
+      localStorage.setItem("meltdownPrivateJournal", journal.value);
+      toolStatus("Saved privately on this device.");
+    }
+    function releaseMeltdownJournal() {
+      var journal = document.getElementById("meltdownJournal");
+      journal.value = "";
+      localStorage.removeItem("meltdownPrivateJournal");
+      toolStatus("Released. The page is clear.");
+    }
+    function clearMeltdownJournal() {
+      localStorage.removeItem("meltdownPrivateJournal");
+      toolStatus("Private journal cleared.");
+    }
+    function startCalmBreathing() {
+      var circle = document.getElementById("calmCircle");
+      var words = document.getElementById("calmWords");
+      circle.classList.add("breathing");
       meltdownStage.classList.add("recovering");
-      meltdownStatus.textContent = "Breathe in as the light grows. Breathe out as it softens.";
+      var inhale = true;
+      words.textContent = "Breathe in slowly…";
+      clearInterval(calmInterval);
+      calmInterval = setInterval(function(){ inhale = !inhale; words.textContent = inhale ? "Breathe in slowly…" : "Breathe out gently…"; },4000);
+      meltdownStatus.textContent = "Follow the breathing light.";
+    }
+    function stopCalmBreathing() {
+      clearInterval(calmInterval);
+      var circle = document.getElementById("calmCircle");
+      if (circle) circle.classList.remove("breathing");
+      meltdownStage.classList.remove("recovering");
+      var words = document.getElementById("calmWords");
+      if (words) words.textContent = "You can return whenever you need.";
+    }
+    function getSupportNotes() { try { return JSON.parse(localStorage.getItem("meltdownSupportNotes") || "[]"); } catch(e) { return []; } }
+    function renderSupportNotes() {
+      var list = document.getElementById("supportNoteList");
+      if (!list) return;
+      var notes = getSupportNotes();
+      list.innerHTML = notes.length ? notes.map(function(note){ var item=document.createElement("div"); item.className="support-note"; item.textContent=note; return item.outerHTML; }).join("") : "<p>Your note wall is ready.</p>";
+    }
+    function addSupportNote() {
+      var input = document.getElementById("supportNoteInput");
+      if (!input.value.trim()) { toolStatus("Write a note first."); return; }
+      var notes = getSupportNotes(); notes.unshift(input.value.trim()); notes = notes.slice(0,12);
+      localStorage.setItem("meltdownSupportNotes",JSON.stringify(notes)); input.value=""; renderSupportNotes(); toolStatus("Your support note is on the wall.");
+    }
+    function clearSupportNotes() { localStorage.removeItem("meltdownSupportNotes"); toolStatus("Note Wall cleared."); }
+    function saveCheckIn(feeling) {
+      localStorage.setItem("meltdownDailyCheckIn",JSON.stringify({feeling:feeling,date:new Date().toISOString()}));
+      toolStatus("Checked in: " + feeling + ". Thank you for noticing how you feel.");
     }
 
     var smashStage = document.getElementById("smashStage");
