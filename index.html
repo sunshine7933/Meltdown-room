@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -187,7 +186,7 @@
       box-shadow: inset 0 0 45px rgba(0,0,0,.75); perspective: 700px;
     }
     .axe-range::after {
-      content: "STAND BACK â€¢ SWIPE UP TO THROW"; position: absolute; left: 5%; right: 5%; bottom: 3%;
+      content: "STAND BACK - SWIPE UP TO THROW"; position: absolute; left: 5%; right: 5%; bottom: 3%;
       padding: 8px; border-top: 3px dashed #e3be79; color: #f7e3bd; font-size: clamp(11px, 2.5vw, 15px);
       font-weight: 900; letter-spacing: .08em; pointer-events: none;
     }
@@ -626,11 +625,14 @@
       axeMark.classList.add("dragging"); axeMark.setPointerCapture(event.pointerId);
       axeStatus.textContent = "Aim toward the target, then swipe upward.";
     });
-    axeMark.addEventListener("pointerup", function(event) {
+    function finishAxeSwipe(event) {
       if (!axeStart) return;
       throwAxe(axeStart.x, axeStart.y, event.clientX, event.clientY, Date.now() - axeStart.time);
       axeStart = null; axeMark.classList.remove("dragging");
-    });
+    }
+    axeMark.addEventListener("pointerup", finishAxeSwipe);
+    axeRange.addEventListener("pointerup", finishAxeSwipe);
+    window.addEventListener("pointerup", finishAxeSwipe);
     axeMark.addEventListener("pointercancel", function() { axeStart = null; axeMark.classList.remove("dragging"); });
     function resetAxeGame() {
       axeThrows = 0; axeScore = 0;
@@ -729,4 +731,3 @@
 
 </body>
 </html>
-
