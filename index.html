@@ -118,6 +118,21 @@
     .status { width: 100%; min-height: 20px; margin: 0; text-align: center; color: #f7e3bd; font-size: 14px; }
     button.danger { background: #8a3f28; border-color: #c7734e; }
     button.secondary { background: #664777; border-color: #9a72ad; }
+    .rant-burn-layer {
+      position: absolute; inset: 0; display: none; align-items: center; justify-content: center;
+      pointer-events: none; overflow: hidden; border-radius: 12px;
+      background: radial-gradient(circle at 50% 53%, rgba(255,165,52,.18), transparent 34%);
+    }
+    .rant-burn-layer.burning { display: flex; }
+    .rant-flame {
+      width: clamp(70px, 12vw, 160px); aspect-ratio: .72; border-radius: 48% 52% 42% 58%;
+      background: radial-gradient(circle at 50% 72%, #fff5a8 0 15%, #ffb229 28%, #e74a1a 58%, transparent 61%);
+      filter: drop-shadow(0 0 22px rgba(255,108,25,.9));
+      transform-origin: 50% 100%; animation: rantFlame 1.25s ease-in-out forwards;
+    }
+    .rant-ash { position: absolute; inset: 28% 30% 24%; opacity: 0; background: radial-gradient(ellipse, rgba(54,48,43,.9), transparent 70%); animation: rantAsh 1.4s .7s ease-out forwards; }
+    @keyframes rantFlame { 0% { opacity: 0; transform: translateY(28px) scale(.3) rotate(-4deg); } 30% { opacity: 1; transform: translateY(0) scale(1.1) rotate(3deg); } 75% { opacity: 1; transform: translateY(-22px) scale(.9) rotate(-2deg); } 100% { opacity: 0; transform: translateY(-45px) scale(.35); } }
+    @keyframes rantAsh { 0% { opacity: 0; transform: scale(.45); } 45% { opacity: .75; } 100% { opacity: 0; transform: scale(1.15) translateY(18px); } }
 
     .meltdown-stage { position: relative; width: min(100%, 1664px); margin: auto; overflow: hidden; }
     .meltdown-stage .scene { max-height: calc(100vh - 118px); }
@@ -377,11 +392,13 @@
       <div class="rant-stage">
         <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
         <textarea class="rant-journal" id="rantText" aria-label="Private rant" placeholder="This is your space. Say it exactly how you feel.&#10;&#10;No judgment. No fixing. Just let it out."></textarea>
+        <div class="rant-burn-layer" id="rantBurnLayer" aria-hidden="true"><div class="rant-flame"></div><div class="rant-ash"></div></div>
       </div>
     </div>
     <div class="controls">
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
       <button class="danger" type="button" onclick="releaseRant()">RELEASE IT</button>
+      <button class="danger" type="button" onclick="burnRant()">BURN IT</button>
       <button class="primary" type="button" onclick="saveRant()">SAVE PRIVATELY</button>
       <button class="secondary" type="button" onclick="shareRant()">SHARE ANONYMOUSLY</button>
       <button type="button" onclick="newRant()">WRITE NEW RANT</button>
@@ -603,6 +620,25 @@
       localStorage.removeItem("meltdownRantDraft");
       setRantStatus("Released. Take a breath.");
       rantText.focus();
+    }
+
+    function burnRant() {
+      if (!rantText.value.trim()) { setRantStatus("Write something first, then burn it when you are ready."); rantText.focus(); return; }
+      if (!window.confirm("Burn this rant? It will be permanently cleared from this device.")) return;
+      var burnLayer = document.getElementById("rantBurnLayer");
+      rantText.setAttribute("readonly", "readonly");
+      burnLayer.classList.remove("burning");
+      void burnLayer.offsetWidth;
+      burnLayer.classList.add("burning");
+      setRantStatus("Burning it. Let it go.");
+      setTimeout(function() {
+        rantText.value = "";
+        rantText.removeAttribute("readonly");
+        localStorage.removeItem("meltdownRantDraft");
+        burnLayer.classList.remove("burning");
+        setRantStatus("Gone. A fresh page is ready when you are.");
+        rantText.focus();
+      }, 1500);
     }
 
     function newRant() {
