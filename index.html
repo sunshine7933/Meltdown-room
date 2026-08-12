@@ -253,7 +253,7 @@
     .smash-stage .scene { max-height:100vh; }
     .smash-choice { height:15.2%; }
     .smash-axe{left:15%;top:65.2%}.smash-plate{left:30.5%;top:65.2%}.smash-crumple{left:46%;top:65.2%}.smash-rip{left:61.5%;top:65.2%}.smash-bubbles{left:77%;top:65.2%}
-    .smash-box{left:15%;top:81%}.smash-throw{left:30.5%;top:81%}.smash-destroy{left:46%;top:81%}.smash-checkin{left:62%;top:81%;width:34%;height:12.5%}
+    .smash-box{left:15%;top:81%}.smash-throw{left:30.5%;top:81%}.smash-checkin{left:62%;top:81%;width:34%;height:12.5%}
     .smash-top-choice,.smash-nav-choice { position:absolute;z-index:3;min-height:0;padding:0;border:0;border-radius:8px;opacity:0;background:#fff; }
     .smash-top-choice:focus-visible,.smash-nav-choice:focus-visible{opacity:.24;outline:3px solid #fff}
     .smash-letout{left:2%;top:36.5%;width:24%;height:24%}.smash-release{left:26%;top:36.5%;width:24%;height:24%}.smash-support{left:50%;top:36.5%;width:24%;height:24%}.smash-quiet{left:74%;top:36.5%;width:24%;height:24%}
@@ -311,7 +311,6 @@
     .virtual-object.thrown{pointer-events:none;animation:virtualRelease .62s cubic-bezier(.13,.78,.24,1) forwards}
     @keyframes virtualRelease{to{left:var(--throw-x);bottom:61%;transform:translateX(-50%) rotate(620deg) scale(.62);opacity:.55}}
 
-    .destroy-canvas{width:min(100%,650px);height:260px;background:#efe1c1;border:3px solid #8b6038;border-radius:12px;touch-action:none}.destroy-canvas.destroyed{animation:safeShake .3s 2;opacity:.15}
     @keyframes virtualRelease{to{transform:translateY(-260px) rotate(420deg) scale(.3);opacity:0}}
     @media(max-width:700px){.smash-tool{inset:1.5% 2%}.bubble-wrap{width:100%;padding:11px}.bubble-board{grid-template-columns:repeat(5,minmax(38px,52px));gap:8px;padding:11px}.stress-bubble{min-height:38px}}
 
@@ -602,7 +601,6 @@
         <button class="smash-choice smash-bubbles" type="button" onclick="openSmashTool('bubbles')" aria-label="Open Stress Bubbles"></button>
         <button class="smash-choice smash-box" type="button" onclick="openSmashTool('box')" aria-label="Open Smash Box"></button>
         <button class="smash-choice smash-throw" type="button" onclick="openSmashTool('throw')" aria-label="Open Virtual Throw"></button>
-        <button class="smash-choice smash-destroy" type="button" onclick="openSmashTool('destroy')" aria-label="Open Scribble and Destroy"></button>
         <button class="smash-choice smash-checkin" type="button" onclick="openSmashTool('checkin')" aria-label="Open Feeling Check-In"></button>
         <button class="smash-nav-choice" type="button" onclick="openSmashTool('navigation')" aria-label="Open Smash Room navigation"></button>
         <div class="smash-tool" id="smashTool" role="dialog" aria-modal="true" aria-labelledby="smashToolTitle">
@@ -944,21 +942,20 @@
     }
 
     var smashStage=document.getElementById("smashStage"),smashTool=document.getElementById("smashTool"),smashToolTitle=document.getElementById("smashToolTitle"),smashToolBody=document.getElementById("smashToolBody");
-    var destroyCanvas,destroyContext,destroyDrawing=false,boxHits=0;
+    var boxHits=0;
     function closeSmashTool(){smashTool.classList.remove("open");smashToolBody.innerHTML="";}
     function smashButton(label,action,kind){return '<button type="button" class="'+(kind||"")+'" onclick="'+action+'">'+label+'</button>';}
     function openSmashTool(tool){smashTool.classList.add("open");var title="",body="";
-      if(tool==="menu"){title="Choose Your Release";body='<div class="smash-actions">'+smashButton("AXE THROWING","showScreen(\'axe\');closeSmashTool()","primary")+smashButton("PLATE THROWING","showScreen(\'plate\');closeSmashTool()")+smashButton("CRUMPLE & THROW","showScreen(\'crumple\');closeSmashTool()")+smashButton("RIP IT UP","openSmashTool(\'rip\')")+smashButton("STRESS BUBBLES","openSmashTool(\'bubbles\')")+smashButton("SMASH BOX","openSmashTool(\'box\')")+smashButton("VIRTUAL THROW","openSmashTool(\'throw\')")+smashButton("SCRIBBLE & DESTROY","openSmashTool(\'destroy\')")+'</div>';}
+      if(tool==="menu"){title="Choose Your Release";body='<div class="smash-actions">'+smashButton("AXE THROWING","showScreen(\'axe\');closeSmashTool()","primary")+smashButton("PLATE THROWING","showScreen(\'plate\');closeSmashTool()")+smashButton("CRUMPLE & THROW","showScreen(\'crumple\');closeSmashTool()")+smashButton("RIP IT UP","openSmashTool(\'rip\')")+smashButton("STRESS BUBBLES","openSmashTool(\'bubbles\')")+smashButton("SMASH BOX","openSmashTool(\'box\')")+smashButton("VIRTUAL THROW","openSmashTool(\'throw\')")+'</div>';}
       else if(tool==="rip"){title="Rip It Up";body='<p>Write it out. Put it on the paper. Rip it into pieces and let it go.</p><textarea id="ripText" placeholder="Write what you want to release..."></textarea><div class="rip-workbench"><div class="rip-paper" id="ripPaper">Your words will appear here.</div><div class="rip-scraps" id="ripScraps" aria-hidden="true"></div></div><div class="smash-actions">'+smashButton("PUT IT ON PAPER","prepareRip()","primary")+smashButton("RIP IT UP","ripItUp()","danger")+smashButton("FRESH PAPER","resetRipPaper()")+'</div><p class="smash-tool-status" id="smashToolStatus" role="status" aria-live="polite">Write what you want to release.</p>';}
       else if(tool==="bubbles"){title="Stress Bubbles";body='<p>Pop the bubbles one at a time. Slow down and feel each release.</p><div class="bubble-wrap"><div class="bubble-counter">POPPED: <span id="bubblePopped">0</span> &bull; LEFT: <span id="bubbleLeft">30</span></div><div class="bubble-board" id="bubbleBoard">'+Array.from({length:30},(_,i)=>'<button class="stress-bubble" type="button" onclick="popStressBubble(this)" aria-label="Pop bubble '+(i+1)+'"></button>').join("")+'</div></div><div class="smash-actions">'+smashButton("RESET BUBBLES","resetStressBubbles()")+'</div><p class="smash-tool-status" id="smashToolStatus" role="status" aria-live="polite">30 bubbles ready. Pop one when you are ready.</p>';}
       else if(tool==="box"){title="Smash Box";boxHits=0;body='<p>Break it. Smash it. Feel lighter. Tap the cardboard box repeatedly.</p><div class="smash-box-area" id="smashBoxArea"><button class="smash-box-game" id="smashBoxGame" type="button" onclick="hitSmashBox()" aria-label="Smash the cardboard box"><span class="smash-box-label">SMASH BOX</span><span class="smash-box-crack"></span></button></div><div class="smash-actions">'+smashButton("RESET BOX","resetSmashBox()")+'</div><p class="smash-tool-status" id="smashToolStatus">The box is ready. Tap to smash.</p>';}
       else if(tool==="throw"){title="Virtual Throw";body='<p>Stand back, hold the square fabric bean bag, and swipe upward toward the metal targets.</p><div class="virtual-counter"><span>THROWS: <span id="virtualThrows">0</span></span><span>TARGETS: <span id="virtualTargetsLeft">6</span></span></div><div class="virtual-range" id="virtualRange"><div class="virtual-targets" id="virtualTargets" aria-label="Stack of six virtual targets">'+Array.from({length:6},(_,i)=>'<span class="virtual-can" aria-label="Target '+(i+1)+'"></span>').join("")+'</div><div class="virtual-object" id="virtualObject" role="button" tabindex="0" aria-label="Square fabric virtual bean bag"></div></div><div class="smash-actions">'+smashButton("RESET TARGETS","resetVirtualThrow()")+'</div><p class="smash-tool-status" id="smashToolStatus" role="status" aria-live="polite">Targets ready. Hold the ball and swipe upward.</p>';}
-      else if(tool==="destroy"){title="Scribble & Destroy";body='<p>Scribble it out, then destroy it and clear your mind.</p><canvas class="destroy-canvas" id="destroyCanvas" width="700" height="300" aria-label="Scribble canvas"></canvas><div class="smash-actions">'+smashButton("DESTROY SCRIBBLE","destroyScribble()","danger")+smashButton("FRESH BOARD","freshDestroyCanvas()")+'</div><p class="smash-tool-status" id="smashToolStatus"></p>';}
       else if(tool==="checkin"){title="How Are You Feeling Now?";body='<p>Check in with yourself.</p><div class="smash-actions">'+["A LITTLE LIGHTER","STILL FRUSTRATED","MEH","OVERWHELMED","I DON'T KNOW"].map(x=>smashButton(x,"saveSmashFeeling('"+x.replace("'","\\'")+"')")).join("")+'</div><p class="smash-tool-status" id="smashToolStatus"></p>';}
       else if(tool==="support"){title="I Need Someone Who Gets It";body='<p>You are not alone. Choose the kind of support you need.</p><div class="smash-actions">'+smashButton("LEAVE A SUPPORT NOTE","showScreen(\'meltdown\');closeSmashTool()","primary")+smashButton("RETURN TO GREAT ROOM","showScreen(\'great\');closeSmashTool()")+'</div>';}
       else if(tool==="quiet"){title="I Just Need Quiet";body='<p>No advice. No prompts. No pressure. Just quiet.</p><div class="smash-actions">'+smashButton("ENTER STILL MODE","setStillMode(true)","primary")+smashButton("RETURN WHEN READY","closeSmashTool()")+'</div>';}
       else if(tool==="navigation"){title="Room Navigation";body='<div class="smash-actions">'+smashButton("GREAT ROOM","showScreen(\'great\');closeSmashTool()","primary")+smashButton("CALM DOWN CORNER","showScreen(\'meltdown\');closeSmashTool()")+smashButton("THINKING ROOM","showScreen(\'thinking\');closeSmashTool()")+smashButton("PROPERTY MAP","showScreen(\'map\');closeSmashTool()")+smashButton("HOME","showScreen(\'home\');closeSmashTool()")+'</div>';}
-      smashToolTitle.textContent=title;smashToolBody.innerHTML=body;if(tool==="throw")setupVirtualThrow();if(tool==="destroy")setupDestroyCanvas();}
+      smashToolTitle.textContent=title;smashToolBody.innerHTML=body;if(tool==="throw")setupVirtualThrow();}
     function smashToolStatus(message){var s=document.getElementById("smashToolStatus");if(s)s.textContent=message;}
     function prepareRip(){
       var t=document.getElementById("ripText"),p=document.getElementById("ripPaper"),scraps=document.getElementById("ripScraps");
@@ -1042,9 +1039,6 @@
       var o=document.getElementById("virtualObject"),targets=document.getElementById("virtualTargets");if(o)o.classList.remove("dragging","thrown");
       document.getElementById("virtualThrows").textContent="0";document.getElementById("virtualTargetsLeft").textContent="6";smashToolStatus("Fresh targets ready. Hold the ball and swipe upward.");
     }
-    function setupDestroyCanvas(){destroyCanvas=document.getElementById("destroyCanvas");destroyContext=destroyCanvas.getContext("2d");destroyContext.lineWidth=5;destroyContext.lineCap="round";destroyContext.strokeStyle="#352319";destroyCanvas.addEventListener("pointerdown",function(e){destroyDrawing=true;destroyCanvas.setPointerCapture(e.pointerId);var r=destroyCanvas.getBoundingClientRect();destroyContext.beginPath();destroyContext.moveTo((e.clientX-r.left)*destroyCanvas.width/r.width,(e.clientY-r.top)*destroyCanvas.height/r.height);});destroyCanvas.addEventListener("pointermove",function(e){if(!destroyDrawing)return;var r=destroyCanvas.getBoundingClientRect();destroyContext.lineTo((e.clientX-r.left)*destroyCanvas.width/r.width,(e.clientY-r.top)*destroyCanvas.height/r.height);destroyContext.stroke();});destroyCanvas.addEventListener("pointerup",function(){destroyDrawing=false;});}
-    function destroyScribble(){destroyCanvas.classList.add("destroyed");setTimeout(function(){freshDestroyCanvas();smashToolStatus("Destroyed. Your board is clear.");},700);}
-    function freshDestroyCanvas(){if(!destroyContext)return;destroyContext.clearRect(0,0,destroyCanvas.width,destroyCanvas.height);destroyCanvas.classList.remove("destroyed");}
     function saveSmashFeeling(feeling){localStorage.setItem("smashFeelingCheckIn",JSON.stringify({feeling:feeling,date:new Date().toISOString()}));smashToolStatus("Checked in: "+feeling+". Thank you for noticing.");}
 
     var axeThrows = 0;
