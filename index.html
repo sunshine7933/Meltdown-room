@@ -310,7 +310,7 @@
     .virtual-object.dragging{cursor:grabbing}
     .virtual-object.thrown{pointer-events:none;animation:virtualRelease .62s cubic-bezier(.13,.78,.24,1) forwards}
     @keyframes virtualRelease{to{left:var(--throw-x);bottom:61%;transform:translateX(-50%) rotate(620deg) scale(.62);opacity:.55}}
-    .virtual-targets.hit{animation:safeShake .34s ease-in-out 2}
+
     .destroy-canvas{width:min(100%,650px);height:260px;background:#efe1c1;border:3px solid #8b6038;border-radius:12px;touch-action:none}.destroy-canvas.destroyed{animation:safeShake .3s 2;opacity:.15}
     @keyframes virtualRelease{to{transform:translateY(-260px) rotate(420deg) scale(.3);opacity:0}}
     @media(max-width:700px){.smash-tool{inset:1.5% 2%}.bubble-wrap{width:100%;padding:11px}.bubble-board{grid-template-columns:repeat(5,minmax(38px,52px));gap:8px;padding:11px}.stress-bubble{min-height:38px}}
@@ -1017,7 +1017,6 @@
       var standing=Array.from(document.querySelectorAll(".virtual-can:not(.knocked)"));
       var hitCount=Math.min(standing.length,rise>170?3:rise>105?2:1);
       for(var i=0;i<hitCount;i++){standing[i].classList.add("knocked");}
-      targets.classList.remove("hit");void targets.offsetWidth;targets.classList.add("hit");
       var left=document.querySelectorAll(".virtual-can:not(.knocked)").length;document.getElementById("virtualTargetsLeft").textContent=left;
       smashToolStatus(left?hitCount+" target"+(hitCount>1?"s":"")+" knocked down. "+left+" left.":"All targets down. Strong release.");
       setTimeout(function(){o.classList.remove("thrown");},760);
@@ -1036,7 +1035,7 @@
     function resetVirtualThrow(){
       virtualThrowCount=0;virtualThrowState=null;
       document.querySelectorAll(".virtual-can").forEach(function(target){target.classList.remove("knocked");});
-      var o=document.getElementById("virtualObject"),targets=document.getElementById("virtualTargets");if(o)o.classList.remove("dragging","thrown");if(targets)targets.classList.remove("hit");
+      var o=document.getElementById("virtualObject"),targets=document.getElementById("virtualTargets");if(o)o.classList.remove("dragging","thrown");
       document.getElementById("virtualThrows").textContent="0";document.getElementById("virtualTargetsLeft").textContent="6";smashToolStatus("Fresh targets ready. Hold the ball and swipe upward.");
     }
     function setupDestroyCanvas(){destroyCanvas=document.getElementById("destroyCanvas");destroyContext=destroyCanvas.getContext("2d");destroyContext.lineWidth=5;destroyContext.lineCap="round";destroyContext.strokeStyle="#352319";destroyCanvas.addEventListener("pointerdown",function(e){destroyDrawing=true;destroyCanvas.setPointerCapture(e.pointerId);var r=destroyCanvas.getBoundingClientRect();destroyContext.beginPath();destroyContext.moveTo((e.clientX-r.left)*destroyCanvas.width/r.width,(e.clientY-r.top)*destroyCanvas.height/r.height);});destroyCanvas.addEventListener("pointermove",function(e){if(!destroyDrawing)return;var r=destroyCanvas.getBoundingClientRect();destroyContext.lineTo((e.clientX-r.left)*destroyCanvas.width/r.width,(e.clientY-r.top)*destroyCanvas.height/r.height);destroyContext.stroke();});destroyCanvas.addEventListener("pointerup",function(){destroyDrawing=false;});}
