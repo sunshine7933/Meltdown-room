@@ -537,6 +537,7 @@
           <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
           <button type="button" onclick="showScreen('calm')">CALM ROOM</button>
           <button type="button" onclick="showScreen('hope')">HOPE ROOM</button>
+          <button type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -559,6 +560,7 @@
       <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button class="primary" type="button" onclick="showScreen('calm')">CALM ROOM</button>
       <button class="primary" type="button" onclick="showScreen('hope')">HOPE ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
@@ -628,7 +630,16 @@
     </div>
   </section>
 
-  <section class="screen" id="rant">
+  
+
+  <section class="screen" id="celebration">
+    <div class="topbar">The Meltdown Room &bull; Celebration Room</div>
+    <div class="scene-wrap"><img class="scene" src="founder-locked-assets/celebration-room-web.jpg" alt="Founder-designed Celebration Room with sunset garden, milestone wall, flowers, lanterns, and five celebration choices"></div>
+    <div class="celebration-panel"><h2>Celebration Room</h2><p>Celebrate the good. Big or small, it all matters.</p><div class="celebration-tools"><button class="celebration-tool primary" type="button" onclick="openCelebrationTool('private')">CELEBRATE PRIVATELY<br><small>Your win, your space</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('share')">SHARE MY WIN<br><small>Share only when you choose</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('milestone')">MARK A MILESTONE<br><small>Remember an important moment</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('someone')">CELEBRATE SOMEONE ELSE<br><small>Lift them up today</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('happy')">MY HAPPY PLACE<br><small>Breathe and soak in the good</small></button></div><div class="celebration-workspace" id="celebrationWorkspace"></div><p class="status" id="celebrationStatus" role="status" aria-live="polite">What are you celebrating today?</p></div>
+    <div class="controls"><button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button><button type="button" onclick="showScreen('map')">PROPERTY MAP</button><button type="button" onclick="showScreen('home')">HOME</button></div>
+  </section>
+
+<section class="screen" id="rant">
     <div class="topbar">The Meltdown Room • Rant Room</div>
     <div class="scene-wrap">
       <div class="rant-stage">
@@ -1458,8 +1469,22 @@
     function resetHopePlant(){localStorage.setItem("hopePlantStage","0");renderHopePlant();hopeStatus.textContent="A new hope seed is planted.";}
     function startHopeQuiet(){var remaining=60,words=document.getElementById("hopeQuietWords");clearInterval(hopeQuietTimer);words.textContent="Quiet hope: "+remaining+" seconds.";hopeQuietTimer=setInterval(function(){remaining--;words.textContent=remaining>0?"Quiet hope: "+remaining+" seconds.":"One quiet minute complete. Hope can be small and still be real.";if(remaining<=0)clearInterval(hopeQuietTimer);},1000);}
 
+    var celebrationWorkspace=document.getElementById("celebrationWorkspace"),celebrationStatus=document.getElementById("celebrationStatus");
+    function celebrationEscape(value){var d=document.createElement("div");d.textContent=value;return d.innerHTML;}
+    function celebrationRecords(){try{return JSON.parse(localStorage.getItem("celebrationRoomWins")||"[]");}catch(error){return [];}}
+    function closeCelebrationTool(){celebrationWorkspace.classList.remove("open");celebrationWorkspace.innerHTML="";}
+    function openCelebrationTool(tool){celebrationWorkspace.classList.add("open");
+      if(tool==="private")celebrationWorkspace.innerHTML='<h3>Celebrate Privately</h3><textarea id="celebrationText" placeholder="Name your win. Big, small, or hard fought—it counts."></textarea><div class="tool-actions"><button class="primary" type="button" onclick="saveCelebration(\'Private win\')">SAVE PRIVATELY</button><button type="button" onclick="showCelebrations()">MY CELEBRATIONS</button><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';
+      else if(tool==="share")celebrationWorkspace.innerHTML='<h3>Share My Win</h3><textarea id="celebrationText" placeholder="What good news would you like to share?"></textarea><div class="tool-actions"><button class="primary" type="button" onclick="shareCelebration()">OPEN PHONE SHARE MENU</button><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';
+      else if(tool==="milestone")celebrationWorkspace.innerHTML='<h3>Mark a Milestone</h3><input id="celebrationTitle" placeholder="Milestone name"><textarea id="celebrationText" placeholder="What made this moment important?"></textarea><div class="tool-actions"><button class="primary" type="button" onclick="saveCelebration(\'Milestone\')">ADD TO MY MILESTONE WALL</button><button type="button" onclick="showCelebrations()">VIEW MY WALL</button><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';
+      else if(tool==="someone")celebrationWorkspace.innerHTML='<h3>Celebrate Someone Else</h3><textarea id="celebrationText" placeholder="Tell them what you noticed and why it matters."></textarea><div class="tool-actions"><button class="primary" type="button" onclick="shareCelebration()">OPEN PHONE SHARE MENU</button><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';
+      else{celebrationWorkspace.innerHTML='<h3>My Happy Place</h3><div class="celebration-bloom">🌻 ✨ 🌼</div><p>Take three easy breaths. Let yourself feel the good without making it smaller.</p><div class="tool-actions"><button class="primary" type="button" onclick="celebrationStatus.textContent=\'You made room for joy today.\'">I AM HERE</button><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';celebrationStatus.textContent="Come in, breathe deep, and soak in the good energy.";}}
+    function saveCelebration(kind){var text=document.getElementById("celebrationText"),title=document.getElementById("celebrationTitle");if(!text||!text.value.trim()){celebrationStatus.textContent="Name the moment you want to celebrate first.";return;}var records=celebrationRecords();records.unshift({kind:kind,title:title&&title.value.trim(),text:text.value.trim(),date:new Date().toISOString()});localStorage.setItem("celebrationRoomWins",JSON.stringify(records.slice(0,75)));celebrationStatus.textContent="Saved privately. Your celebration made a flower bloom.";celebrationWorkspace.innerHTML='<div class="celebration-bloom">🌻</div><p>You did that. Be proud.</p><div class="tool-actions"><button type="button" onclick="showCelebrations()">MY CELEBRATIONS</button><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';}
+    function showCelebrations(){var records=celebrationRecords();celebrationWorkspace.classList.add("open");celebrationWorkspace.innerHTML='<h3>My Celebration Wall</h3><div class="celebration-history">'+(records.length?records.map(function(r){return '<div class="celebration-card"><strong>'+celebrationEscape(r.title||r.kind)+'</strong><br>'+celebrationEscape(r.text)+'<br><small>'+new Date(r.date).toLocaleDateString()+'</small></div>';}).join(""):'<p>Your first celebration will appear here.</p>')+'</div><div class="tool-actions"><button type="button" onclick="closeCelebrationTool()">CLOSE</button></div>';}
+    async function shareCelebration(){var input=document.getElementById("celebrationText"),value=input&&input.value.trim();if(!value){celebrationStatus.textContent="Write the celebration first.";return;}if(navigator.share){try{await navigator.share({title:"Something Worth Celebrating",text:value});celebrationStatus.textContent="Your phone share menu handled the celebration.";return;}catch(error){if(error.name==="AbortError"){celebrationStatus.textContent="Sharing canceled.";return;}}}try{await navigator.clipboard.writeText(value);celebrationStatus.textContent="Celebration copied. Share it wherever you choose.";}catch(error){celebrationStatus.textContent="Select and copy your message to share it.";}}
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
