@@ -1,3 +1,4 @@
+
 <!doctype html>
 <html lang="en">
 <head>
@@ -209,6 +210,30 @@
     .axe-target.hit { animation: targetHit .34s ease-out; }
     .axe-score { display: flex; justify-content: center; gap: 24px; font-weight: 800; color: #f7e3bd; }
 
+    .plate-game {
+      width: min(94vw, 760px); margin: 22px auto; padding: clamp(18px, 4vw, 34px);
+      border: 3px solid #8b6038; border-radius: 22px; text-align: center;
+      background: linear-gradient(rgba(31,19,11,.82),rgba(20,12,7,.95)), repeating-linear-gradient(90deg,#684629 0 42px,#54351f 42px 45px);
+      box-shadow: inset 0 0 30px #000, 0 14px 35px rgba(0,0,0,.45);
+    }
+    .plate-game h2 { margin: 0 0 6px; color: #f7e3bd; font: 700 clamp(28px,5vw,46px) Georgia,serif; }
+    .plate-game p { color: #dcc39c; }
+    .plate-lane {
+      position: relative; width: min(88vw,560px); height: min(62vh,620px); min-height: 470px; margin: 14px auto 4px;
+      overflow: hidden; border: 3px solid #4a301d; border-radius: 18px; touch-action: none;
+      background: linear-gradient(to bottom,#786047 0 49%,#3b281a 49% 51%,#553820 51% 100%);
+      box-shadow: inset 0 0 55px rgba(0,0,0,.7);
+    }
+    .plate-wall { position:absolute; left:8%; right:8%; top:5%; height:48%; border:8px solid #422918; background:repeating-linear-gradient(0deg,#795c42 0 28px,#6a4e38 28px 31px); box-shadow:inset 0 0 22px rgba(0,0,0,.45); }
+    .plate-wall::after { content:"SMASH WALL"; position:absolute; inset:0; display:grid; place-items:center; color:rgba(255,235,197,.4); font:900 clamp(26px,6vw,48px) Georgia,serif; letter-spacing:.08em; }
+    .plate-lane::after { content:"STAND BACK - SWIPE UP TO THROW"; position:absolute; left:5%; right:5%; bottom:3%; padding:8px; border-top:3px dashed #e3be79; color:#f7e3bd; font-size:clamp(11px,2.5vw,15px); font-weight:900; letter-spacing:.08em; pointer-events:none; }
+    .throw-plate { position:absolute; left:50%; bottom:9%; z-index:5; width:clamp(105px,27vw,165px); transform:translateX(-50%) rotate(-8deg); filter:drop-shadow(5px 7px 4px rgba(0,0,0,.68)); cursor:grab; touch-action:none; user-select:none; }
+    .throw-plate.dragging { cursor:grabbing; }
+    .throw-plate.flying { pointer-events:none; animation:plateFlight .58s cubic-bezier(.15,.75,.28,1) forwards; }
+    .throw-plate.smashed { opacity:0; }
+    .plate-shard { position:absolute; z-index:7; width:18px; height:25px; background:#eee0c6; border:2px solid #9a673d; clip-path:polygon(50% 0,100% 100%,0 72%); pointer-events:none; animation:shardFall .8s ease-out forwards; }
+    .plate-score { display:flex; justify-content:center; gap:24px; font-weight:800; color:#f7e3bd; }
+
     .map-stage { position: relative; width: min(100%, 1536px); margin: auto; }
     .map-stage .scene { filter: saturate(.72) brightness(.72); }
     .map-panel {
@@ -228,6 +253,8 @@
       from { left: 50%; bottom: 9%; transform: translateX(-50%) rotate(-18deg) scale(1); }
       to { left: var(--land-x); bottom: var(--land-y); transform: translateX(-50%) rotate(1062deg) scale(.48); }
     }
+    @keyframes plateFlight { from { left:50%; bottom:9%; transform:translateX(-50%) rotate(-8deg) scale(1); } to { left:var(--plate-x); bottom:50%; transform:translateX(-50%) rotate(720deg) scale(.5); } }
+    @keyframes shardFall { from { transform:translate(0,0) rotate(0); opacity:1; } to { transform:translate(var(--dx),var(--dy)) rotate(var(--spin)); opacity:0; } }
     @keyframes breathe {
       0%,100% { transform: scale(.75); box-shadow: 0 0 0 0 rgba(145,220,240,.5); }
       50% { transform: scale(1.55); box-shadow: 0 0 32px 22px rgba(145,220,240,.25); }
@@ -358,38 +385,7 @@
     <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
     <div class="scene-wrap">
       <div class="thinking-stage" id="thinkingStage">
-        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with decision and brainstorm boards">
-        <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
-      <button class="primary" type="button" onclick="addThinkingNote()">+ ADD NOTE</button>
-      <button class="secondary" type="button" onclick="clearMyHead()">CLEAR MY HEAD</button>
-      <button type="button" onclick="showScreen('home')">HOME</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <p class="status" id="thinkingStatus" role="status" aria-live="polite">Move the notes, write what is on your mind, and sort your thoughts.</p>
-    </div>
-  </section>
-
-  <section class="screen" id="smash">
-    <div class="topbar">The Meltdown Room &bull; Smash &amp; Release</div>
-    <div class="scene-wrap">
-      <div class="smash-stage" id="smashStage">
-        <img class="scene" src="https://raw.githubusercontent.com/sunshine7933/Meltdown-room/main/smash-release-room.png?v=complete6" alt="Smash and Release Room with nine release activities">
-        <button class="smash-choice" type="button" onclick="showScreen('axe')" aria-label="Open Axe Throwing"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Plate Throwing')" aria-label="Choose Plate Throwing"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Crumple and Throw')" aria-label="Choose Crumple and Throw"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Rip It Up')" aria-label="Choose Rip It Up"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Stress Bubbles')" aria-label="Choose Stress Bubbles"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Smash Box')" aria-label="Choose Smash Box"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Virtual Throw')" aria-label="Choose Virtual Throw"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Scribble and Destroy')" aria-label="Choose Scribble and Destroy"></button>
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Check In')" aria-label="Choose How Are You Feeling"></button>
-      </div>
-    </div>
-    <div class="controls">
-      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room w…629 tokens truncated…M</button>
       <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
       <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
@@ -417,6 +413,28 @@
     <div class="controls">
       <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
       <button type="button" onclick="resetAxeGame()">RESET SCORE</button>
+      <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+  <section class="screen" id="plate">
+    <div class="topbar">The Meltdown Room &bull; Plate Throwing</div>
+    <div class="scene-wrap">
+      <div class="plate-game">
+        <h2>Plate Throwing</h2>
+        <p>Hold the virtual plate and swipe upward to throw it safely into the smash wall.</p>
+        <div class="plate-score"><span>PLATES SMASHED: <span id="plateSmashes">0</span></span></div>
+        <div class="plate-lane" id="plateLane">
+          <div class="plate-wall" id="plateWall" aria-label="Plate smash wall"></div>
+          <img class="throw-plate" id="throwPlate" src="plate-real.png" alt="Virtual ceramic plate" draggable="false">
+        </div>
+        <p class="status" id="plateStatus" role="status" aria-live="polite">Take a breath. Hold the plate and swipe upward.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
+      <button type="button" onclick="resetPlateGame()">RESET PLATES</button>
       <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
     </div>
@@ -648,6 +666,58 @@
       axeStatus.textContent = "Score cleared. Stand back, aim, and swipe upward.";
     }
 
+    var plateLane = document.getElementById("plateLane");
+    var throwPlate = document.getElementById("throwPlate");
+    var plateStatus = document.getElementById("plateStatus");
+    var plateStart = null;
+    var plateSmashes = 0;
+    function smashPlate(endX, endY) {
+      var lane = plateLane.getBoundingClientRect();
+      var landX = Math.max(18, Math.min(82, (endX - lane.left) / lane.width * 100));
+      throwPlate.style.setProperty("--plate-x", landX + "%");
+      throwPlate.classList.remove("dragging", "flying", "smashed"); void throwPlate.offsetWidth; throwPlate.classList.add("flying");
+      setTimeout(function() {
+        throwPlate.classList.add("smashed");
+        for (var i = 0; i < 12; i += 1) {
+          let shard = document.createElement("span"); shard.className = "plate-shard";
+          shard.style.left = landX + "%"; shard.style.top = "34%";
+          shard.style.setProperty("--dx", (-95 + Math.random() * 190) + "px");
+          shard.style.setProperty("--dy", (75 + Math.random() * 160) + "px");
+          shard.style.setProperty("--spin", (-360 + Math.random() * 720) + "deg");
+          plateLane.appendChild(shard); setTimeout(function() { shard.remove(); }, 850);
+        }
+        plateSmashes += 1; document.getElementById("plateSmashes").textContent = plateSmashes;
+        plateStatus.textContent = "SMASH! Released safely. Grab the next virtual plate.";
+        setTimeout(function() { throwPlate.classList.remove("flying", "smashed"); }, 850);
+      }, 560);
+    }
+    throwPlate.addEventListener("pointerdown", function(event) {
+      plateStart = { x:event.clientX, y:event.clientY, time:Date.now() };
+      throwPlate.classList.add("dragging"); throwPlate.setPointerCapture(event.pointerId);
+      plateStatus.textContent = "Aim at the wall and swipe upward.";
+    });
+    throwPlate.addEventListener("pointermove", function(event) {
+      if (!plateStart || throwPlate.classList.contains("flying")) return;
+      if (plateStart.y - event.clientY < 85) return;
+      plateStart = null; smashPlate(event.clientX, event.clientY);
+    });
+    function finishPlateSwipe(event) {
+      if (!plateStart) return;
+      if (plateStart.y - event.clientY >= 65) smashPlate(event.clientX, event.clientY);
+      else plateStatus.textContent = "Swipe upward faster to throw the plate.";
+      plateStart = null; throwPlate.classList.remove("dragging");
+    }
+    throwPlate.addEventListener("pointerup", finishPlateSwipe);
+    plateLane.addEventListener("pointerup", finishPlateSwipe);
+    window.addEventListener("pointerup", finishPlateSwipe);
+    throwPlate.addEventListener("pointercancel", function() { plateStart = null; throwPlate.classList.remove("dragging"); });
+    function resetPlateGame() {
+      plateSmashes = 0; document.getElementById("plateSmashes").textContent = "0";
+      throwPlate.classList.remove("dragging", "flying", "smashed");
+      document.querySelectorAll(".plate-shard").forEach(function(shard) { shard.remove(); });
+      plateStatus.textContent = "Fresh stack ready. Hold the plate and swipe upward.";
+    }
+
     var thinkingBoard = document.getElementById("thinkingBoard");
     var thinkingStatus = document.getElementById("thinkingStatus");
     var thinkingNotes = [];
@@ -730,10 +800,11 @@
     window.addEventListener("load", sizeScribbleCanvas);
 
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe"].includes(start)) {
+    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe", "plate"].includes(start)) {
       showScreen(start);
     }
   </script>
 
 </body>
 </html>
+
