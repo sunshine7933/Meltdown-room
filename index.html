@@ -398,7 +398,7 @@
     <div class="controls">
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
       <button class="danger" type="button" onclick="releaseRant()">RELEASE IT</button>
-      <button class="danger" type="button" onclick="burnRant()">BURN IT</button>
+      <button class="danger" id="burnRantButton" type="button" onclick="burnRant()" aria-label="Burn this rant">BURN IT</button>
       <button class="primary" type="button" onclick="saveRant()">SAVE PRIVATELY</button>
       <button class="secondary" type="button" onclick="shareRant()">SHARE ANONYMOUSLY</button>
       <button type="button" onclick="newRant()">WRITE NEW RANT</button>
@@ -622,10 +622,37 @@
       rantText.focus();
     }
 
+    var burnRantArmed = false;
+    var burnRantTimer;
+
+    function resetBurnButton() {
+      var button = document.getElementById("burnRantButton");
+      burnRantArmed = false;
+      clearTimeout(burnRantTimer);
+      button.textContent = "BURN IT";
+      button.setAttribute("aria-label", "Burn this rant");
+    }
+
     function burnRant() {
-      if (!rantText.value.trim()) { setRantStatus("Write something first, then burn it when you are ready."); rantText.focus(); return; }
-      if (!window.confirm("Burn this rant? It will be permanently cleared from this device.")) return;
+      var button = document.getElementById("burnRantButton");
       var burnLayer = document.getElementById("rantBurnLayer");
+      if (!rantText.value.trim()) {
+        resetBurnButton();
+        setRantStatus("Write something first, then burn it when you are ready.");
+        rantText.focus();
+        return;
+      }
+      if (!burnRantArmed) {
+        burnRantArmed = true;
+        button.textContent = "TAP AGAIN TO BURN";
+        button.setAttribute("aria-label", "Tap again to permanently burn and clear this rant");
+        setRantStatus("Tap Burn again to confirm. This cannot be undone.");
+        burnRantTimer = setTimeout(resetBurnButton, 6000);
+        return;
+      }
+      clearTimeout(burnRantTimer);
+      button.disabled = true;
+      button.textContent = "BURNING…";
       rantText.setAttribute("readonly", "readonly");
       burnLayer.classList.remove("burning");
       void burnLayer.offsetWidth;
@@ -636,6 +663,8 @@
         rantText.removeAttribute("readonly");
         localStorage.removeItem("meltdownRantDraft");
         burnLayer.classList.remove("burning");
+        button.disabled = false;
+        resetBurnButton();
         setRantStatus("Gone. A fresh page is ready when you are.");
         rantText.focus();
       }, 1500);
