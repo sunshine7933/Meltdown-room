@@ -625,6 +625,12 @@
       axeMark.classList.add("dragging"); axeMark.setPointerCapture(event.pointerId);
       axeStatus.textContent = "Aim toward the target, then swipe upward.";
     });
+    axeMark.addEventListener("pointermove", function(event) {
+      if (!axeStart || axeMark.classList.contains("throwing")) return;
+      if (axeStart.y - event.clientY < 90) return;
+      var start = axeStart; axeStart = null;
+      throwAxe(start.x, start.y, event.clientX, event.clientY, Date.now() - start.time);
+    });
     function finishAxeSwipe(event) {
       if (!axeStart) return;
       throwAxe(axeStart.x, axeStart.y, event.clientX, event.clientY, Date.now() - axeStart.time);
