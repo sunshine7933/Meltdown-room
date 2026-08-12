@@ -170,6 +170,31 @@
     .smash-choice:nth-of-type(9) { left: 50.3%; top: 73.8%; }
     .smash-stage.releasing { animation: safeShake .42s ease-in-out 2; }
 
+    .axe-game {
+      width: min(94vw, 760px); margin: 22px auto; padding: clamp(18px, 4vw, 34px);
+      border: 3px solid #8b6038; border-radius: 22px; text-align: center;
+      background: linear-gradient(rgba(31,19,11,.84), rgba(20,12,7,.94)),
+        repeating-linear-gradient(90deg, #684629 0 42px, #54351f 42px 45px);
+      box-shadow: inset 0 0 30px #000, 0 14px 35px rgba(0,0,0,.45);
+    }
+    .axe-game h2 { margin: 0 0 6px; color: #f7e3bd; font: 700 clamp(28px, 5vw, 46px) Georgia, serif; }
+    .axe-game p { color: #dcc39c; }
+    .axe-target {
+      position: relative; width: min(68vw, 360px); aspect-ratio: 1; margin: 20px auto;
+      border: 12px solid #57371f; border-radius: 50%; cursor: crosshair; touch-action: manipulation;
+      background: radial-gradient(circle, #b6402f 0 9%, #e7c979 9% 20%, #6d91a0 20% 34%, #e7c979 34% 48%, #8e4c35 48% 64%, #d8b973 64% 80%, #6f4728 80% 100%);
+      box-shadow: 0 0 0 7px #2b1a0f, inset 0 0 22px rgba(0,0,0,.45), 0 10px 24px rgba(0,0,0,.45);
+    }
+    .axe-target::before, .axe-target::after { content: ""; position: absolute; background: rgba(43,26,15,.35); }
+    .axe-target::before { left: 49.5%; top: 4%; width: 1%; height: 92%; }
+    .axe-target::after { top: 49.5%; left: 4%; height: 1%; width: 92%; }
+    .axe-mark {
+      position: absolute; left: 50%; top: 50%; z-index: 3; transform: translate(-50%,-50%) rotate(-38deg);
+      font-size: clamp(34px, 9vw, 62px); filter: drop-shadow(3px 4px 2px rgba(0,0,0,.7)); pointer-events: none;
+    }
+    .axe-target.hit { animation: targetHit .34s ease-out; }
+    .axe-score { display: flex; justify-content: center; gap: 24px; font-weight: 800; color: #f7e3bd; }
+
     .map-stage { position: relative; width: min(100%, 1536px); margin: auto; }
     .map-stage .scene { filter: saturate(.72) brightness(.72); }
     .map-panel {
@@ -184,6 +209,7 @@
 
     @keyframes rainDrift { from { transform: translate(-18px,-20px); } to { transform: translate(18px,25px); } }
     @keyframes safeShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+    @keyframes targetHit { 50% { transform: scale(.97); } }
     @keyframes breathe {
       0%,100% { transform: scale(.75); box-shadow: 0 0 0 0 rgba(145,220,240,.5); }
       50% { transform: scale(1.55); box-shadow: 0 0 32px 22px rgba(145,220,240,.25); }
@@ -333,7 +359,7 @@
     <div class="scene-wrap">
       <div class="smash-stage" id="smashStage">
         <img class="scene" src="https://raw.githubusercontent.com/sunshine7933/Meltdown-room/main/smash-release-room.png?v=complete6" alt="Smash and Release Room with nine release activities">
-        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Axe Throwing')" aria-label="Choose Axe Throwing"></button>
+        <button class="smash-choice" type="button" onclick="showScreen('axe')" aria-label="Open Axe Throwing"></button>
         <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Plate Throwing')" aria-label="Choose Plate Throwing"></button>
         <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Crumple and Throw')" aria-label="Choose Crumple and Throw"></button>
         <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Rip It Up')" aria-label="Choose Rip It Up"></button>
@@ -350,6 +376,30 @@
       <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
       <p class="status" id="smashStatus" role="status" aria-live="polite">Choose a safe release activity from the room.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="axe">
+    <div class="topbar">The Meltdown Room &bull; Axe Throwing</div>
+    <div class="scene-wrap">
+      <div class="axe-game">
+        <h2>Axe Throwing</h2>
+        <p>Tap anywhere on the target to throw safely. No real axe needed.</p>
+        <div class="axe-score" aria-label="Axe throwing score">
+          <span>THROWS: <span id="axeThrows">0</span></span>
+          <span>SCORE: <span id="axeScore">0</span></span>
+        </div>
+        <button class="axe-target" id="axeTarget" type="button" onclick="throwAxe(event)" aria-label="Throw axe at target">
+          <span class="axe-mark" id="axeMark" aria-hidden="true">ðŸª“</span>
+        </button>
+        <p class="status" id="axeStatus" role="status" aria-live="polite">Take a breath, aim, and tap the target.</p>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('smash')">BACK TO SMASH &amp; RELEASE</button>
+      <button type="button" onclick="resetAxeGame()">RESET SCORE</button>
+      <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
     </div>
   </section>
 
@@ -518,6 +568,32 @@
       setTimeout(function() { smashStage.classList.remove("releasing"); }, 900);
     }
 
+    var axeThrows = 0;
+    var axeScore = 0;
+    var axeTarget = document.getElementById("axeTarget");
+    var axeMark = document.getElementById("axeMark");
+    var axeStatus = document.getElementById("axeStatus");
+    function throwAxe(event) {
+      var box = axeTarget.getBoundingClientRect();
+      var x = Math.max(8, Math.min(92, (event.clientX - box.left) / box.width * 100));
+      var y = Math.max(8, Math.min(92, (event.clientY - box.top) / box.height * 100));
+      var distance = Math.hypot(x - 50, y - 50);
+      var points = distance < 10 ? 10 : distance < 20 ? 7 : distance < 32 ? 5 : distance < 43 ? 3 : 1;
+      axeThrows += 1; axeScore += points;
+      axeMark.style.left = x + "%"; axeMark.style.top = y + "%";
+      axeTarget.classList.remove("hit"); void axeTarget.offsetWidth; axeTarget.classList.add("hit");
+      document.getElementById("axeThrows").textContent = axeThrows;
+      document.getElementById("axeScore").textContent = axeScore;
+      axeStatus.textContent = points === 10 ? "Bullseye! Strong release." : points + " points. Let it out and throw again.";
+    }
+    function resetAxeGame() {
+      axeThrows = 0; axeScore = 0;
+      document.getElementById("axeThrows").textContent = "0";
+      document.getElementById("axeScore").textContent = "0";
+      axeMark.style.left = "50%"; axeMark.style.top = "50%";
+      axeStatus.textContent = "Score cleared. Take a breath and begin again.";
+    }
+
     var thinkingBoard = document.getElementById("thinkingBoard");
     var thinkingStatus = document.getElementById("thinkingStatus");
     var thinkingNotes = [];
@@ -600,10 +676,11 @@
     window.addEventListener("load", sizeScribbleCanvas);
 
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash"].includes(start)) {
+    if (["home", "entrance", "map", "great", "rant", "meltdown", "thinking", "smash", "axe"].includes(start)) {
       showScreen(start);
     }
   </script>
 
 </body>
 </html>
+
