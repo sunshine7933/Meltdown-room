@@ -555,7 +555,7 @@
       <div class="calm-tools">
         <button class="calm-tool primary" type="button" onclick="startCalmBreathing()">GUIDED BREATHING<br><small>Follow the quiet light</small></button>
         <button class="calm-tool" type="button" onclick="startCalmQuiet(60)">ONE QUIET MINUTE<br><small>Rest without pressure</small></button>
-        <button class="calm-tool" type="button" onclick="setCalmSound('stream')">STREAM SOUNDS<br><small>Water and soft night air</small></button>
+        <button class="calm-tool" type="button" onclick="setCalmSound('stream')">STREAM & CRICKETS<br><small>Flowing water and night chirps</small></button>
         <button class="calm-tool" type="button" onclick="setCalmSound('rain')">GENTLE RAIN<br><small>Steady calming rhythm</small></button>
         <button class="calm-tool" type="button" onclick="openCalmReflection()">PRIVATE REFLECTION<br><small>Write what you need</small></button>
         <button class="calm-tool" type="button" onclick="setCalmSound('off')">QUIET THE ROOM<br><small>Stop sound and timer</small></button>
@@ -1352,14 +1352,36 @@
       calmSoundNodes.forEach(function(node){try{node.stop?node.stop():node.disconnect();}catch(error){}});calmSoundNodes=[];
       document.getElementById("calmSoundWave").classList.remove("active");
     }
+    function makeCalmNoise(context,seconds,amount){
+      var length=context.sampleRate*seconds,buffer=context.createBuffer(1,length,context.sampleRate),data=buffer.getChannelData(0),last=0;
+      for(var i=0;i<length;i++){var white=Math.random()*2-1;last=last*.985+white*.015;data[i]=(white*.22+last*.78)*amount;}
+      return buffer;
+    }
+    function addCricketChirps(context){
+      var master=context.createGain();master.gain.value=.13;master.connect(context.destination);calmSoundNodes.push(master);
+      var start=context.currentTime+.12;
+      for(var group=0;group<18;group++){
+        var groupStart=start+group*(1.35+Math.random()*.85);
+        for(var chirp=0;chirp<3;chirp++){
+          var oscillator=context.createOscillator(),gain=context.createGain(),when=groupStart+chirp*.105;
+          oscillator.type="sine";oscillator.frequency.setValueAtTime(3900+Math.random()*900,when);
+          oscillator.frequency.exponentialRampToValueAtTime(2850+Math.random()*550,when+.055);
+          gain.gain.setValueAtTime(.0001,when);gain.gain.exponentialRampToValueAtTime(.38,when+.009);gain.gain.exponentialRampToValueAtTime(.0001,when+.075);
+          oscillator.connect(gain);gain.connect(master);oscillator.start(when);oscillator.stop(when+.085);calmSoundNodes.push(oscillator,gain);
+        }
+      }
+    }
     function setCalmSound(mode){
       stopCalmSound();if(mode==="off"){stopCalmTimer();calmStage.classList.remove("breathing");calmBreathOrb.classList.remove("active");calmStatus.textContent="The room is quiet.";return;}
       try{
-        calmAudioContext=calmAudioContext||new (window.AudioContext||window.webkitAudioContext)();var length=calmAudioContext.sampleRate*2,buffer=calmAudioContext.createBuffer(1,length,calmAudioContext.sampleRate),data=buffer.getChannelData(0);
-        for(var i=0;i<length;i++)data[i]=(Math.random()*2-1)*(mode==="rain"?.22:.12);
-        var source=calmAudioContext.createBufferSource(),filter=calmAudioContext.createBiquadFilter(),gain=calmAudioContext.createGain();source.buffer=buffer;source.loop=true;filter.type="lowpass";filter.frequency.value=mode==="rain"?1200:520;gain.gain.value=.16;source.connect(filter);filter.connect(gain);gain.connect(calmAudioContext.destination);source.start();calmSoundNodes=[source,filter,gain];
-        document.getElementById("calmSoundWave").classList.add("active");calmStatus.textContent=mode==="rain"?"Gentle rain is playing.":"The stream and soft night air are playing.";
-      }catch(error){calmStatus.textContent="Sound is unavailable on this device. The room can stay quiet.";}
+        calmAudioContext=calmAudioContext||new (window.AudioContext||window.webkitAudioContext)();
+        if(calmAudioContext.state==="suspended")calmAudioContext.resume();
+        var source=calmAudioContext.createBufferSource(),filter=calmAudioContext.createBiquadFilter(),gain=calmAudioContext.createGain();
+        source.buffer=makeCalmNoise(calmAudioContext,4,mode==="rain"?1:.72);source.loop=true;filter.type=mode==="rain"?"lowpass":"bandpass";filter.frequency.value=mode==="rain"?1800:720;filter.Q.value=mode==="rain"?.4:.75;gain.gain.value=mode==="rain"?.27:.34;
+        source.connect(filter);filter.connect(gain);gain.connect(calmAudioContext.destination);source.start();calmSoundNodes=[source,filter,gain];
+        if(mode==="stream")addCricketChirps(calmAudioContext);
+        document.getElementById("calmSoundWave").classList.add("active");calmStatus.textContent=mode==="rain"?"Gentle rain is playing. Turn up your phone volume if needed.":"The stream and nighttime crickets are playing. Turn up your phone volume if needed.";
+      }catch(error){calmStatus.textContent="Sound is unavailable. Check that your phone is not muted, then tap again.";}
     }
     function openCalmReflection(){document.getElementById("calmReflection").classList.add("open");document.getElementById("calmReflectionText").value=localStorage.getItem("calmRoomReflection")||"";document.getElementById("calmReflectionText").focus();calmStatus.textContent="This reflection stays privately on this device.";}
     function closeCalmReflection(){document.getElementById("calmReflection").classList.remove("open");}
