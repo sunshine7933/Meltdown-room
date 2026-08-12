@@ -639,37 +639,18 @@
       rantText.focus();
     }
 
-    var burnRantArmed = false;
-    var burnRantTimer;
-
-    function resetBurnButton() {
-      var button = document.getElementById("burnRantButton");
-      burnRantArmed = false;
-      clearTimeout(burnRantTimer);
-      button.textContent = "BURN IT";
-      button.setAttribute("aria-label", "Burn this rant");
-    }
-
     function burnRant() {
       var button = document.getElementById("burnRantButton");
       var burnLayer = document.getElementById("rantBurnLayer");
       if (!rantText.value.trim()) {
-        resetBurnButton();
-        setRantStatus("Write something first, then burn it when you are ready.");
+        setRantStatus("Write something first, then tap Burn It.");
         rantText.focus();
         return;
       }
-      if (!burnRantArmed) {
-        burnRantArmed = true;
-        button.textContent = "TAP AGAIN TO BURN";
-        button.setAttribute("aria-label", "Tap again to permanently burn and clear this rant");
-        setRantStatus("Tap Burn again to confirm. This cannot be undone.");
-        burnRantTimer = setTimeout(resetBurnButton, 6000);
-        return;
-      }
-      clearTimeout(burnRantTimer);
+      if (button.disabled) return;
       button.disabled = true;
       button.textContent = "BURNING…";
+      button.setAttribute("aria-label", "Burning this rant");
       rantText.setAttribute("readonly", "readonly");
       burnLayer.classList.remove("burning");
       void burnLayer.offsetWidth;
@@ -684,7 +665,8 @@
         rantText.removeAttribute("readonly");
         burnLayer.classList.remove("burning");
         button.disabled = false;
-        resetBurnButton();
+        button.textContent = "BURN IT";
+        button.setAttribute("aria-label", "Burn this rant");
         setRantStatus("The ash is gone. A fresh page is ready when you are.");
         rantText.focus();
       }, 3300);
