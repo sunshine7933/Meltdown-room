@@ -1,4 +1,3 @@
-
 <!doctype html>
 <html lang="en">
 <head>
@@ -280,7 +279,7 @@
   <button class="still-toggle" id="stillModeButton" type="button" onclick="toggleStillMode()" aria-pressed="false">STILL MODE</button>
 
   <section class="screen active" id="home">
-    <div class="topbar">The Meltdown Room â€¢ Home</div>
+    <div class="topbar">The Meltdown Room • Home</div>
     <div class="scene-wrap">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
     </div>
@@ -290,7 +289,7 @@
   </section>
 
   <section class="screen" id="entrance">
-    <div class="topbar">The Meltdown Room â€¢ Entrance</div>
+    <div class="topbar">The Meltdown Room • Entrance</div>
     <div class="scene-wrap">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
     </div>
@@ -324,7 +323,7 @@
   </section>
 
   <section class="screen" id="great">
-    <div class="topbar">The Meltdown Room â€¢ Great Room</div>
+    <div class="topbar">The Meltdown Room • Great Room</div>
     <div class="scene-wrap">
       <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
     </div>
@@ -340,7 +339,7 @@
   </section>
 
   <section class="screen" id="rant">
-    <div class="topbar">The Meltdown Room â€¢ Rant Room</div>
+    <div class="topbar">The Meltdown Room • Rant Room</div>
     <div class="scene-wrap">
       <div class="rant-stage">
         <img class="scene" src="rant-room.png" alt="The Meltdown Room Rant Room">
@@ -360,7 +359,7 @@
   </section>
 
   <section class="screen" id="meltdown">
-    <div class="topbar">The Meltdown Room â€¢ Release &amp; Recover</div>
+    <div class="topbar">The Meltdown Room • Release &amp; Recover</div>
     <div class="scene-wrap">
       <div class="meltdown-stage" id="meltdownStage">
         <img class="scene" src="meltdown-room.jpg?v=repair2" alt="Meltdown Room with Release and Recover areas">
@@ -385,7 +384,38 @@
     <div class="topbar">The Meltdown Room &bull; Thinking Room</div>
     <div class="scene-wrap">
       <div class="thinking-stage" id="thinkingStage">
-        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room w…629 tokens truncated…M</button>
+        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with decision and brainstorm boards">
+        <div class="thinking-board" id="thinkingBoard" aria-label="Thinking board"></div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="primary" type="button" onclick="addThinkingNote()">+ ADD NOTE</button>
+      <button class="secondary" type="button" onclick="clearMyHead()">CLEAR MY HEAD</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <p class="status" id="thinkingStatus" role="status" aria-live="polite">Move the notes, write what is on your mind, and sort your thoughts.</p>
+    </div>
+  </section>
+
+  <section class="screen" id="smash">
+    <div class="topbar">The Meltdown Room &bull; Smash &amp; Release</div>
+    <div class="scene-wrap">
+      <div class="smash-stage" id="smashStage">
+        <img class="scene" src="https://raw.githubusercontent.com/sunshine7933/Meltdown-room/main/smash-release-room.png?v=complete6" alt="Smash and Release Room with nine release activities">
+        <button class="smash-choice" type="button" onclick="showScreen('axe')" aria-label="Open Axe Throwing"></button>
+        <button class="smash-choice" type="button" onclick="showScreen('plate')" aria-label="Open Plate Throwing"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Crumple and Throw')" aria-label="Choose Crumple and Throw"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Rip It Up')" aria-label="Choose Rip It Up"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Stress Bubbles')" aria-label="Choose Stress Bubbles"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Smash Box')" aria-label="Choose Smash Box"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Virtual Throw')" aria-label="Choose Virtual Throw"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Scribble and Destroy')" aria-label="Choose Scribble and Destroy"></button>
+        <button class="smash-choice" type="button" onclick="chooseSmash(this, 'Check In')" aria-label="Choose How Are You Feeling"></button>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
       <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
       <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
@@ -497,7 +527,7 @@
     function saveRant() {
       var text = rantText.value.trim();
       if (!text) {
-        setRantStatus("Write something first â€” this space is yours.");
+        setRantStatus("Write something first — this space is yours.");
         rantText.focus();
         return;
       }
@@ -807,4 +837,3 @@
 
 </body>
 </html>
-
