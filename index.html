@@ -179,9 +179,21 @@
     }
     .axe-game h2 { margin: 0 0 6px; color: #f7e3bd; font: 700 clamp(28px, 5vw, 46px) Georgia, serif; }
     .axe-game p { color: #dcc39c; }
+    .axe-range {
+      position: relative; width: min(88vw, 560px); height: min(62vh, 620px); min-height: 470px;
+      margin: 14px auto 4px; overflow: hidden; border: 3px solid #4a301d; border-radius: 18px;
+      background: linear-gradient(to bottom, rgba(15,10,6,.28), rgba(44,28,15,.82)),
+        repeating-linear-gradient(100deg, #4f331e 0 34px, #412817 34px 38px);
+      box-shadow: inset 0 0 45px rgba(0,0,0,.75); perspective: 700px;
+    }
+    .axe-range::after {
+      content: "STAND BACK â€¢ SWIPE UP TO THROW"; position: absolute; left: 5%; right: 5%; bottom: 3%;
+      padding: 8px; border-top: 3px dashed #e3be79; color: #f7e3bd; font-size: clamp(11px, 2.5vw, 15px);
+      font-weight: 900; letter-spacing: .08em; pointer-events: none;
+    }
     .axe-target {
-      position: relative; width: min(68vw, 360px); aspect-ratio: 1; margin: 20px auto;
-      border: 12px solid #57371f; border-radius: 50%; cursor: crosshair; touch-action: manipulation;
+      position: absolute; left: 50%; top: 5%; width: min(48vw, 250px); aspect-ratio: 1; margin: 0;
+      transform: translateX(-50%); border: 10px solid #57371f; border-radius: 50%; pointer-events: none;
       background: radial-gradient(circle, #b6402f 0 9%, #e7c979 9% 20%, #6d91a0 20% 34%, #e7c979 34% 48%, #8e4c35 48% 64%, #d8b973 64% 80%, #6f4728 80% 100%);
       box-shadow: 0 0 0 7px #2b1a0f, inset 0 0 22px rgba(0,0,0,.45), 0 10px 24px rgba(0,0,0,.45);
     }
@@ -189,9 +201,12 @@
     .axe-target::before { left: 49.5%; top: 4%; width: 1%; height: 92%; }
     .axe-target::after { top: 49.5%; left: 4%; height: 1%; width: 92%; }
     .axe-mark {
-      position: absolute; left: 50%; top: 50%; z-index: 3; transform: translate(-50%,-50%) rotate(-38deg);
-      font-size: clamp(34px, 9vw, 62px); filter: drop-shadow(3px 4px 2px rgba(0,0,0,.7)); pointer-events: none;
+      position: absolute; left: 50%; bottom: 9%; z-index: 5; width: clamp(82px, 22vw, 130px); height: auto;
+      transform: translateX(-50%) rotate(-18deg); transform-origin: 50% 58%;
+      filter: drop-shadow(5px 7px 4px rgba(0,0,0,.72)); cursor: grab; touch-action: none; user-select: none;
     }
+    .axe-mark.dragging { cursor: grabbing; }
+    .axe-mark.throwing { pointer-events: none; animation: axeFlight .72s cubic-bezier(.18,.74,.32,1) forwards; }
     .axe-target.hit { animation: targetHit .34s ease-out; }
     .axe-score { display: flex; justify-content: center; gap: 24px; font-weight: 800; color: #f7e3bd; }
 
@@ -209,7 +224,11 @@
 
     @keyframes rainDrift { from { transform: translate(-18px,-20px); } to { transform: translate(18px,25px); } }
     @keyframes safeShake { 0%,100% { transform: translateX(0); } 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
-    @keyframes targetHit { 50% { transform: scale(.97); } }
+    @keyframes targetHit { 0%,100% { transform: translateX(-50%) scale(1); } 50% { transform: translateX(-50%) scale(.97); } }
+    @keyframes axeFlight {
+      from { left: 50%; bottom: 9%; transform: translateX(-50%) rotate(-18deg) scale(1); }
+      to { left: var(--land-x); bottom: var(--land-y); transform: translateX(-50%) rotate(1062deg) scale(.48); }
+    }
     @keyframes breathe {
       0%,100% { transform: scale(.75); box-shadow: 0 0 0 0 rgba(145,220,240,.5); }
       50% { transform: scale(1.55); box-shadow: 0 0 32px 22px rgba(145,220,240,.25); }
@@ -384,15 +403,16 @@
     <div class="scene-wrap">
       <div class="axe-game">
         <h2>Axe Throwing</h2>
-        <p>Tap anywhere on the target to throw safely. No real axe needed.</p>
+        <p>Stand back, hold the axe, then swipe upward toward the target to throw.</p>
         <div class="axe-score" aria-label="Axe throwing score">
           <span>THROWS: <span id="axeThrows">0</span></span>
           <span>SCORE: <span id="axeScore">0</span></span>
         </div>
-        <button class="axe-target" id="axeTarget" type="button" onclick="throwAxe(event)" aria-label="Throw axe at target">
-          <span class="axe-mark" id="axeMark" aria-hidden="true">&#129683;</span>
-        </button>
-        <p class="status" id="axeStatus" role="status" aria-live="polite">Take a breath, aim, and tap the target.</p>
+        <div class="axe-range" id="axeRange">
+          <div class="axe-target" id="axeTarget" aria-label="Axe target"></div>
+          <img class="axe-mark" id="axeMark" src="axe-real.png" alt="Realistic virtual axe" draggable="false">
+        </div>
+        <p class="status" id="axeStatus" role="status" aria-live="polite">Take a breath. Hold the axe and swipe upward to throw.</p>
       </div>
     </div>
     <div class="controls">
@@ -570,28 +590,54 @@
 
     var axeThrows = 0;
     var axeScore = 0;
+    var axeRange = document.getElementById("axeRange");
     var axeTarget = document.getElementById("axeTarget");
     var axeMark = document.getElementById("axeMark");
     var axeStatus = document.getElementById("axeStatus");
-    function throwAxe(event) {
-      var box = axeTarget.getBoundingClientRect();
-      var x = Math.max(8, Math.min(92, (event.clientX - box.left) / box.width * 100));
-      var y = Math.max(8, Math.min(92, (event.clientY - box.top) / box.height * 100));
+    var axeStart = null;
+    function throwAxe(startX, startY, endX, endY, duration) {
+      var rangeBox = axeRange.getBoundingClientRect();
+      var targetBox = axeTarget.getBoundingClientRect();
+      var swipeY = startY - endY;
+      var swipeX = endX - startX;
+      if (swipeY < 70 || duration > 1200) {
+        axeStatus.textContent = "Swipe upward faster from the stand-back line.";
+        return;
+      }
+      var force = Math.max(.55, Math.min(1.15, swipeY / (rangeBox.height * .58)));
+      var x = Math.max(8, Math.min(92, 50 + swipeX / rangeBox.width * 120));
+      var y = Math.max(8, Math.min(92, 50 - (force - .88) * 85));
       var distance = Math.hypot(x - 50, y - 50);
       var points = distance < 10 ? 10 : distance < 20 ? 7 : distance < 32 ? 5 : distance < 43 ? 3 : 1;
       axeThrows += 1; axeScore += points;
-      axeMark.style.left = x + "%"; axeMark.style.top = y + "%";
+      var targetCenterX = targetBox.left - rangeBox.left + targetBox.width * x / 100;
+      var targetCenterY = rangeBox.bottom - (targetBox.top + targetBox.height * y / 100);
+      axeMark.style.setProperty("--land-x", targetCenterX / rangeBox.width * 100 + "%");
+      axeMark.style.setProperty("--land-y", targetCenterY / rangeBox.height * 100 + "%");
+      axeMark.classList.remove("dragging", "throwing"); void axeMark.offsetWidth; axeMark.classList.add("throwing");
       axeTarget.classList.remove("hit"); void axeTarget.offsetWidth; axeTarget.classList.add("hit");
       document.getElementById("axeThrows").textContent = axeThrows;
       document.getElementById("axeScore").textContent = axeScore;
       axeStatus.textContent = points === 10 ? "Bullseye! Strong release." : points + " points. Let it out and throw again.";
+      setTimeout(function() { axeMark.classList.remove("throwing"); }, 1250);
     }
+    axeMark.addEventListener("pointerdown", function(event) {
+      axeStart = { x: event.clientX, y: event.clientY, time: Date.now(), pointerId: event.pointerId };
+      axeMark.classList.add("dragging"); axeMark.setPointerCapture(event.pointerId);
+      axeStatus.textContent = "Aim toward the target, then swipe upward.";
+    });
+    axeMark.addEventListener("pointerup", function(event) {
+      if (!axeStart) return;
+      throwAxe(axeStart.x, axeStart.y, event.clientX, event.clientY, Date.now() - axeStart.time);
+      axeStart = null; axeMark.classList.remove("dragging");
+    });
+    axeMark.addEventListener("pointercancel", function() { axeStart = null; axeMark.classList.remove("dragging"); });
     function resetAxeGame() {
       axeThrows = 0; axeScore = 0;
       document.getElementById("axeThrows").textContent = "0";
       document.getElementById("axeScore").textContent = "0";
-      axeMark.style.left = "50%"; axeMark.style.top = "50%";
-      axeStatus.textContent = "Score cleared. Take a breath and begin again.";
+      axeMark.classList.remove("dragging", "throwing");
+      axeStatus.textContent = "Score cleared. Stand back, aim, and swipe upward.";
     }
 
     var thinkingBoard = document.getElementById("thinkingBoard");
@@ -683,3 +729,4 @@
 
 </body>
 </html>
+
