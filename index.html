@@ -494,6 +494,18 @@
     @media (min-width: 900px) {
       button { font-size: 17px; padding: 14px 24px; }
     }
+  
+    .learn-panel { width:min(1100px,96%); margin:0 auto 12px; padding:14px; color:#f4dfb8; background:rgba(38,24,14,.96); border:1px solid #8b6f47; border-radius:14px; text-align:center; }
+    .learn-panel h2 { margin:0 0 5px; font-family:Georgia,serif; }
+    .learn-shelves { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:8px; }
+    .learn-shelf { min-height:76px; border-radius:10px; background:#4b3521; border-color:#987049; }
+    .learn-shelf.active { outline:3px solid #dca85d; background:#654a2d; }
+    .learn-workspace { display:none; margin-top:12px; padding:14px; text-align:left; background:#f0dfbd; color:#302116; border-radius:10px; }
+    .learn-workspace.open { display:block; }
+    .learn-workspace input, .learn-workspace textarea, .learn-workspace select { width:100%; margin:6px 0; padding:12px; border:1px solid #9b774c; border-radius:8px; background:#fffaf0; color:#302116; font:inherit; }
+    .learn-workspace textarea { min-height:115px; resize:vertical; }
+    .learn-resource { padding:10px; margin:8px 0; border-left:5px solid #8d673d; background:#fff7e8; border-radius:6px; }
+
   </style>
 </head>
 
@@ -539,6 +551,7 @@
           <button type="button" onclick="showScreen('hope')">HOPE ROOM</button>
           <button type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
           <button type="button" onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
+          <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -563,6 +576,7 @@
       <button class="primary" type="button" onclick="showScreen('hope')">HOPE ROOM</button>
       <button class="primary" type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
       <button class="primary" type="button" onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
+      <button class="primary" type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
@@ -675,6 +689,36 @@
     </nav>
     <div class="controls"><button onclick="showScreen('great')">BACK TO GREAT ROOM</button><button onclick="showScreen('map')">PROPERTY MAP</button><button onclick="showScreen('home')">HOME</button></div>
   </section>
+
+
+<section class="screen" id="learn">
+  <div class="topbar">The Meltdown Room &bull; Learning Cabin</div>
+  <div class="scene-wrap"><img class="scene" src="founder-locked-assets/learning-cabin-dashboard.png" alt="Founder-designed Learning Cabin with sunset study desk, learning shelves, tools, and resource paths"></div>
+  <div class="learn-panel">
+    <h2>The Learning Cabin</h2>
+    <p>Knowledge brings hope. We learn together.</p>
+    <div class="learn-shelves" aria-label="Learning shelves">
+      <button class="learn-shelf" onclick="openLearnShelf('Autism & Neurodiversity',this)">AUTISM &amp; NEURODIVERSITY<br><small>Understanding, support, and strengths</small></button>
+      <button class="learn-shelf" onclick="openLearnShelf('Parenting & Caregiving',this)">PARENTING &amp; CAREGIVING<br><small>Tools for everyday moments</small></button>
+      <button class="learn-shelf" onclick="openLearnShelf('Trauma Recovery & Healing',this)">TRAUMA RECOVERY &amp; HEALING<br><small>Support for survivors</small></button>
+      <button class="learn-shelf" onclick="openLearnShelf('Caregiver Support',this)">CAREGIVER SUPPORT<br><small>You matter too</small></button>
+      <button class="learn-shelf" onclick="openLearnShelf('Emotional Wellness',this)">EMOTIONAL WELLNESS<br><small>Mental health and coping</small></button>
+      <button class="learn-shelf" onclick="openLearnShelf('School & Advocacy',this)">SCHOOL &amp; ADVOCACY<br><small>IEPs, rights, and tools</small></button>
+      <button class="learn-shelf" onclick="openLearnShelf('Daily Life Tips',this)">DAILY LIFE TIPS<br><small>Routines and practical help</small></button>
+    </div>
+    <div class="learn-workspace" id="learnWorkspace"></div>
+    <p class="status" id="learnStatus" role="status" aria-live="polite">Choose a shelf to begin your learning path.</p>
+  </div>
+  <div class="controls">
+    <button class="primary" onclick="continueLearning()">CONTINUE MY LEARNING</button>
+    <button onclick="openLearnTools()">TOOLS &amp; PRINTABLES</button>
+    <button onclick="askLearningQuestion()">ASK A QUESTION</button>
+    <button onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
+    <button onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+    <button onclick="showScreen('map')">PROPERTY MAP</button>
+    <button onclick="showScreen('home')">HOME</button>
+  </div>
+</section>
 
 <section class="screen" id="rant">
     <div class="topbar">The Meltdown Room • Rant Room</div>
@@ -1530,8 +1574,36 @@
     function viewReflections(t){renderReflectionList(reflectionEntries().filter(function(e){return e.type===t;}),reflectionLabel(t)+"s");}function showMemoryBox(){renderReflectionList(reflectionEntries().filter(function(e){return e.type==="memory";}),"My Memory Box");}function searchReflection(){reflectionWorkspace.classList.add("open");reflectionWorkspace.innerHTML='<h3>Search My Library</h3><input id="reflectionSearch" placeholder="Search words, titles, or memories"><button class="primary" onclick="runReflectionSearch()">SEARCH</button><button onclick="closeReflectionTool()">CLOSE</button>';}
     function runReflectionSearch(){var q=document.getElementById("reflectionSearch").value.trim().toLowerCase();if(!q){reflectionStatus.textContent="Enter a word to search for.";return;}var found=reflectionEntries().filter(function(e){return ((e.title||"")+" "+e.text+" "+reflectionLabel(e.type)).toLowerCase().includes(q);});renderReflectionList(found,"Search Results");reflectionStatus.textContent=found.length?found.length+" reflection"+(found.length===1?"":"s")+" found.":"No matching reflections found.";}
 
+
+    var learnWorkspace=document.getElementById("learnWorkspace"),learnStatus=document.getElementById("learnStatus");
+    var learnResources={
+      "Autism & Neurodiversity":["Understanding sensory needs","Communication and connection","Strength-based support"],
+      "Parenting & Caregiving":["Small wins that build connection","Calm routines for hard days","Caring for the caregiver"],
+      "Trauma Recovery & Healing":["Grounding after overwhelm","Building safety and trust","Gentle steps toward healing"],
+      "Caregiver Support":["Preventing caregiver burnout","Asking for help","A five-minute reset"],
+      "Emotional Wellness":["Name what you feel","Healthy coping choices","When to seek more support"],
+      "School & Advocacy":["IEP basics","Preparing for school meetings","Keeping useful records"],
+      "Daily Life Tips":["Visual schedules","Sensory-friendly routines","Breaking tasks into small steps"]
+    };
+    function learnEscape(v){var d=document.createElement("div");d.textContent=v;return d.innerHTML;}
+    function openLearnShelf(name,button){
+      document.querySelectorAll(".learn-shelf").forEach(function(b){b.classList.remove("active");});
+      if(button)button.classList.add("active");
+      localStorage.setItem("meltdownLearningShelf",name);
+      var items=learnResources[name]||[];
+      learnWorkspace.classList.add("open");
+      learnWorkspace.innerHTML="<h3>"+learnEscape(name)+"</h3>"+items.map(function(item,i){return '<div class="learn-resource"><strong>'+learnEscape(item)+'</strong><p>Read, reflect, and take one useful step at your own pace.</p><button onclick="markLearned(\''+learnEscape(name).replace(/'/g,"&#39;")+'\','+i+',this)">MARK AS LEARNED</button></div>';}).join("")+'<button onclick="closeLearnWorkspace()">CLOSE</button>';
+      learnStatus.textContent=name+" shelf opened.";
+    }
+    function markLearned(name,index,button){var key="meltdownLearned";var done=[];try{done=JSON.parse(localStorage.getItem(key)||"[]");}catch(e){}var id=name+"::"+index;if(!done.includes(id))done.push(id);localStorage.setItem(key,JSON.stringify(done));button.textContent="LEARNED ✓";button.disabled=true;learnStatus.textContent="Progress saved privately on this device.";}
+    function continueLearning(){var name=localStorage.getItem("meltdownLearningShelf")||"Daily Life Tips";var button=Array.from(document.querySelectorAll(".learn-shelf")).find(function(b){return b.textContent.toLowerCase().includes(name.toLowerCase());});openLearnShelf(name,button);}
+    function openLearnTools(){learnWorkspace.classList.add("open");learnWorkspace.innerHTML='<h3>Tools & Printables</h3><div class="learn-resource">Visual Schedule — build a simple step-by-step routine.</div><div class="learn-resource">Sensory Checklist — note what helps and what feels difficult.</div><div class="learn-resource">Calm Down Plan — save the steps that help you reset.</div><div class="learn-resource">Caregiver Planner — keep important needs in one place.</div><div class="learn-resource">Reward Chart — celebrate steady progress.</div><button onclick="closeLearnWorkspace()">CLOSE</button>';learnStatus.textContent="Learning tools opened.";}
+    function askLearningQuestion(){learnWorkspace.classList.add("open");learnWorkspace.innerHTML='<h3>Ask. Learn. Grow.</h3><input id="learnQuestionTitle" placeholder="What topic is this about?"><textarea id="learnQuestionText" placeholder="What would you like help understanding?"></textarea><button class="primary" onclick="saveLearningQuestion()">SAVE QUESTION PRIVATELY</button><button onclick="closeLearnWorkspace()">CLOSE</button>';learnStatus.textContent="Write your question. It stays on this device.";}
+    function saveLearningQuestion(){var title=document.getElementById("learnQuestionTitle").value.trim(),body=document.getElementById("learnQuestionText").value.trim();if(!body){learnStatus.textContent="Write your question first.";return;}var list=[];try{list=JSON.parse(localStorage.getItem("meltdownLearningQuestions")||"[]");}catch(e){}list.unshift({title:title,text:body,date:new Date().toISOString()});localStorage.setItem("meltdownLearningQuestions",JSON.stringify(list.slice(0,100)));learnStatus.textContent="Question saved privately on this device.";closeLearnWorkspace();}
+    function closeLearnWorkspace(){learnWorkspace.classList.remove("open");learnWorkspace.innerHTML="";}
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
