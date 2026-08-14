@@ -857,6 +857,47 @@
     .explore-trip{display:grid;grid-template-columns:180px 1fr auto;gap:8px;align-items:end}
     @media(max-width:740px){.explore-results{grid-template-columns:1fr}.explore-location,.explore-trip{grid-template-columns:1fr}.explore-shell{padding:7px}.explore-hotspot{min-width:32px;min-height:32px}}
 
+
+    /* Founder-locked Family & Fun Room: original dashboard art stays unchanged. */
+    .game-shell{width:min(1180px,100%);margin:0 auto;padding:12px}
+    .game-stage{position:relative;border:2px solid #9b7042;border-radius:16px;overflow:hidden;background:#160e08;box-shadow:0 18px 45px #0009}
+    .game-stage img{display:block;width:100%;height:auto}
+    .game-hotspot{position:absolute;border:2px solid transparent;border-radius:10px;background:transparent;cursor:pointer}
+    .game-hotspot:hover,.game-hotspot:focus-visible{border-color:#dbfbff;background:#74dbe422;box-shadow:0 0 0 3px #101b}
+    .game-panel{margin:14px 0;padding:16px;border:1px solid #ad8151;border-radius:14px;background:linear-gradient(145deg,#302116,#17100c);color:#f9ecd5}
+    .game-panel h2,.game-panel h3{margin:0 0 10px;font-family:Georgia,serif;color:#f1ce98}
+    .game-choice-grid,.game-filter-grid,.game-memory-actions{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}
+    .game-choice-grid button,.game-filter-grid button,.game-memory-actions button,.game-workspace button{min-height:44px;padding:9px;border:1px solid #b79061;border-radius:10px;background:#593b24;color:#fff4e2;font-weight:750;cursor:pointer}
+    .game-choice-grid button:hover,.game-choice-grid button[aria-pressed="true"],.game-workspace button:hover{background:#176b71;border-color:#c8f2f3}
+    .game-filter-grid{grid-template-columns:repeat(2,minmax(0,1fr))}
+    .game-filter-grid label{display:grid;gap:4px}
+    .game-filter-grid select,.game-panel textarea{width:100%;min-height:44px;padding:9px;border:1px solid #aa8357;border-radius:9px;background:#f8ead3;color:#2c1d13;font:inherit}
+    .game-panel textarea{min-height:105px;resize:vertical}
+    .game-workspace{margin-top:12px;padding:14px;border:1px solid #856344;border-radius:12px;background:#f1dfbf;color:#2c1c12;min-height:120px}
+    .game-workspace h3{color:#4c2e1a}
+    .game-workspace-status,.game-status{min-height:42px;margin-top:10px;padding:9px;border-radius:8px;background:#0d0907cc;color:#fff2d8}
+    .checker-board{display:grid;grid-template-columns:repeat(8,1fr);width:min(520px,100%);aspect-ratio:1;margin:10px auto;border:5px solid #4b2a16}
+    .checker-cell{min-height:0!important;border:0!important;border-radius:0!important;padding:0!important;background:#d6ae75!important}
+    .checker-cell.dark{background:#5b321c!important}
+    .checker-piece{display:block;width:72%;height:72%;margin:14%;border-radius:50%;box-shadow:inset 0 5px 8px #fff5,0 3px 5px #0008}
+    .checker-piece.red{background:#a63227;border:3px solid #e3a38d}.checker-piece.black{background:#181818;border:3px solid #777}
+    .checker-piece.king:after{content:"★";display:grid;place-items:center;height:100%;color:#ffd36f;font-size:1.2rem}
+    .checker-cell.selected{outline:4px solid #ffe16b;z-index:1}
+    .game-dartboard{width:min(360px,90vw);aspect-ratio:1;margin:12px auto;border-radius:50%;border:12px solid #3b2415;background:repeating-radial-gradient(circle,#d9b775 0 9%,#26382b 9% 18%,#b23a2d 18% 27%,#e7d5a6 27% 36%,#243d34 36% 45%,#a92e24 45% 54%,#ead5aa 54% 63%,#233c32 63% 72%,#b33529 72% 81%,#e6d2a5 81% 100%);cursor:crosshair;box-shadow:0 8px 20px #0007}
+    .game-cards{display:flex;justify-content:center;gap:12px;align-items:center;flex-wrap:wrap}
+    .game-card{display:grid;place-items:center;width:92px;height:128px;border:2px solid #7c4b2c;border-radius:10px;background:#fff9ea;color:#24160e;font:800 2rem Georgia,serif;box-shadow:0 5px 12px #0005}
+    .sudoku-board{display:grid;grid-template-columns:repeat(9,1fr);width:min(520px,100%);margin:10px auto;border:3px solid #3a2415}
+    .sudoku-cell{width:100%;aspect-ratio:1;min-width:0;border:1px solid #9b7a55;text-align:center;font-size:clamp(.8rem,3vw,1.2rem);background:#fff8e6;color:#2d1c12}
+    .sudoku-cell:nth-child(3n){border-right:3px solid #3a2415}.sudoku-cell:nth-child(n+19):nth-child(-n+27),.sudoku-cell:nth-child(n+46):nth-child(-n+54){border-bottom:3px solid #3a2415}
+    .sudoku-cell.clue{background:#d9c19b;font-weight:800}
+    .puzzle-board{display:grid;width:100%;aspect-ratio:4/3;margin:10px auto;border:4px solid #4a2b18;background:#21150d;overflow:auto}
+    .puzzle-tile{min-width:0!important;min-height:0!important;padding:0!important;border:1px solid #e5c68a!important;border-radius:1px!important;background-image:url("founder-locked-assets/game-room-dashboard.png?v=64")!important;background-size:500% 500%!important}
+    .puzzle-tile.blank{background-image:none!important;background:#21150d!important}
+    .game-idea{padding:14px;border-left:5px solid #1c7478;background:#fff6e6;color:#302014;border-radius:8px}
+    .game-shell[data-mood="lantern"] .game-stage{filter:sepia(.15) brightness(.82)}
+    .game-shell[data-mood="bright"] .game-stage{filter:brightness(1.12) saturate(1.05)}
+    .game-shell[data-mood="quiet"] .game-stage{filter:saturate(.75) brightness(.9)}
+    @media(max-width:720px){.game-shell{padding:7px}.game-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-filter-grid,.game-memory-actions{grid-template-columns:1fr}.game-hotspot{min-width:30px;min-height:30px}}
 </style>
 </head>
 
@@ -943,6 +984,7 @@
       <button class="primary" type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
       <button class="primary" type="button" onclick="showScreen('plan')">PLAN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
+      <button class="primary" type="button" onclick="showScreen('game')">FAMILY &amp; FUN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
@@ -1090,6 +1132,93 @@
 
 
   
+
+
+  <section class="screen" id="game">
+    <div class="topbar">The Meltdown Room &bull; Family &amp; Fun Room</div>
+    <div class="game-shell" id="gameShell">
+      <div class="game-stage">
+        <img src="founder-locked-assets/game-room-dashboard.png?v=64" alt="Sunshine's founder-approved Family and Fun Room dashboard">
+        <button class="game-hotspot" style="left:2%;top:39%;width:10%;height:8%" onclick="openGameTool('checkers')" aria-label="Open Game Night"></button>
+        <button class="game-hotspot" style="left:12%;top:39%;width:10%;height:8%" onclick="openGameTool('puzzle',25)" aria-label="Create Together"></button>
+        <button class="game-hotspot" style="left:22%;top:39%;width:10%;height:8%" onclick="openGameTool('movie')" aria-label="Plan Movie Night"></button>
+        <button class="game-hotspot" style="left:32%;top:39%;width:10%;height:8%" onclick="openGameTool('music')" aria-label="Music and Dance"></button>
+        <button class="game-hotspot" style="left:42%;top:39%;width:10%;height:8%" onclick="openGameTool('laughs')" aria-label="Just for Laughs"></button>
+        <button class="game-hotspot" style="left:52%;top:39%;width:10%;height:8%" onclick="openGameTool('sudoku')" aria-label="Brain Games"></button>
+        <button class="game-hotspot" style="left:2%;top:51%;width:12%;height:7%" onclick="openGameTool('checkers')" aria-label="Play Checkers"></button>
+        <button class="game-hotspot" style="left:14%;top:51%;width:12%;height:7%" onclick="openGameTool('darts')" aria-label="Play Darts"></button>
+        <button class="game-hotspot" style="left:26%;top:51%;width:13%;height:7%" onclick="openGameTool('solitaire')" aria-label="Play Solitaire"></button>
+        <button class="game-hotspot" style="left:39%;top:51%;width:13%;height:7%" onclick="openGameTool('sudoku')" aria-label="Play Sudoku"></button>
+        <button class="game-hotspot" style="left:2%;top:63%;width:12%;height:8%" onclick="openGameTool('puzzle',25)" aria-label="Start 25 piece puzzle"></button>
+        <button class="game-hotspot" style="left:14%;top:63%;width:12%;height:8%" onclick="openGameTool('puzzle',50)" aria-label="Start 50 piece puzzle"></button>
+        <button class="game-hotspot" style="left:26%;top:63%;width:12%;height:8%" onclick="openGameTool('puzzle',100)" aria-label="Start 100 piece puzzle"></button>
+        <button class="game-hotspot" style="left:38%;top:63%;width:12%;height:8%" onclick="openGameTool('puzzle',500)" aria-label="Start 500 piece puzzle"></button>
+        <button class="game-hotspot" style="left:53%;top:62%;width:44%;height:9%" onclick="showScreen('explore')" aria-label="Explore outdoor adventures"></button>
+        <button class="game-hotspot" style="left:54%;top:75%;width:13%;height:7%" onclick="setGameMood('bright')" aria-label="Change decor and colors"></button>
+        <button class="game-hotspot" style="left:68%;top:75%;width:13%;height:7%" onclick="setGameMood('lantern')" aria-label="Set mood and lighting"></button>
+        <button class="game-hotspot" style="left:82%;top:75%;width:14%;height:7%" onclick="toggleGameBeat()" aria-label="Choose music and sounds"></button>
+      </div>
+
+      <div class="game-panel">
+        <h2>Choose Your Fun</h2>
+        <div class="game-choice-grid">
+          <button onclick="openGameTool('checkers')">CHECKERS</button>
+          <button onclick="openGameTool('darts')">DARTS</button>
+          <button onclick="openGameTool('solitaire')">SOLITAIRE</button>
+          <button onclick="openGameTool('sudoku')">SUDOKU</button>
+          <button onclick="openGameTool('puzzle',25)">PUZZLES</button>
+          <button onclick="openGameTool('laughs')">JUST FOR LAUGHS</button>
+        </div>
+        <div class="game-workspace" id="gameWorkspace" aria-live="polite">
+          <h3>Family &amp; Fun Room</h3><p>Choose a game from the original picture or the buttons above.</p>
+        </div>
+        <div class="game-workspace-status" id="gameWorkspaceStatus" role="status" aria-live="polite">Ready when you are.</div>
+      </div>
+
+      <div class="game-panel">
+        <h3>Activity Filters</h3>
+        <div class="game-filter-grid">
+          <label>Who is joining?<select id="gameWho"><option>Me</option><option>Couple</option><option selected>Family</option><option>Friends</option></select></label>
+          <label>Age range<select id="gameAge"><option>Kids</option><option>Teens</option><option>Adults</option><option selected>All Ages</option></select></label>
+          <label>Energy level<select id="gameEnergy"><option>Quiet</option><option selected>Moderate</option><option>High Energy</option></select></label>
+          <label>Indoor / Outdoor<select id="gamePlace"><option>Indoor</option><option>Outdoor</option><option selected>Either</option></select></label>
+          <label>Sensory needs<select id="gameSensory"><option>Low Stimulation</option><option selected>Moderate</option><option>High Stimulation</option></select></label>
+          <label>Time available<select id="gameTime"><option>5–15 minutes</option><option selected>15–30 minutes</option><option>30+ minutes</option></select></label>
+        </div>
+        <button class="primary" type="button" onclick="findGameActivity()">FIND ACTIVITIES</button>
+      </div>
+
+      <div class="game-panel">
+        <h3>Make It Your Room</h3>
+        <div class="game-choice-grid">
+          <button onclick="setGameMood('bright')">BRIGHT &amp; PLAYFUL</button>
+          <button onclick="setGameMood('lantern')">LANTERN GLOW</button>
+          <button onclick="setGameMood('quiet')">QUIET MODE</button>
+          <button onclick="toggleGameBeat()">MUSIC / SOUNDS</button>
+          <button onclick="saveGameSetup()">SAVE MY SETUP</button>
+          <button onclick="showScreen('explore')">OUTDOOR ADVENTURES</button>
+        </div>
+      </div>
+
+      <div class="game-panel">
+        <h3>Create Memories</h3>
+        <textarea id="gameMemoryText" placeholder="Write a favorite moment from today..."></textarea>
+        <div class="game-memory-actions">
+          <button onclick="saveGameMemory()">SAVE PRIVATELY</button>
+          <button onclick="showGameMemories()">MEMORY LIBRARY</button>
+          <button onclick="clearGameMemory()">CLEAR</button>
+        </div>
+        <div class="game-status" id="gameStatus" role="status" aria-live="polite">Memories stay privately on this device.</div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
+      <button type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
+      <button type="button" onclick="showScreen('companion')">PET &amp; COMPANION</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
 
   <section class="screen" id="explore">
     <div class="topbar">The Meltdown Room &bull; Explore Near Me</div>
@@ -1916,6 +2045,7 @@
       if (typeof updateCompanionDock === "function") updateCompanionDock(id);
       if (id === "resources" && typeof initResourceShed === "function") initResourceShed();
       if (id === "explore" && typeof initExploreNearMe === "function") initExploreNearMe();
+      if (id === "game" && typeof initGameRoom === "function") initGameRoom();
       if (id === "outdoor" && typeof initOutdoorRoom === "function") initOutdoorRoom();
 
 
@@ -1928,6 +2058,7 @@
 
     function cleanUpRoomBeforeLeaving(id) {
       if (id === "outdoor" && typeof stopOutdoorSounds === "function") stopOutdoorSounds();
+      if (id === "game" && typeof stopGameBeat === "function") stopGameBeat();
       if (id === "outdoor" && outdoorBreathTimer) { clearInterval(outdoorBreathTimer); outdoorBreathTimer = null; }
       if (id === "meltdown" && typeof closeMeltdownTool === "function") closeMeltdownTool();
       if (id === "thinking" && typeof closeThinkingTool === "function") closeThinkingTool();
@@ -3501,8 +3632,162 @@
       exploreSay("Choose what sounds good today.");
     }
 
+
+    var gameCheckersBoard=[],gameCheckerPick=null,gameCheckerTurn="red";
+    var gameDartScore=0,gameDartThrows=0;
+    var gameSoloDeck=[],gameSoloCurrent=0,gameSoloScore=0,gameSoloRound=0;
+    var gamePuzzle={count:25,rows:5,cols:5,tiles:[]};
+    var gameBeatTimer=null,gameAudioContext=null,gameLaughIndex=0,gameSuggestedIdea="";
+    var gameJokes=[
+      "Why did the scarecrow win an award? Because he was outstanding in his field.",
+      "What do you call cheese that is not yours? Nacho cheese.",
+      "Why could not the bicycle stand up by itself? It was two-tired.",
+      "What did one wall say to the other wall? I will meet you at the corner.",
+      "Why did the cookie go to the doctor? It felt crummy.",
+      "What kind of tree fits in your hand? A palm tree."
+    ];
+    var gameMovies=[
+      "Cozy comedy night: blankets, popcorn, and everyone picks one favorite snack.",
+      "Family adventure night: choose a feel-good journey and build a blanket fort.",
+      "Animated favorite night: let the youngest person choose, then make hot cocoa.",
+      "Old favorite night: rewatch something that always makes your family smile."
+    ];
+    function gameSay(message){var node=document.getElementById("gameWorkspaceStatus");if(node)node.textContent=message}
+    function initGameRoom(){
+      var mood=localStorage.getItem("meltdownGameMood")||"bright";setGameMood(mood,false);
+      var memories=getGameMemories();var status=document.getElementById("gameStatus");if(status)status.textContent=memories.length?memories.length+" private memor"+(memories.length===1?"y":"ies")+" saved on this device.":"Memories stay privately on this device.";
+    }
+    function openGameTool(type,size){
+      stopGameBeat();
+      if(type==="checkers")startCheckersGame();
+      else if(type==="darts")startDartsGame();
+      else if(type==="solitaire")startSoloCards();
+      else if(type==="sudoku")startSudokuGame();
+      else if(type==="puzzle")startGamePuzzle(size||25);
+      else if(type==="movie")showMovieIdea();
+      else if(type==="music")toggleGameBeat();
+      else if(type==="laughs")showGameLaugh();
+    }
+    function startCheckersGame(){
+      gameCheckersBoard=Array.from({length:8},function(){return Array(8).fill("")});
+      for(var r=0;r<3;r++)for(var c=0;c<8;c++)if((r+c)%2===1)gameCheckersBoard[r][c]="b";
+      for(var r2=5;r2<8;r2++)for(var c2=0;c2<8;c2++)if((r2+c2)%2===1)gameCheckersBoard[r2][c2]="r";
+      gameCheckerPick=null;gameCheckerTurn="red";renderCheckersGame();gameSay("Checkers ready. Red moves first.");
+    }
+    function checkerColor(piece){return piece.toLowerCase()==="r"?"red":"black"}
+    function renderCheckersGame(){
+      var box=document.getElementById("gameWorkspace");if(!box)return;
+      var html='<h3>Checkers — Two Players</h3><p id="checkerTurn">Turn: '+gameCheckerTurn+'</p><div class="checker-board" role="grid" aria-label="Checkers board">';
+      for(var r=0;r<8;r++)for(var c=0;c<8;c++){
+        var piece=gameCheckersBoard[r][c],dark=(r+c)%2===1,selected=gameCheckerPick&&gameCheckerPick.r===r&&gameCheckerPick.c===c;
+        html+='<button class="checker-cell '+(dark?"dark ":"")+(selected?"selected":"")+'" onclick="chooseChecker('+r+','+c+')" aria-label="Row '+(r+1)+' column '+(c+1)+(piece?" "+checkerColor(piece)+" piece":" empty")+'">'+(piece?'<span class="checker-piece '+checkerColor(piece)+(piece===piece.toUpperCase()?" king":"")+'"></span>':"")+'</button>';
+      }
+      box.innerHTML=html+'</div><button onclick="startCheckersGame()">NEW GAME</button>';
+    }
+    function chooseChecker(r,c){
+      var piece=gameCheckersBoard[r][c];
+      if(!gameCheckerPick){
+        if(!piece||checkerColor(piece)!==gameCheckerTurn){gameSay("Choose a "+gameCheckerTurn+" piece.");return}
+        gameCheckerPick={r:r,c:c};renderCheckersGame();gameSay("Piece selected. Choose a diagonal square.");return;
+      }
+      if(piece&&checkerColor(piece)===gameCheckerTurn){gameCheckerPick={r:r,c:c};renderCheckersGame();return}
+      var from=gameCheckerPick,moving=gameCheckersBoard[from.r][from.c],dr=r-from.r,dc=c-from.c,isKing=moving===moving.toUpperCase(),forward=checkerColor(moving)==="red"?-1:1,valid=false,captured=null;
+      if(!piece&&Math.abs(dc)===1&&Math.abs(dr)===1&&(isKing||dr===forward))valid=true;
+      if(!piece&&Math.abs(dc)===2&&Math.abs(dr)===2&&(isKing||dr===forward*2)){
+        var mr=from.r+dr/2,mc=from.c+dc/2,mid=gameCheckersBoard[mr][mc];
+        if(mid&&checkerColor(mid)!==gameCheckerTurn){valid=true;captured={r:mr,c:mc}}
+      }
+      if(!valid){gameSay("That move is not available.");gameCheckerPick=null;renderCheckersGame();return}
+      gameCheckersBoard[r][c]=moving;gameCheckersBoard[from.r][from.c]="";if(captured)gameCheckersBoard[captured.r][captured.c]="";
+      if((moving==="r"&&r===0)||(moving==="b"&&r===7))gameCheckersBoard[r][c]=moving.toUpperCase();
+      gameCheckerPick=null;var other=gameCheckerTurn==="red"?"black":"red";
+      var otherLeft=gameCheckersBoard.some(function(row){return row.some(function(p){return p&&checkerColor(p)===other})});
+      if(!otherLeft){gameSay(gameCheckerTurn+" wins!");renderCheckersGame();return}
+      gameCheckerTurn=other;renderCheckersGame();gameSay(gameCheckerTurn+" to move.");
+    }
+    function startDartsGame(){
+      gameDartScore=0;gameDartThrows=0;
+      document.getElementById("gameWorkspace").innerHTML='<h3>Darts — Tap to Throw</h3><p>Ten throws. Aim for the center.</p><div class="game-dartboard" onclick="throwGameDart(event)" role="button" tabindex="0" aria-label="Dartboard"></div><p id="gameDartReadout">Score: 0 • Throws: 0/10</p><button onclick="startDartsGame()">NEW ROUND</button>';
+      gameSay("Stand back in real life. In the app, tap the dartboard to throw.");
+    }
+    function throwGameDart(event){
+      if(gameDartThrows>=10){gameSay("Round complete. Start a new round to throw again.");return}
+      var board=event.currentTarget,rect=board.getBoundingClientRect(),x=event.clientX-rect.left-rect.width/2,y=event.clientY-rect.top-rect.height/2,radius=Math.sqrt(x*x+y*y)/(rect.width/2),points=0;
+      if(radius<=.08)points=50;else if(radius<=.2)points=25;else if(radius<=.38)points=20;else if(radius<=.56)points=15;else if(radius<=.74)points=10;else if(radius<=1)points=5;
+      gameDartThrows++;gameDartScore+=points;document.getElementById("gameDartReadout").textContent="Score: "+gameDartScore+" • Throws: "+gameDartThrows+"/10";
+      gameSay(points?points+" points!": "Missed the board. Try again.");
+      if(gameDartThrows===10)gameSay("Round complete — final score "+gameDartScore+".");
+    }
+    function makeSoloDeck(){var deck=[];for(var suit=0;suit<4;suit++)for(var rank=1;rank<=13;rank++)deck.push({rank:rank,suit:suit});for(var i=deck.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1)),t=deck[i];deck[i]=deck[j];deck[j]=t}return deck}
+    function soloCardLabel(card){var names={1:"A",11:"J",12:"Q",13:"K"},suits=["♣","♦","♥","♠"];return(names[card.rank]||card.rank)+suits[card.suit]}
+    function startSoloCards(){gameSoloDeck=makeSoloDeck();gameSoloCurrent=gameSoloDeck.pop();gameSoloScore=0;gameSoloRound=0;renderSoloCards();gameSay("Solo card challenge ready. Guess whether the next card is higher or lower.");}
+    function renderSoloCards(){
+      var box=document.getElementById("gameWorkspace"),card=gameSoloCurrent;
+      box.innerHTML='<h3>Solitaire — High or Low</h3><p>Build the longest correct streak you can.</p><div class="game-cards"><div class="game-card">'+soloCardLabel(card)+'</div></div><p>Score: '+gameSoloScore+' • Cards played: '+gameSoloRound+'</p><button onclick="guessSoloCard(&quot;higher&quot;)">HIGHER</button> <button onclick="guessSoloCard(&quot;lower&quot;)">LOWER</button> <button onclick="startSoloCards()">RESHUFFLE</button>';
+    }
+    function guessSoloCard(choice){
+      if(!gameSoloDeck.length){gameSay("Deck complete! Final score "+gameSoloScore+".");return}
+      var next=gameSoloDeck.pop(),correct=choice==="higher"?next.rank>=gameSoloCurrent.rank:next.rank<=gameSoloCurrent.rank;
+      gameSoloScore=correct?gameSoloScore+1:0;gameSoloRound++;var before=soloCardLabel(gameSoloCurrent);gameSoloCurrent=next;renderSoloCards();gameSay((correct?"Correct! ":"Not this time. ")+before+" → "+soloCardLabel(next)+".");
+    }
+    var sudokuPuzzle="530070000600195000098000060800060003400803001700020006060000280000419005000080079";
+    var sudokuSolution="534678912672195348198342567859761423426853791713924856961537284287419635345286179";
+    function startSudokuGame(){
+      var html='<h3>Sudoku</h3><p>Fill every row, column, and 3×3 box with 1–9.</p><div class="sudoku-board">';
+      for(var i=0;i<81;i++){var clue=sudokuPuzzle[i]!=="0";html+='<input class="sudoku-cell '+(clue?"clue":"")+'" data-sudoku="'+i+'" value="'+(clue?sudokuPuzzle[i]:"")+'" '+(clue?"readonly":"")+' inputmode="numeric" maxlength="1" aria-label="Sudoku row '+(Math.floor(i/9)+1)+' column '+(i%9+1)+'">'}
+      document.getElementById("gameWorkspace").innerHTML=html+'</div><button onclick="checkSudokuGame()">CHECK PUZZLE</button> <button onclick="startSudokuGame()">RESET</button>';
+      gameSay("Sudoku ready. Take your time.");
+    }
+    function checkSudokuGame(){
+      var cells=document.querySelectorAll("[data-sudoku]"),complete=true,correct=true;
+      cells.forEach(function(cell){var index=Number(cell.getAttribute("data-sudoku")),value=cell.value.replace(/[^1-9]/g,"");cell.value=value;if(!value)complete=false;if(value&&value!==sudokuSolution[index]){correct=false;cell.style.background="#ffd0c7"}else if(!cell.readOnly)cell.style.background="#fff8e6"});
+      if(complete&&correct)gameSay("Sudoku complete — beautifully done!");else if(!correct)gameSay("A highlighted square needs another look.");else gameSay("So far so good. Keep going.");
+    }
+    function startGamePuzzle(count){
+      var sizes={25:[5,5],50:[5,10],100:[10,10],500:[20,25]},size=sizes[count]||sizes[25];gamePuzzle={count:count,rows:size[0],cols:size[1],tiles:Array.from({length:count},function(_,i){return i})};gamePuzzle.tiles[count-1]=-1;
+      for(var n=0;n<Math.min(4000,count*8);n++){var blank=gamePuzzle.tiles.indexOf(-1),br=Math.floor(blank/gamePuzzle.cols),bc=blank%gamePuzzle.cols,candidates=[];if(br>0)candidates.push(blank-gamePuzzle.cols);if(br<gamePuzzle.rows-1)candidates.push(blank+gamePuzzle.cols);if(bc>0)candidates.push(blank-1);if(bc<gamePuzzle.cols-1)candidates.push(blank+1);var pick=candidates[Math.floor(Math.random()*candidates.length)];gamePuzzle.tiles[blank]=gamePuzzle.tiles[pick];gamePuzzle.tiles[pick]=-1}
+      renderGamePuzzle();gameSay(count+"-piece puzzle shuffled. Tap a piece beside the empty space.");
+    }
+    function renderGamePuzzle(){
+      var box=document.getElementById("gameWorkspace"),html='<h3>'+gamePuzzle.count+'-Piece Sliding Puzzle</h3><p>Rebuild the room picture by sliding pieces into the empty space.</p><div class="puzzle-board" style="grid-template-columns:repeat('+gamePuzzle.cols+',1fr);grid-template-rows:repeat('+gamePuzzle.rows+',1fr)">';
+      gamePuzzle.tiles.forEach(function(tile,index){if(tile<0)html+='<button class="puzzle-tile blank" aria-label="Empty puzzle space"></button>';else{var row=Math.floor(tile/gamePuzzle.cols),col=tile%gamePuzzle.cols,x=gamePuzzle.cols===1?0:col/(gamePuzzle.cols-1)*100,y=gamePuzzle.rows===1?0:row/(gamePuzzle.rows-1)*100;html+='<button class="puzzle-tile" onclick="moveGamePuzzle('+index+')" style="background-size:'+(gamePuzzle.cols*100)+'% '+(gamePuzzle.rows*100)+'%!important;background-position:'+x+'% '+y+'%" aria-label="Puzzle piece '+(tile+1)+'"></button>'}});
+      box.innerHTML=html+'</div><button onclick="startGamePuzzle('+gamePuzzle.count+')">SHUFFLE AGAIN</button>';
+    }
+    function moveGamePuzzle(index){
+      var blank=gamePuzzle.tiles.indexOf(-1),r=Math.floor(index/gamePuzzle.cols),c=index%gamePuzzle.cols,br=Math.floor(blank/gamePuzzle.cols),bc=blank%gamePuzzle.cols;
+      if(Math.abs(r-br)+Math.abs(c-bc)!==1){gameSay("Choose a piece beside the empty space.");return}
+      gamePuzzle.tiles[blank]=gamePuzzle.tiles[index];gamePuzzle.tiles[index]=-1;renderGamePuzzle();
+      var solved=gamePuzzle.tiles.every(function(tile,i){return i===gamePuzzle.count-1?tile===-1:tile===i});gameSay(solved?"Puzzle complete — you did it!":"Piece moved.");
+    }
+    function showMovieIdea(){var idea=gameMovies[Math.floor(Math.random()*gameMovies.length)];document.getElementById("gameWorkspace").innerHTML='<h3>Movie Night</h3><div class="game-idea">'+idea+'</div><button onclick="showMovieIdea()">ANOTHER IDEA</button>';gameSay("Movie-night idea ready.");}
+    function showGameLaugh(){var joke=gameJokes[gameLaughIndex%gameJokes.length];gameLaughIndex++;document.getElementById("gameWorkspace").innerHTML='<h3>Just for Laughs</h3><div class="game-idea">'+joke+'</div><button onclick="showGameLaugh()">NEXT JOKE</button>';gameSay("Share the smile.");}
+    function toggleGameBeat(){
+      if(gameBeatTimer){stopGameBeat();gameSay("Music stopped.");return}
+      var AudioContext=window.AudioContext||window.webkitAudioContext;if(!AudioContext){gameSay("Music is not available on this device.");return}
+      gameAudioContext=gameAudioContext||new AudioContext();var notes=[261.6,329.6,392,329.6],step=0;
+      function tone(){var osc=gameAudioContext.createOscillator(),gain=gameAudioContext.createGain();osc.frequency.value=notes[step++%notes.length];gain.gain.setValueAtTime(.035,gameAudioContext.currentTime);gain.gain.exponentialRampToValueAtTime(.001,gameAudioContext.currentTime+.22);osc.connect(gain);gain.connect(gameAudioContext.destination);osc.start();osc.stop(gameAudioContext.currentTime+.24)}
+      tone();gameBeatTimer=setInterval(tone,420);document.getElementById("gameWorkspace").innerHTML='<h3>Music &amp; Dance</h3><p>A gentle playful beat is playing. Move however feels fun.</p><button onclick="toggleGameBeat()">STOP MUSIC</button>';gameSay("Music started.");
+    }
+    function stopGameBeat(){if(gameBeatTimer){clearInterval(gameBeatTimer);gameBeatTimer=null}}
+    function setGameMood(mood,announce){
+      var shell=document.getElementById("gameShell");if(shell)shell.setAttribute("data-mood",mood);localStorage.setItem("meltdownGameMood",mood);
+      if(announce!==false)gameSay((mood==="lantern"?"Lantern glow":mood==="quiet"?"Quiet mode":"Bright and playful")+" selected.");
+    }
+    function saveGameSetup(){var setup={mood:document.getElementById("gameShell").getAttribute("data-mood")||"bright",who:document.getElementById("gameWho").value,age:document.getElementById("gameAge").value,energy:document.getElementById("gameEnergy").value,place:document.getElementById("gamePlace").value,sensory:document.getElementById("gameSensory").value,time:document.getElementById("gameTime").value};localStorage.setItem("meltdownGameSetup",JSON.stringify(setup));gameSay("Your Family & Fun Room setup was saved on this device.");}
+    function findGameActivity(){
+      var who=document.getElementById("gameWho").value,energy=document.getElementById("gameEnergy").value,place=document.getElementById("gamePlace").value,sensory=document.getElementById("gameSensory").value,time=document.getElementById("gameTime").value,ideas=[];
+      if(place==="Outdoor")ideas=["Playground adventure","Garden scavenger hunt","Creek and water-wheel walk"];else if(energy==="Quiet"||sensory==="Low Stimulation")ideas=["25-piece puzzle","Solitaire card challenge","Sudoku together"];else if(energy==="High Energy")ideas=["Darts challenge","Music and dance","Outdoor adventure"];else ideas=["Checkers match","Movie night","50-piece puzzle"];
+      gameSuggestedIdea=ideas[0];document.getElementById("gameWorkspace").innerHTML='<h3>Activities for '+who+'</h3><div class="game-idea">'+ideas.join(" • ")+'<br><small>'+time+' • '+place+' • '+sensory+'</small></div><button onclick="openSuggestedGame(gameSuggestedIdea)">START FIRST IDEA</button>';gameSay("Three blueprint-matched activities are ready.");
+    }
+    function openSuggestedGame(idea){if(idea.indexOf("Puzzle")>=0||idea.indexOf("puzzle")>=0)openGameTool("puzzle",25);else if(idea.indexOf("Solitaire")>=0)openGameTool("solitaire");else if(idea.indexOf("Sudoku")>=0)openGameTool("sudoku");else if(idea.indexOf("Darts")>=0)openGameTool("darts");else if(idea.indexOf("Music")>=0)openGameTool("music");else if(idea.indexOf("Outdoor")>=0||idea.indexOf("Playground")>=0||idea.indexOf("Garden")>=0||idea.indexOf("Creek")>=0)showScreen("explore");else if(idea.indexOf("Movie")>=0)openGameTool("movie");else openGameTool("checkers")}
+    function getGameMemories(){try{return JSON.parse(localStorage.getItem("meltdownGameMemories")||"[]")}catch(error){return[]}}
+    function saveGameMemory(){var area=document.getElementById("gameMemoryText"),text=area.value.trim();if(!text){document.getElementById("gameStatus").textContent="Write a memory first.";return}var items=getGameMemories();items.unshift({text:text,date:new Date().toISOString()});localStorage.setItem("meltdownGameMemories",JSON.stringify(items.slice(0,100)));area.value="";document.getElementById("gameStatus").textContent="Memory saved privately on this device."}
+    function showGameMemories(){var items=getGameMemories(),box=document.getElementById("gameWorkspace");if(!items.length){box.innerHTML="<h3>Memory Library</h3><p>No memories saved yet.</p>";return}box.innerHTML="<h3>Memory Library</h3>"+items.map(function(item){return '<div class="game-idea"><strong>'+new Date(item.date).toLocaleDateString()+'</strong><br>'+gameEscape(item.text)+'</div>'}).join("")}
+    function clearGameMemory(){document.getElementById("gameMemoryText").value="";document.getElementById("gameStatus").textContent="Writing cleared."}
+    function gameEscape(value){var node=document.createElement("div");node.textContent=value||"";return node.innerHTML}
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "resources", "explore", "connect", "plan", "relationship", "outdoor", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "resources", "explore", "game", "connect", "plan", "relationship", "outdoor", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
