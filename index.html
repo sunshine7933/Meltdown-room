@@ -227,8 +227,17 @@
     .thinking-status { min-height:24px; color:#f3d39a; }
     .thinking-note-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; max-width:720px; margin:14px auto; }
     .thinking-note-card { min-height:90px; padding:10px; color:#49331f; background:#ead8aa; border-radius:6px; box-shadow:0 5px 10px rgba(0,0,0,.35); }
-    .hourglass-visual { width:90px; height:150px; margin:15px auto; border:8px solid #825b36; border-radius:45px; background:linear-gradient(to bottom,transparent 0 45%,#79aeb2 46% 54%,transparent 55%); animation:none; }
-    .hourglass-visual.running { animation:hourglassTurn 1s ease, breathe 8s 1s ease-in-out infinite; }
+    .hourglass-visual { position:relative; width:110px; height:160px; margin:18px auto; border-top:12px solid #6d4729; border-bottom:12px solid #6d4729; border-radius:10px; background:linear-gradient(155deg,transparent 0 42%,rgba(118,181,190,.92) 43% 57%,transparent 58%),linear-gradient(25deg,transparent 0 42%,rgba(118,181,190,.92) 43% 57%,transparent 58%); filter:drop-shadow(0 8px 8px rgba(0,0,0,.45)); animation:none; }
+    .hourglass-visual::before,.hourglass-visual::after { content:""; position:absolute; left:16px; right:16px; height:61px; border:5px solid #b78b58; background:rgba(226,240,231,.15); }
+    .hourglass-visual::before { top:4px; border-radius:8px 8px 50% 50%; background:linear-gradient(to bottom,rgba(116,184,195,.85) 0 45%,transparent 46%); }
+    .hourglass-visual::after { bottom:4px; border-radius:50% 50% 8px 8px; background:linear-gradient(to top,rgba(116,184,195,.85) 0 45%,transparent 46%); }
+    .hourglass-visual.running { animation:hourglassTurn 1s ease, hourglassGlow 4s 1s ease-in-out infinite; }
+    @keyframes hourglassGlow { 50% { filter:drop-shadow(0 0 15px rgba(117,198,209,.85)); } }
+    .thinking-pin-picker { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:10px 0; }
+    .pin-choice { min-height:42px; padding:8px 13px; border-radius:12px; }
+    .pin-choice.active { outline:3px solid #fff2c9; }
+    .thinking-note-card { position:relative; padding-top:25px; }
+    .thinking-note-card::before { content:""; position:absolute; top:7px; left:50%; width:15px; height:15px; border-radius:50%; background:var(--pin,#b83d35); box-shadow:0 2px 3px rgba(0,0,0,.55); transform:translateX(-50%); }
     .thinking-stage.thinking-rain .scene { filter:saturate(.75) brightness(.78) hue-rotate(12deg); }
     .thinking-stage.thinking-night .scene { filter:brightness(.55) saturate(.8) hue-rotate(15deg); }
     .thinking-stage.thinking-warm .scene { filter:sepia(.18) saturate(1.18) brightness(1.04); }
@@ -355,8 +364,9 @@
     .hope-plant.stage-1 .hope-stem{height:55px}.hope-plant.stage-2 .hope-stem{height:100px}.hope-plant.stage-3 .hope-stem{height:145px}
     .hope-plant.stage-1 .leaf-1,.hope-plant.stage-2 .leaf-1,.hope-plant.stage-3 .leaf-1{opacity:1}.hope-plant.stage-2 .leaf-2,.hope-plant.stage-3 .leaf-2{opacity:1}.hope-plant.stage-3 .leaf-3,.hope-plant.stage-3 .leaf-4{opacity:1}
     .leaf-1{left:42px;bottom:90px;transform:rotate(-25deg)}.leaf-2{left:82px;bottom:115px;transform:scaleX(-1) rotate(-25deg)}.leaf-3{left:39px;bottom:142px;transform:rotate(-20deg)}.leaf-4{left:84px;bottom:165px;transform:scaleX(-1) rotate(-20deg)}
-    .hope-flower{position:absolute;left:65px;bottom:177px;width:48px;height:48px;opacity:0;border-radius:50%;background:radial-gradient(circle,#553215 0 18%,#efb82f 20% 43%,#d48221 45% 65%,transparent 67%);transition:opacity .6s}
-    .hope-plant.stage-3 .hope-flower{opacity:1}
+    .hope-flower{position:absolute;left:55px;bottom:168px;width:70px;height:70px;opacity:0;border-radius:50%;background:radial-gradient(circle,#4b2b14 0 20%,#7b4b1d 21% 27%,transparent 28%),repeating-conic-gradient(from 0deg,#ffd64a 0 9deg,#e99b20 10deg 18deg);filter:drop-shadow(0 0 9px rgba(255,191,44,.65));transform:scale(.18) rotate(-18deg);transition:opacity .7s,transform 1s cubic-bezier(.2,.85,.2,1.2)}
+    .hope-plant.stage-3 .hope-flower{opacity:1;transform:scale(1) rotate(0);animation:sunflowerBloom 2.4s ease-in-out}
+    @keyframes sunflowerBloom{0%{transform:scale(.18) rotate(-18deg)}65%{transform:scale(1.13) rotate(4deg)}100%{transform:scale(1) rotate(0)}}
     @media(max-width:700px){.hope-stage .scene{max-height:calc(100vh - 230px)}.hope-tools{grid-template-columns:repeat(2,minmax(130px,1fr))}.hope-tool{min-height:98px;padding:10px}}
 
     .axe-game {
@@ -506,6 +516,11 @@
     .learn-workspace textarea { min-height:115px; resize:vertical; }
     .learn-resource { padding:10px; margin:8px 0; border-left:5px solid #8d673d; background:#fff7e8; border-radius:6px; }
 
+  
+    .meltdown-tool-launchers { width:100%; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:10px 12px; background:rgba(36,23,14,.95); border-top:1px solid #8b6f47; }
+    .meltdown-tool-launchers button { min-height:44px; padding:10px 14px; }
+    #hope .scene,#celebration .scene,#reflection .scene,#learn .scene { max-height:62vh; }
+
   </style>
 </head>
 
@@ -627,7 +642,7 @@
 
   <section class="screen" id="hope">
     <div class="topbar">The Meltdown Room &bull; Hope Room</div>
-    <div class="scene-wrap"><div class="hope-stage"><img class="scene" src="founder-locked-assets/hope-room.png?v=full44" alt="The Hope Room with sunrise windows, Hope Box, flowers, lanterns, and six hope activities"></div></div>
+    <div class="scene-wrap"><div class="hope-stage"><img class="scene" src="founder-locked-assets/hope-room.png?v=full-repair" loading="eager" decoding="async" alt="The Hope Room with sunrise windows, Hope Box, flowers, lanterns, and six hope activities"></div></div>
     <div class="hope-panel">
       <h2>The Hope Room</h2><p>Hold on. Keep going. Better days are ahead.</p>
       <div class="hope-tools">
@@ -650,7 +665,7 @@
 
   <section class="screen" id="celebration">
     <div class="topbar">The Meltdown Room &bull; Celebration Room</div>
-    <div class="scene-wrap"><img class="scene" src="founder-locked-assets/celebration-room-dashboard.png?v=full44" alt="Founder-designed Celebration Room with sunset garden, milestone wall, flowers, lanterns, and five celebration choices"></div>
+    <div class="scene-wrap"><img class="scene" src="founder-locked-assets/celebration-room-dashboard.png?v=full-repair" loading="eager" decoding="async" alt="Founder-designed Celebration Room with sunset garden, milestone wall, flowers, lanterns, and five celebration choices"></div>
     <div class="celebration-panel"><h2>Celebration Room</h2><p>Celebrate the good. Big or small, it all matters.</p><div class="celebration-tools"><button class="celebration-tool primary" type="button" onclick="openCelebrationTool('private')">CELEBRATE PRIVATELY<br><small>Your win, your space</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('share')">SHARE MY WIN<br><small>Share only when you choose</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('milestone')">MARK A MILESTONE<br><small>Remember an important moment</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('someone')">CELEBRATE SOMEONE ELSE<br><small>Lift them up today</small></button><button class="celebration-tool" type="button" onclick="openCelebrationTool('happy')">MY HAPPY PLACE<br><small>Breathe and soak in the good</small></button></div><div class="celebration-workspace" id="celebrationWorkspace"></div><p class="status" id="celebrationStatus" role="status" aria-live="polite">What are you celebrating today?</p></div>
     <div class="controls"><button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button><button type="button" onclick="showScreen('map')">PROPERTY MAP</button><button type="button" onclick="showScreen('home')">HOME</button></div>
   </section>
@@ -658,7 +673,7 @@
 
 <section class="screen" id="reflection">
     <div class="topbar">The Meltdown Room &bull; Reflection Library</div>
-    <div class="scene-wrap"><img class="scene" src="founder-locked-assets/reflection-library-web.jpg" alt="Founder-designed Reflection Library with fireplace, books, sunset window, writing desk, memory box, and private library tools"></div>
+    <div class="scene-wrap"><img class="scene" src="founder-locked-assets/reflection-library.png?v=full-repair" loading="eager" decoding="async" alt="Founder-designed Reflection Library with fireplace, books, sunset window, writing desk, memory box, and private library tools"></div>
     <div class="reflection-panel">
       <h2>The Reflection Library</h2>
       <p>Your story. Your growth. Your way. Look back. Be proud. Keep growing.</p>
@@ -693,7 +708,7 @@
 
 <section class="screen" id="learn">
   <div class="topbar">The Meltdown Room &bull; Learning Cabin</div>
-  <div class="scene-wrap"><img class="scene" src="founder-locked-assets/learning-cabin-dashboard.png" alt="Founder-designed Learning Cabin with sunset study desk, learning shelves, tools, and resource paths"></div>
+  <div class="scene-wrap"><img class="scene" src="founder-locked-assets/learning-cabin-dashboard.png?v=full-repair" loading="eager" decoding="async" alt="Founder-designed Learning Cabin with sunset study desk, learning shelves, tools, and resource paths"></div>
   <div class="learn-panel">
     <h2>The Learning Cabin</h2>
     <p>Knowledge brings hope. We learn together.</p>
@@ -763,6 +778,15 @@
           <div id="meltdownToolBody"></div>
         </div>
       </div>
+    </div>
+    <div class="meltdown-tool-launchers" aria-label="Meltdown Room tools">
+      <button class="primary" type="button" onclick="openMeltdownTool('letout')">LET IT OUT</button>
+      <button type="button" onclick="openMeltdownTool('journal')">PRIVATE JOURNAL</button>
+      <button type="button" onclick="openMeltdownTool('calm')">CALM DOWN</button>
+      <button type="button" onclick="openMeltdownTool('notes')">NOTE WALL</button>
+      <button type="button" onclick="openMeltdownTool('checkin')">DAILY CHECK-IN</button>
+      <button type="button" onclick="openMeltdownTool('reminder')">REMINDER</button>
+      <button type="button" onclick="openMeltdownTool('settings')">SETTINGS</button>
     </div>
     <div class="controls" aria-label="Meltdown Room navigation">
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
@@ -1446,7 +1470,7 @@
       }else if(tool==="questions"){
         title="Ask Myself Questions"; body='<p class="thinking-question" id="thinkingQuestion">'+thinkingQuestions[thinkingQuestionIndex]+'</p><textarea id="thinkingAnswer" placeholder="Your answer..."></textarea><div class="thinking-actions">'+thinkButton("SAVE ANSWER & NEXT","saveThinkingAnswer()","primary")+thinkButton("NEXT QUESTION","nextThinkingQuestion()")+'</div><p class="thinking-status" id="thinkingToolStatus"></p>';
       }else if(tool==="brainstorm"){
-        title="Brainstorm"; body='<p>Let ideas flow. Organize, move, group, save, or let go of ideas.</p><input id="brainstormInput" placeholder="New idea"><div class="thinking-actions">'+thinkButton("ADD IDEA","addBrainstormIdea()","primary")+thinkButton("CLEAR IDEAS","clearBrainstormIdeas()","danger")+'</div><div class="thinking-note-grid" id="brainstormGrid"></div><p class="thinking-status" id="thinkingToolStatus"></p>';
+        title="Brainstorm"; body='<p>Let ideas flow. Choose the pin you want, then add your idea.</p><input id="brainstormInput" placeholder="New idea"><div class="thinking-pin-picker" aria-label="Choose a pin color"><button type="button" class="pin-choice active" data-pin="#b83d35" onclick="chooseThinkingPin(this)">RED PIN</button><button type="button" class="pin-choice" data-pin="#d49a28" onclick="chooseThinkingPin(this)">GOLD PIN</button><button type="button" class="pin-choice" data-pin="#497c91" onclick="chooseThinkingPin(this)">BLUE PIN</button><button type="button" class="pin-choice" data-pin="#63834a" onclick="chooseThinkingPin(this)">GREEN PIN</button><button type="button" class="pin-choice" data-pin="#785684" onclick="chooseThinkingPin(this)">PURPLE PIN</button></div><div class="thinking-actions">'+thinkButton("ADD IDEA","addBrainstormIdea()","primary")+thinkButton("CLEAR IDEAS","clearBrainstormIdeas()","danger")+'</div><div class="thinking-note-grid" id="brainstormGrid"></div><p class="thinking-status" id="thinkingToolStatus"></p>';
       }else if(tool==="quiet"){
         title="Just Think"; body='<p>No prompts. No pressure. Just you and your thoughts.</p><div class="hourglass-visual" id="quietVisual"></div><p id="quietWords">Choose a quiet pause.</p><div class="thinking-actions">'+thinkButton("1 MINUTE","startQuiet(60)","primary")+thinkButton("3 MINUTES","startQuiet(180)")+thinkButton("END QUIET TIME","finishQuiet()")+'</div>';
       }else if(tool==="hourglass"){
@@ -1470,9 +1494,11 @@
     function clearThinkingWriting(){thinkingWriting.value="";localStorage.removeItem("thinkingPrivateWriting");thinkingStatus("Released. The page is clear.");}
     function nextThinkingQuestion(){thinkingQuestionIndex=(thinkingQuestionIndex+1)%thinkingQuestions.length;thinkingQuestion.textContent=thinkingQuestions[thinkingQuestionIndex];thinkingAnswer.value="";}
     function saveThinkingAnswer(){var answers=[];try{answers=JSON.parse(localStorage.getItem("thinkingAnswers")||"[]");}catch(e){}answers.push({question:thinkingQuestions[thinkingQuestionIndex],answer:thinkingAnswer.value,date:new Date().toISOString()});localStorage.setItem("thinkingAnswers",JSON.stringify(answers));thinkingStatus("Answer saved privately.");nextThinkingQuestion();}
-    function getBrainstormIdeas(){try{return JSON.parse(localStorage.getItem("thinkingBrainstormIdeas")||"[]");}catch(e){return [];}}
-    function renderBrainstormIdeas(){var g=document.getElementById("brainstormGrid");if(!g)return;var ideas=getBrainstormIdeas();g.innerHTML=ideas.length?ideas.map(function(x,i){return '<button type="button" class="thinking-note-card" onclick="removeBrainstormIdea('+i+')" aria-label="Remove idea">'+x.replace(/[&<>"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch];})+'</button>';}).join(""):"<p>Your board is ready for ideas.</p>";}
-    function addBrainstormIdea(){if(!brainstormInput.value.trim()){thinkingStatus("Write an idea first.");return;}var ideas=getBrainstormIdeas();ideas.push(brainstormInput.value.trim());localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));brainstormInput.value="";renderBrainstormIdeas();thinkingStatus("Idea added. Tap an idea to remove it.");}
+    var selectedThinkingPin="#b83d35";
+    function chooseThinkingPin(button){selectedThinkingPin=button.getAttribute("data-pin")||"#b83d35";document.querySelectorAll(".pin-choice").forEach(function(pin){pin.classList.remove("active");});button.classList.add("active");thinkingStatus("Pin selected.");}
+    function getBrainstormIdeas(){try{var list=JSON.parse(localStorage.getItem("thinkingBrainstormIdeas")||"[]");return Array.isArray(list)?list.map(function(item){return typeof item==="string"?{text:item,pin:"#b83d35"}:item;}):[];}catch(e){return [];}}
+    function renderBrainstormIdeas(){var g=document.getElementById("brainstormGrid");if(!g)return;var ideas=getBrainstormIdeas();g.innerHTML=ideas.length?ideas.map(function(item,i){var text=(item.text||"").replace(/[&<>"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch];});return '<button type="button" class="thinking-note-card" style="--pin:'+String(item.pin||"#b83d35").replace(/[^#a-zA-Z0-9(),.% -]/g,"")+'" onclick="removeBrainstormIdea('+i+')" aria-label="Remove idea">'+text+'</button>';}).join(""):"<p>Your board is ready for ideas.</p>";}
+    function addBrainstormIdea(){var input=document.getElementById("brainstormInput");if(!input||!input.value.trim()){thinkingStatus("Write an idea first.");return;}var ideas=getBrainstormIdeas();ideas.push({text:input.value.trim(),pin:selectedThinkingPin});localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));input.value="";renderBrainstormIdeas();thinkingStatus("Idea added with your chosen pin. Tap an idea to remove it.");}
     function removeBrainstormIdea(i){var ideas=getBrainstormIdeas();ideas.splice(i,1);localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));renderBrainstormIdeas();}
     function clearBrainstormIdeas(){localStorage.removeItem("thinkingBrainstormIdeas");renderBrainstormIdeas();thinkingStatus("Brainstorm Board cleared.");}
     function startQuiet(seconds){var v=document.getElementById("quietVisual"),w=document.getElementById("quietWords"),remaining=seconds;v.classList.add("running");w.textContent="Quiet time: "+remaining+" seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;w.textContent=remaining>0?"Quiet time: "+remaining+" seconds":"Quiet time complete. Take your next step gently.";if(remaining<=0)clearInterval(thinkingTimer);},1000);}
@@ -1609,6 +1635,8 @@
     function askLearningQuestion(){learnWorkspace.classList.add("open");learnWorkspace.innerHTML='<h3>Ask. Learn. Grow.</h3><input id="learnQuestionTitle" placeholder="What topic is this about?"><textarea id="learnQuestionText" placeholder="What would you like help understanding?"></textarea><button class="primary" onclick="saveLearningQuestion()">SAVE QUESTION PRIVATELY</button><button onclick="closeLearnWorkspace()">CLOSE</button>';learnStatus.textContent="Write your question. It stays on this device.";}
     function saveLearningQuestion(){var title=document.getElementById("learnQuestionTitle").value.trim(),body=document.getElementById("learnQuestionText").value.trim();if(!body){learnStatus.textContent="Write your question first.";return;}var list=[];try{list=JSON.parse(localStorage.getItem("meltdownLearningQuestions")||"[]");}catch(e){}list.unshift({title:title,text:body,date:new Date().toISOString()});localStorage.setItem("meltdownLearningQuestions",JSON.stringify(list.slice(0,100)));learnStatus.textContent="Question saved privately on this device.";closeLearnWorkspace();}
     function closeLearnWorkspace(){learnWorkspace.classList.remove("open");learnWorkspace.innerHTML="";}
+
+    window.addEventListener("hashchange",function(){var id=window.location.hash.replace("#","");if(document.getElementById(id)&&id!==currentRoom)showScreen(id);});
 
     var start = window.location.hash.replace("#", "");
     if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
