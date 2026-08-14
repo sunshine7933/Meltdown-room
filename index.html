@@ -610,6 +610,14 @@
     .learn-workspace input, .learn-workspace textarea, .learn-workspace select { width:100%; margin:6px 0; padding:12px; border:1px solid #9b774c; border-radius:8px; background:#fffaf0; color:#302116; font:inherit; }
     .learn-workspace textarea { min-height:115px; resize:vertical; }
     .learn-resource { padding:10px; margin:8px 0; border-left:5px solid #8d673d; background:#fff7e8; border-radius:6px; }
+    .learn-resource strong { display:block; margin:4px 0; font:700 18px/1.3 Georgia,serif; }
+    .learn-source { display:inline-block; padding:3px 8px; margin-bottom:4px; color:#fff9e9; background:#6c4b2d; border-radius:999px; font-size:12px; font-weight:800; }
+    .learn-resource-actions { display:flex; flex-wrap:wrap; align-items:center; gap:8px; }
+    .learn-open { display:inline-flex; align-items:center; justify-content:center; min-height:44px; padding:10px 15px; color:#fff; background:#5c7c8a; border:1px solid #385561; border-radius:999px; font-weight:800; text-decoration:none; }
+    .learn-open:focus-visible { outline:3px solid #e07a3d; outline-offset:2px; }
+    .learn-disclaimer,.learn-notice { padding:10px; border-radius:8px; background:#ead8b2; }
+    .learn-notice { color:#fff; background:#70402f; border:2px solid #a96e4b; }
+
 
   
     .meltdown-tool-launchers { width:100%; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:10px 12px; background:rgba(36,23,14,.95); border-top:1px solid #8b6f47; }
@@ -1880,13 +1888,34 @@
 
     var learnWorkspace=document.getElementById("learnWorkspace"),learnStatus=document.getElementById("learnStatus");
     var learnResources={
-      "Autism & Neurodiversity":["Understanding sensory needs","Communication and connection","Strength-based support"],
-      "Parenting & Caregiving":["Small wins that build connection","Calm routines for hard days","Caring for the caregiver"],
-      "Trauma Recovery & Healing":["Grounding after overwhelm","Building safety and trust","Gentle steps toward healing"],
-      "Caregiver Support":["Preventing caregiver burnout","Asking for help","A five-minute reset"],
-      "Emotional Wellness":["Name what you feel","Healthy coping choices","When to seek more support"],
-      "School & Advocacy":["IEP basics","Preparing for school meetings","Keeping useful records"],
-      "Daily Life Tips":["Visual schedules","Sensory-friendly routines","Breaking tasks into small steps"]
+      "Autism & Neurodiversity":[
+        {title:"Autistic Self Advocacy Network Resource Library",description:"Autistic-led guides about self-advocacy, communication, community living, healthcare, college, and transition to adulthood.",source:"ASAN",url:"https://autisticadvocacy.org/resources/"},
+        {title:"Start Here: A Guide for Parents of Autistic Kids",description:"A strengths-based starting place created by autistic advocates for families learning how to support an autistic child.",source:"ASAN",url:"https://autisticadvocacy.org/book/start-here/"}
+      ],
+      "Parenting & Caregiving":[
+        {title:"Positive Parenting Tips by Age",description:"Practical guidance for nurturing, protecting, and guiding children through each stage of development.",source:"CDC",url:"https://www.cdc.gov/child-development/positive-parenting-tips/index.html"},
+        {title:"Helping Children Manage Big Feelings",description:"Simple emotion-coaching ideas that help children feel safe, understood, and supported during hard moments.",source:"American Academy of Pediatrics",url:"https://www.healthychildren.org/English/family-life/family-dynamics/Pages/helping-little-people-manage-big-feelings.aspx"}
+      ],
+      "Trauma Recovery & Healing":[
+        {title:"Trauma-Informed Approaches and Programs",description:"Learn about safety, trust, peer support, collaboration, choice, and recovery-focused care.",source:"SAMHSA",url:"https://www.samhsa.gov/mental-health/trauma-violence/trauma-informed-approaches-programs"},
+        {title:"Helping Children Cope After Trauma",description:"Supportive guidance built around reassurance, returning to routine, and regulation.",source:"American Academy of Pediatrics",url:"https://www.healthychildren.org/English/healthy-living/emotional-wellness/Building-Resilience/Pages/Childhood-Trauma-3-Ways-to-Help-Kids-Cope.aspx"}
+      ],
+      "Caregiver Support":[
+        {title:"Government Resources for Caregivers",description:"A collection of caregiver information and services across U.S. health agencies.",source:"U.S. Department of Health and Human Services",url:"https://www.hhs.gov/programs/providers-and-facilities/resources-for-caregivers/index.html"},
+        {title:"Find Caregiver Services in Your State",description:"Locate support, guidance, and service organizations for family caregivers.",source:"Family Caregiver Alliance",url:"https://www.caregiver.org/connecting-caregivers/services-by-state/"}
+      ],
+      "Emotional Wellness":[
+        {title:"988 Suicide & Crisis Lifeline",description:"Free, confidential emotional support available 24/7 in the United States and its territories. Call or text 988 when immediate support is needed.",source:"988 Lifeline",url:"https://988lifeline.org/"},
+        {title:"Find Support for Mental Health or Substance Use",description:"Official starting points for treatment, support, and help for yourself or someone you care about.",source:"SAMHSA",url:"https://www.samhsa.gov/find-support"}
+      ],
+      "School & Advocacy":[
+        {title:"IDEA Resources for Parents and Families",description:"Understand special-education rights, IEP information, and federally supported family resources.",source:"U.S. Department of Education",url:"https://sites.ed.gov/idea/parents-families/"},
+        {title:"Find Your Parent Training and Information Center",description:"Find the center serving your state for disability education information, training, and family support.",source:"U.S. Department of Education",url:"https://www.ed.gov/grants-and-programs/grants-special-populations/grants-special-education-and-individuals-disabilities/special-education-parent-information-centers"}
+      ],
+      "Daily Life Tips":[
+        {title:"The Importance of Family Routines",description:"Ideas for creating regular, predictable routines while keeping enough flexibility for real family life.",source:"American Academy of Pediatrics",url:"https://www.healthychildren.org/English/family-life/family-dynamics/Pages/The-Importance-of-Family-Routines.aspx"},
+        {title:"Tips for Building Structure",description:"Learn how routines, clear expectations, and consistent responses can make daily life more predictable.",source:"CDC",url:"https://www.cdc.gov/parenting-toddlers/structure-rules/structure.html"}
+      ]
     };
     function learnEscape(v){var d=document.createElement("div");d.textContent=v;return d.innerHTML;}
     function openLearnShelf(name,button){
@@ -1894,9 +1923,12 @@
       if(button)button.classList.add("active");
       localStorage.setItem("meltdownLearningShelf",name);
       var items=learnResources[name]||[];
+      var notice=name==="Emotional Wellness"?'<p class="learn-notice"><strong>Need immediate help?</strong> In the U.S., call or text 988. If there is immediate danger, call emergency services.</p>':'';
       learnWorkspace.classList.add("open");
-      learnWorkspace.innerHTML="<h3>"+learnEscape(name)+"</h3>"+items.map(function(item,i){return '<div class="learn-resource"><strong>'+learnEscape(item)+'</strong><p>Read, reflect, and take one useful step at your own pace.</p><button onclick="markLearned(\''+learnEscape(name).replace(/'/g,"&#39;")+'\','+i+',this)">MARK AS LEARNED</button></div>';}).join("")+'<button onclick="closeLearnWorkspace()">CLOSE</button>';
-      learnStatus.textContent=name+" shelf opened.";
+      learnWorkspace.innerHTML="<h3>"+learnEscape(name)+"</h3>"+notice+'<p class="learn-disclaimer">Trusted starting points for education and support. External resources open in a new tab and do not replace professional medical, mental-health, or legal advice.</p>'+items.map(function(item,i){
+        return '<article class="learn-resource"><span class="learn-source">'+learnEscape(item.source)+'</span><strong>'+learnEscape(item.title)+'</strong><p>'+learnEscape(item.description)+'</p><div class="learn-resource-actions"><a class="learn-open" href="'+learnEscape(item.url)+'" target="_blank" rel="noopener noreferrer">OPEN RESOURCE</a><button onclick="markLearned(\''+learnEscape(name).replace(/'/g,"&#39;")+'\','+i+',this)">MARK AS LEARNED</button></div></article>';
+      }).join("")+'<button onclick="closeLearnWorkspace()">CLOSE</button>';
+      learnStatus.textContent=name+" shelf opened with "+items.length+" trusted resources.";
     }
     function markLearned(name,index,button){var key="meltdownLearned";var done=[];try{done=JSON.parse(localStorage.getItem(key)||"[]");}catch(e){}var id=name+"::"+index;if(!done.includes(id))done.push(id);localStorage.setItem(key,JSON.stringify(done));button.textContent="LEARNED ✓";button.disabled=true;learnStatus.textContent="Progress saved privately on this device.";}
     function continueLearning(){var name=localStorage.getItem("meltdownLearningShelf")||"Daily Life Tips";var button=Array.from(document.querySelectorAll(".learn-shelf")).find(function(b){return b.textContent.toLowerCase().includes(name.toLowerCase());});openLearnShelf(name,button);}
