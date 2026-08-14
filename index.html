@@ -688,12 +688,39 @@
     @media(max-width:680px){.connect-shell{padding:8px}.connect-grid{grid-template-columns:1fr}.connect-tabs button{min-width:130px;flex:1}}
     @media print{body.printing-connect .screen{display:none!important}body.printing-connect #connect{display:block!important}body.printing-connect #connect .topbar,body.printing-connect #connect .connect-art,body.printing-connect #connect .connect-tabs,body.printing-connect #connect .connect-actions,body.printing-connect #connect .controls,body.printing-connect #connect .connect-private{display:none!important}body.printing-connect #connect .connect-shell,body.printing-connect #connect .connect-workspace{background:#fff;color:#111;border:0;box-shadow:none}}
 
+    /* Founder blueprint: PX-018 Companion Experience */
+    .companion-shell{width:min(1120px,96%);margin:12px auto;padding:18px;border:1px solid #90683f;border-radius:18px;background:
+      radial-gradient(circle at 18% 8%,rgba(216,163,94,.18),transparent 28%),
+      linear-gradient(145deg,#3b2518,#1b100a 65%);box-shadow:0 18px 45px rgba(0,0,0,.48);color:#f4e4c8}
+    .companion-heading{text-align:center;margin-bottom:16px}.companion-heading h2{margin:0;color:#f2cc87;font:700 clamp(28px,5vw,48px)/1.1 Georgia,serif}
+    .companion-heading p{margin:8px auto 0;max-width:760px;color:#dbc6a5}
+    .companion-layout{display:grid;grid-template-columns:minmax(250px,.8fr) minmax(0,1.5fr);gap:16px}
+    .companion-preview,.companion-builder{border:1px solid #7f5c39;border-radius:14px;background:rgba(24,14,9,.76);padding:16px}
+    .companion-portrait{width:min(260px,85%);aspect-ratio:1;margin:0 auto 14px;border-radius:50%;display:grid;place-items:center;border:5px solid #b58b54;
+      background:radial-gradient(circle at 42% 34%,#b89469 0 8%,#785536 9% 35%,#312015 36% 100%);box-shadow:inset 0 0 30px rgba(0,0,0,.65),0 8px 24px rgba(0,0,0,.4);background-size:cover;background-position:center}
+    .companion-monogram{font:700 clamp(40px,8vw,82px)/1 Georgia,serif;color:#f1d5a2;text-shadow:0 3px 8px #000}
+    .companion-preview h3{text-align:center;color:#f1c982;margin:6px 0}.companion-preview p{text-align:center;color:#d8c4a6}
+    .companion-presence{padding:12px;border:1px solid #7c5d3c;border-radius:10px;background:#24170f;text-align:center;min-height:74px}
+    .companion-group{margin:0 0 16px}.companion-group h3{margin:0 0 8px;color:#edca8e;font:700 18px Georgia,serif}
+    .companion-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
+    .companion-choice{border-radius:10px;min-height:48px;padding:10px;background:#4a392d;border-color:#9a784e}
+    .companion-choice.active{background:#a75d31;border-color:#efbb77;box-shadow:0 0 0 2px rgba(239,187,119,.22)}
+    .companion-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+    .companion-fields label{display:block;color:#e7d2ae;font-weight:700}.companion-fields input,.companion-fields select,.companion-fields textarea{width:100%;margin-top:5px;padding:11px;border:1px solid #9a774b;border-radius:8px;background:#fff7e8;color:#2d1c12;font:inherit}
+    .companion-fields textarea{min-height:85px;resize:vertical}.companion-photo{grid-column:1/-1}
+    .companion-actions{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-top:16px}
+    .companion-private{text-align:center;color:#cdbb9d;font-size:13px}
+    .companion-dock{position:fixed;right:10px;bottom:84px;z-index:45;display:none;max-width:220px;padding:9px 13px;border:1px solid #c09257;border-radius:14px;background:rgba(39,24,15,.95);color:#f4deb8;box-shadow:0 8px 24px rgba(0,0,0,.45);text-align:left;cursor:pointer}
+    .companion-dock.show{display:block}.companion-dock strong{display:block;color:#f2c87e}.companion-dock small{display:block;margin-top:2px}
+    @media(max-width:720px){.companion-layout{grid-template-columns:1fr}.companion-fields{grid-template-columns:1fr}.companion-dock{bottom:76px;max-width:180px}}
+
   </style>
 </head>
 
 <body>
 
   <button class="still-toggle" id="stillModeButton" type="button" onclick="toggleStillMode()" aria-pressed="false">STILL MODE</button>
+  <button class="companion-dock" id="companionDock" type="button" onclick="showScreen('companion')" aria-label="Open Companion Experience"><strong id="companionDockName">MY COMPANION</strong><small id="companionDockMode">Calm background presence</small></button>
 
   <section class="screen active" id="home">
     <div class="topbar">The Meltdown Room • Home</div>
@@ -736,6 +763,7 @@
           <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
           <button type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
           <button type="button" onclick="showScreen('plan')">PLAN ROOM</button>
+          <button type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -763,6 +791,7 @@
       <button class="primary" type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
       <button class="primary" type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
       <button class="primary" type="button" onclick="showScreen('plan')">PLAN ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
@@ -968,6 +997,77 @@
     <div class="controls">
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
       <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
+  <section class="screen" id="companion">
+    <div class="topbar">The Meltdown Room &bull; Companion Experience</div>
+    <div class="companion-shell">
+      <header class="companion-heading">
+        <h2>Choose Your Companion</h2>
+        <p>A steady presence for comfort, company, movement, or quiet. Your companion is always optional, and you decide how they interact with you.</p>
+      </header>
+      <div class="companion-layout">
+        <aside class="companion-preview">
+          <div class="companion-portrait" id="companionPortrait" aria-label="Companion preview"><span class="companion-monogram" id="companionMonogram">C</span></div>
+          <h3 id="companionPreviewName">My Companion</h3>
+          <p id="companionPreviewDetails">Choose a companion and the kind of presence you want.</p>
+          <div class="companion-presence" id="companionPresence" role="status" aria-live="polite">You can take your time. Nothing is selected until you save it.</div>
+          <div class="companion-actions">
+            <button type="button" onclick="runCompanionInteraction('come')">COME WITH ME</button>
+            <button type="button" onclick="runCompanionInteraction('sit')">SIT NEARBY</button>
+            <button type="button" onclick="runCompanionInteraction('comfort')">COMFORT ME</button>
+            <button type="button" onclick="runCompanionInteraction('play')">PLAY OR WALK</button>
+          </div>
+        </aside>
+        <main class="companion-builder">
+          <div class="companion-group">
+            <h3>1. Choose a companion</h3>
+            <div class="companion-choices" data-companion-group="type">
+              <button class="companion-choice active" type="button" data-value="Small Dog" onclick="chooseCompanionOption('type','Small Dog',this)">SMALL DOG</button>
+              <button class="companion-choice" type="button" data-value="Large Dog" onclick="chooseCompanionOption('type','Large Dog',this)">LARGE DOG</button>
+              <button class="companion-choice" type="button" data-value="Cat" onclick="chooseCompanionOption('type','Cat',this)">CAT</button>
+              <button class="companion-choice" type="button" data-value="Horse" onclick="chooseCompanionOption('type','Horse',this)">HORSE</button>
+              <button class="companion-choice" type="button" data-value="Other Companion" onclick="chooseCompanionOption('type','Other Companion',this)">OTHER</button>
+            </div>
+          </div>
+          <div class="companion-fields">
+            <label>Name<input id="companionName" maxlength="40" placeholder="What would you like to call them?" oninput="previewCompanion()"></label>
+            <label>Appearance<input id="companionAppearance" maxlength="100" placeholder="Color, markings, size, or look" oninput="previewCompanion()"></label>
+            <label>Personality<input id="companionPersonality" maxlength="100" placeholder="Gentle, playful, steady, quiet..." oninput="previewCompanion()"></label>
+            <label>Resting place<input id="companionRestingPlace" maxlength="100" placeholder="By the fireplace, near the window..." oninput="previewCompanion()"></label>
+            <label>Interaction level
+              <select id="companionLevel" onchange="previewCompanion()"><option>Gentle</option><option>Moderate</option><option>Active</option></select>
+            </label>
+            <label>Companion sounds
+              <select id="companionSounds" onchange="previewCompanion()"><option value="off">Quiet</option><option value="on">Optional natural sounds</option></select>
+            </label>
+            <label class="companion-photo">Optional private photo<input id="companionPhoto" type="file" accept="image/*" onchange="chooseCompanionPhoto(this)"><small>Choose a photo from this device. It stays on this device.</small></label>
+          </div>
+          <div class="companion-group">
+            <h3>2. Choose how they interact</h3>
+            <div class="companion-choices" data-companion-group="mode">
+              <button class="companion-choice active" type="button" data-value="Follows me" onclick="chooseCompanionOption('mode','Follows me',this)">FOLLOWS ME</button>
+              <button class="companion-choice" type="button" data-value="Sits nearby" onclick="chooseCompanionOption('mode','Sits nearby',this)">SITS NEARBY</button>
+              <button class="companion-choice" type="button" data-value="Walks with me" onclick="chooseCompanionOption('mode','Walks with me',this)">WALKS WITH ME</button>
+              <button class="companion-choice" type="button" data-value="Comforts me" onclick="chooseCompanionOption('mode','Comforts me',this)">COMFORTS ME</button>
+              <button class="companion-choice" type="button" data-value="Plays with me" onclick="chooseCompanionOption('mode','Plays with me',this)">PLAYS WITH ME</button>
+              <button class="companion-choice" type="button" data-value="Calm background presence" onclick="chooseCompanionOption('mode','Calm background presence',this)">CALM PRESENCE</button>
+            </div>
+          </div>
+          <div class="companion-actions">
+            <button class="primary" type="button" onclick="saveCompanion()">SAVE MY COMPANION</button>
+            <button type="button" onclick="loadCompanion()">RESET UNSAVED CHANGES</button>
+            <button class="danger" type="button" onclick="removeCompanion()">REMOVE COMPANION</button>
+          </div>
+          <p class="companion-private">Private by default. Your choices and optional photo stay on this device.</p>
+        </main>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
     </div>
@@ -1212,6 +1312,7 @@
 
       if (id !== currentRoom) { previousRoom = currentRoom; currentRoom = id; }
       target.classList.add("active");
+      if (typeof updateCompanionDock === "function") updateCompanionDock(id);
 
 
       if (history.replaceState) {
@@ -2282,10 +2383,69 @@
     function printConnectRoom(){document.body.classList.add("printing-connect");window.addEventListener("afterprint",function stopConnectPrint(){document.body.classList.remove("printing-connect");window.removeEventListener("afterprint",stopConnectPrint);});window.print();}
     openConnectTab("directory");
 
+    var companionDraft={type:"Small Dog",mode:"Follows me",photo:""};
+    function companionSaved(){try{return JSON.parse(localStorage.getItem("meltdownCompanion")||"null");}catch(error){return null;}}
+    function companionEscape(value){var node=document.createElement("div");node.textContent=value||"";return node.innerHTML;}
+    function companionTypeLetter(type){return {"Small Dog":"SD","Large Dog":"LD","Cat":"C","Horse":"H","Other Companion":"OC"}[type]||"C";}
+    function chooseCompanionOption(group,value,button){
+      companionDraft[group]=value;
+      document.querySelectorAll('[data-companion-group="'+group+'"] .companion-choice').forEach(function(choice){choice.classList.toggle("active",choice===button);});
+      previewCompanion();
+    }
+    function companionFormValue(id){var field=document.getElementById(id);return field?field.value.trim():"";}
+    function previewCompanion(){
+      var name=companionFormValue("companionName")||"My Companion";
+      var personality=companionFormValue("companionPersonality");
+      var place=companionFormValue("companionRestingPlace");
+      var level=document.getElementById("companionLevel")?document.getElementById("companionLevel").value:"Gentle";
+      document.getElementById("companionPreviewName").textContent=name;
+      document.getElementById("companionPreviewDetails").textContent=[companionDraft.type,personality,level+" interaction"].filter(Boolean).join(" • ");
+      document.getElementById("companionPresence").textContent=name+" "+companionDraft.mode.toLowerCase()+(place?" and rests "+place.toLowerCase():"")+".";
+      var portrait=document.getElementById("companionPortrait"),monogram=document.getElementById("companionMonogram");
+      monogram.textContent=companionTypeLetter(companionDraft.type);
+      portrait.style.backgroundImage=companionDraft.photo?'url("'+companionDraft.photo+'")':"";
+      monogram.style.display=companionDraft.photo?"none":"";
+    }
+    function chooseCompanionPhoto(input){
+      var file=input.files&&input.files[0];if(!file)return;
+      if(file.size>700000){document.getElementById("companionPresence").textContent="Please choose a photo smaller than 700 KB.";input.value="";return;}
+      var reader=new FileReader();reader.onload=function(){companionDraft.photo=reader.result;previewCompanion();document.getElementById("companionPresence").textContent="Private photo ready. Save your companion when it feels right.";};reader.onerror=function(){document.getElementById("companionPresence").textContent="That photo could not be opened. Try another one.";};reader.readAsDataURL(file);
+    }
+    function saveCompanion(){
+      var name=companionFormValue("companionName");
+      if(!name){document.getElementById("companionPresence").textContent="Choose a name for your companion first.";document.getElementById("companionName").focus();return;}
+      var state={enabled:true,type:companionDraft.type,mode:companionDraft.mode,name:name,appearance:companionFormValue("companionAppearance"),personality:companionFormValue("companionPersonality"),restingPlace:companionFormValue("companionRestingPlace"),level:document.getElementById("companionLevel").value,sounds:document.getElementById("companionSounds").value,photo:companionDraft.photo};
+      try{localStorage.setItem("meltdownCompanion",JSON.stringify(state));document.getElementById("companionPresence").textContent=name+" is ready to join you in the way you chose.";updateCompanionDock("companion");}
+      catch(error){document.getElementById("companionPresence").textContent="This device could not save that photo. Try a smaller photo or save without one.";}
+    }
+    function loadCompanion(){
+      var state=companionSaved()||{type:"Small Dog",mode:"Follows me",name:"",appearance:"",personality:"",restingPlace:"",level:"Gentle",sounds:"off",photo:""};
+      companionDraft={type:state.type||"Small Dog",mode:state.mode||"Follows me",photo:state.photo||""};
+      [["companionName",state.name],["companionAppearance",state.appearance],["companionPersonality",state.personality],["companionRestingPlace",state.restingPlace],["companionLevel",state.level||"Gentle"],["companionSounds",state.sounds||"off"]].forEach(function(pair){var field=document.getElementById(pair[0]);if(field)field.value=pair[1]||"";});
+      ["type","mode"].forEach(function(group){document.querySelectorAll('[data-companion-group="'+group+'"] .companion-choice').forEach(function(button){button.classList.toggle("active",button.getAttribute("data-value")===companionDraft[group]);});});
+      document.getElementById("companionPhoto").value="";previewCompanion();
+    }
+    function removeCompanion(){
+      var state=companionSaved();if(!state){document.getElementById("companionPresence").textContent="No companion is currently saved.";return;}
+      if(!window.confirm("Remove this saved companion from the app?"))return;
+      localStorage.removeItem("meltdownCompanion");loadCompanion();updateCompanionDock("companion");document.getElementById("companionPresence").textContent="Companion removed. You can choose another whenever you want.";
+    }
+    function runCompanionInteraction(action){
+      var state=companionSaved(),name=(state&&state.name)||companionFormValue("companionName")||"Your companion";
+      var messages={come:name+" comes with you at your chosen pace.",sit:name+" settles nearby without asking anything from you.",comfort:name+" stays close while you breathe. You do not have to explain.",play:name+" is ready for a little movement, play, or a quiet walk."};
+      document.getElementById("companionPresence").textContent=messages[action]||name+" is here.";
+    }
+    function updateCompanionDock(screenId){
+      var state=companionSaved(),dock=document.getElementById("companionDock"),hidden=["home","entrance","map","companion"].indexOf(screenId)>-1;
+      if(!state||!state.enabled||hidden){dock.classList.remove("show");return;}
+      document.getElementById("companionDockName").textContent=state.name||"MY COMPANION";document.getElementById("companionDockMode").textContent=state.mode||"Calm background presence";dock.classList.add("show");
+    }
+    loadCompanion();
+
     window.addEventListener("hashchange",function(){var id=window.location.hash.replace("#","");if(document.getElementById(id)&&id!==currentRoom)showScreen(id);});
 
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "connect", "plan", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "connect", "plan", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
