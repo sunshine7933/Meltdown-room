@@ -833,6 +833,30 @@
     .resource-status{min-height:44px;padding:10px;margin-top:10px;border-radius:9px;background:#0c0907aa}
     @media(max-width:760px){.resource-list{grid-template-columns:1fr}.resource-tools,.resource-form{grid-template-columns:1fr}.resource-shell{padding:7px}.resource-hotspot{min-width:32px;min-height:32px}}
 
+
+    /* Founder-locked Explore Near Me: original dashboard art remains unchanged. */
+    .explore-shell{width:min(1180px,100%);margin:0 auto;padding:12px}
+    .explore-stage{position:relative;border:2px solid #9c7044;border-radius:16px;overflow:hidden;background:#16110c;box-shadow:0 18px 45px #0009}
+    .explore-stage img{display:block;width:100%;height:auto}
+    .explore-hotspot{position:absolute;border:2px solid transparent;border-radius:11px;background:transparent;cursor:pointer}
+    .explore-hotspot:hover,.explore-hotspot:focus-visible{border-color:#cff6ff;background:#75dfff25;box-shadow:0 0 0 3px #112c}
+    .explore-panel{margin:14px 0;padding:16px;border:1px solid #ad8151;border-radius:14px;background:linear-gradient(145deg,#302116,#17100c);color:#f9ecd5}
+    .explore-panel h2,.explore-panel h3{margin:0 0 9px;font-family:Georgia,serif;color:#f1ce98}
+    .explore-panel p{line-height:1.45}
+    .explore-location{display:grid;grid-template-columns:minmax(210px,1fr) auto auto;gap:8px;align-items:end}
+    .explore-location input,.explore-trip input,.explore-trip textarea{width:100%;min-height:44px;padding:9px;border:1px solid #aa8357;border-radius:9px;background:#f8ead3;color:#2c1d13;font:inherit}
+    .explore-options,.explore-actions{display:flex;flex-wrap:wrap;gap:8px;margin:9px 0}
+    .explore-options button,.explore-actions button,.explore-actions a{flex:1 1 135px;min-height:44px;padding:10px;border:1px solid #b79061;border-radius:10px;background:#593b24;color:#fff4e2;font-weight:750;text-align:center;text-decoration:none;cursor:pointer}
+    .explore-options button:hover,.explore-options button[aria-pressed="true"],.explore-actions button:hover,.explore-actions a:hover{background:#176b71;border-color:#c8f2f3}
+    .explore-advanced[hidden]{display:none}
+    .explore-results{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+    .explore-result{padding:14px;border:1px solid #846243;border-radius:11px;background:#f3e2c5;color:#2d1d13}
+    .explore-result h3{color:#50301c}
+    .explore-result a{display:inline-block;margin-top:7px;color:#075b68;font-weight:800}
+    .explore-status{min-height:46px;padding:10px;margin-top:10px;border-radius:9px;background:#0c0907aa}
+    .explore-trip{display:grid;grid-template-columns:180px 1fr auto;gap:8px;align-items:end}
+    @media(max-width:740px){.explore-results{grid-template-columns:1fr}.explore-location,.explore-trip{grid-template-columns:1fr}.explore-shell{padding:7px}.explore-hotspot{min-width:32px;min-height:32px}}
+
 </style>
 </head>
 
@@ -884,6 +908,7 @@
           <button type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
           <button type="button" onclick="showScreen('relationship')">RELATIONSHIP ROOM</button>
           <button type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
+          <button type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
           <button type="button" onclick="showScreen('plan')">PLAN ROOM</button>
           <button type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
@@ -915,6 +940,7 @@
       <button class="primary" type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
       <button class="primary" type="button" onclick="showScreen('relationship')">RELATIONSHIP ROOM</button>
       <button class="primary" type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
       <button class="primary" type="button" onclick="showScreen('plan')">PLAN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
@@ -1064,6 +1090,109 @@
 
 
   
+
+  <section class="screen" id="explore">
+    <div class="topbar">The Meltdown Room &bull; Explore Near Me</div>
+    <div class="explore-shell">
+      <div class="explore-stage">
+        <img src="founder-locked-assets/explore-near-me-dashboard.png?v=63" alt="The founder-approved Explore Near Me dashboard with outdoor categories, filters, nearby places, favorites, recent places, and trips">
+        <button class="explore-hotspot" style="left:1%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Fishing')" aria-label="Explore fishing"></button>
+        <button class="explore-hotspot" style="left:13.5%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Camping')" aria-label="Explore camping"></button>
+        <button class="explore-hotspot" style="left:26%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Hiking & Trails')" aria-label="Explore hiking and trails"></button>
+        <button class="explore-hotspot" style="left:38.5%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Parks')" aria-label="Explore parks"></button>
+        <button class="explore-hotspot" style="left:51%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Playgrounds')" aria-label="Explore playgrounds"></button>
+        <button class="explore-hotspot" style="left:63.5%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Lakes & Beaches')" aria-label="Explore lakes and beaches"></button>
+        <button class="explore-hotspot" style="left:76%;top:25%;width:12%;height:25%" onclick="chooseExploreCategory('Picnic Spots')" aria-label="Explore picnic spots"></button>
+        <button class="explore-hotspot" style="left:88%;top:25%;width:11%;height:25%" onclick="chooseExploreCategory('Other Outdoors')" aria-label="Explore other outdoor places"></button>
+        <button class="explore-hotspot" style="left:1%;top:18%;width:37%;height:5%" onclick="showScreen('map')" aria-label="Back to Property Map"></button>
+        <button class="explore-hotspot" style="left:38%;top:18%;width:25%;height:5%" onclick="showScreen('home')" aria-label="Take Me Home"></button>
+        <button class="explore-hotspot" style="left:17%;top:89%;width:11%;height:9%" onclick="showExploreFavorites()" aria-label="Open Explore favorites"></button>
+        <button class="explore-hotspot" style="left:62%;top:89%;width:11%;height:9%" onclick="showExploreRecent()" aria-label="Open recent places"></button>
+        <button class="explore-hotspot" style="left:74%;top:89%;width:11%;height:9%" onclick="showExploreTrips()" aria-label="Open my trips"></button>
+      </div>
+
+      <div class="explore-panel">
+        <h2>What Are You Looking For Today?</h2>
+        <p>Enter a city or ZIP code, or choose current location. Current location is optional and stays on this device.</p>
+        <div class="explore-location">
+          <label>City or ZIP code<input id="exploreLocationText" placeholder="City, state, or ZIP code"></label>
+          <button type="button" onclick="useExploreLocation()">USE CURRENT LOCATION</button>
+          <button type="button" onclick="keepExploreLocationPrivate()">KEEP PRIVATE</button>
+        </div>
+        <div class="explore-options" id="exploreCategories">
+          <button data-explore-category="Fishing" onclick="chooseExploreCategory('Fishing')">FISHING</button>
+          <button data-explore-category="Camping" onclick="chooseExploreCategory('Camping')">CAMPING</button>
+          <button data-explore-category="Hiking & Trails" onclick="chooseExploreCategory('Hiking & Trails')">HIKING &amp; TRAILS</button>
+          <button data-explore-category="Parks" onclick="chooseExploreCategory('Parks')">PARKS</button>
+          <button data-explore-category="Playgrounds" onclick="chooseExploreCategory('Playgrounds')">PLAYGROUNDS</button>
+          <button data-explore-category="Lakes & Beaches" onclick="chooseExploreCategory('Lakes & Beaches')">LAKES &amp; BEACHES</button>
+          <button data-explore-category="Picnic Spots" onclick="chooseExploreCategory('Picnic Spots')">PICNIC SPOTS</button>
+          <button data-explore-category="Other Outdoors" onclick="chooseExploreCategory('Other Outdoors')">OTHER OUTDOORS</button>
+        </div>
+      </div>
+
+      <div class="explore-panel">
+        <h3>Filter Your Results</h3>
+        <div class="explore-options">
+          <button data-explore-distance="5 miles" onclick="setExploreDistance('5 miles')">5 MILES</button>
+          <button data-explore-distance="10 miles" onclick="setExploreDistance('10 miles')">10 MILES</button>
+          <button data-explore-distance="25 miles" onclick="setExploreDistance('25 miles')">25 MILES</button>
+          <button data-explore-distance="50+ miles" onclick="setExploreDistance('50+ miles')">50+ MILES</button>
+        </div>
+        <div class="explore-options">
+          <button data-explore-party="Just Me" onclick="setExploreParty('Just Me')">JUST ME</button>
+          <button data-explore-party="Kids" onclick="setExploreParty('Kids')">KIDS</button>
+          <button data-explore-party="Family" onclick="setExploreParty('Family')">FAMILY</button>
+          <button data-explore-party="Pets" onclick="setExploreParty('Pets')">PETS</button>
+          <button data-explore-party="Friends" onclick="setExploreParty('Friends')">FRIENDS</button>
+        </div>
+        <div class="explore-options">
+          <button data-explore-filter="free" onclick="toggleExploreFilter('free',this)">FREE OR LOW COST</button>
+          <button data-explore-filter="open now" onclick="toggleExploreFilter('open now',this)">OPEN NOW</button>
+          <button data-explore-filter="kid friendly" onclick="toggleExploreFilter('kid friendly',this)">KID FRIENDLY</button>
+          <button data-explore-filter="pet friendly" onclick="toggleExploreFilter('pet friendly',this)">PET FRIENDLY</button>
+          <button data-explore-filter="wheelchair accessible" onclick="toggleExploreFilter('wheelchair accessible',this)">ACCESSIBLE</button>
+          <button data-explore-filter="quiet low sensory" onclick="toggleExploreFilter('quiet low sensory',this)">LOW SENSORY</button>
+          <button data-explore-filter="public bathrooms" onclick="toggleExploreFilter('public bathrooms',this)">BATHROOMS</button>
+          <button onclick="toggleExploreAdvanced()">MORE FILTERS</button>
+        </div>
+        <div class="explore-advanced" id="exploreAdvanced" hidden>
+          <div class="explore-options">
+            <button data-explore-filter="shaded" onclick="toggleExploreFilter('shaded',this)">SHADE</button>
+            <button data-explore-filter="picnic tables" onclick="toggleExploreFilter('picnic tables',this)">PICNIC TABLES</button>
+            <button data-explore-filter="parking" onclick="toggleExploreFilter('parking',this)">PARKING</button>
+            <button data-explore-filter="rest area" onclick="toggleExploreFilter('rest area',this)">REST AREAS</button>
+          </div>
+        </div>
+        <div class="explore-actions">
+          <button class="primary" type="button" onclick="findExplorePlaces()">SHOW ME GREAT OPTIONS</button>
+          <button type="button" onclick="showExploreFavorites()">FAVORITES</button>
+          <button type="button" onclick="showExploreRecent()">RECENT PLACES</button>
+          <button type="button" onclick="showExploreTrips()">MY TRIPS</button>
+        </div>
+        <div class="explore-results" id="exploreResults"></div>
+        <div class="explore-status" id="exploreStatus" role="status" aria-live="polite">Choose what sounds good today.</div>
+      </div>
+
+      <div class="explore-panel">
+        <h3>Plan a Trip</h3>
+        <p>Trip notes stay only on this device.</p>
+        <div class="explore-trip">
+          <label>Date<input id="exploreTripDate" type="date"></label>
+          <label>Trip notes<textarea id="exploreTripNotes" placeholder="Where, who is coming, what to bring…"></textarea></label>
+          <button type="button" onclick="saveExploreTrip()">SAVE TRIP</button>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
+      <button type="button" onclick="showScreen('resources')">RESOURCE SHED</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <button type="button" onclick="showScreen('great')">GREAT ROOM</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
   <section class="screen" id="resources">
     <div class="topbar">The Meltdown Room &bull; Resource Shed</div>
     <div class="resource-shell">
@@ -1101,15 +1230,15 @@
           <input id="resourceSearch" type="search" placeholder="Search resources…" oninput="renderResources()" aria-label="Search resources">
         </div>
         <div class="resource-category-buttons">
-          <button type="button" onclick="openResourceCategory('Parenting Support')">PARENTING</button>
-          <button type="button" onclick="openResourceCategory('Learning & Development')">LEARNING</button>
-          <button type="button" onclick="openResourceCategory('Health & Wellness')">WELLNESS</button>
-          <button type="button" onclick="openResourceCategory('Financial Guidance')">FINANCIAL</button>
-          <button type="button" onclick="openResourceCategory('Community Support')">COMMUNITY</button>
-          <button type="button" onclick="openResourceCategory('Education Center')">EDUCATION</button>
-          <button type="button" onclick="openResourceCategory('Safety & Preparedness')">SAFETY</button>
-          <button type="button" onclick="openResourceCategory('Forms & Printables')">PRINTABLES</button>
-          <button type="button" onclick="showResourceFavorites()">MY FAVORITES</button>
+          <button type="button" data-resource-category="Parenting Support" onclick="openResourceCategory('Parenting Support')">PARENTING</button>
+          <button type="button" data-resource-category="Learning & Development" onclick="openResourceCategory('Learning & Development')">LEARNING</button>
+          <button type="button" data-resource-category="Health & Wellness" onclick="openResourceCategory('Health & Wellness')">WELLNESS</button>
+          <button type="button" data-resource-category="Financial Guidance" onclick="openResourceCategory('Financial Guidance')">FINANCIAL</button>
+          <button type="button" data-resource-category="Community Support" onclick="openResourceCategory('Community Support')">COMMUNITY</button>
+          <button type="button" data-resource-category="Education Center" onclick="openResourceCategory('Education Center')">EDUCATION</button>
+          <button type="button" data-resource-category="Safety & Preparedness" onclick="openResourceCategory('Safety & Preparedness')">SAFETY</button>
+          <button type="button" data-resource-category="Forms & Printables" onclick="openResourceCategory('Forms & Printables')">PRINTABLES</button>
+          <button type="button" data-resource-favorites onclick="showResourceFavorites()">MY FAVORITES</button>
         </div>
         <div class="resource-list" id="resourceList"></div>
         <div class="resource-status" id="resourceStatus" role="status" aria-live="polite">Trusted starter resources are connected. Add your own resources below whenever you are ready.</div>
@@ -1153,6 +1282,7 @@
     </div>
     <div class="controls">
       <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
+      <button type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
@@ -1761,6 +1891,7 @@
     </div>
     <div class="controls">
       <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('explore')">EXPLORE PLACES NEAR ME</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('companion')">MY COMPANION</button>
       <button type="button" onclick="showScreen('home')">HOME</button>
@@ -1784,6 +1915,7 @@
       target.classList.add("active");
       if (typeof updateCompanionDock === "function") updateCompanionDock(id);
       if (id === "resources" && typeof initResourceShed === "function") initResourceShed();
+      if (id === "explore" && typeof initExploreNearMe === "function") initExploreNearMe();
       if (id === "outdoor" && typeof initOutdoorRoom === "function") initOutdoorRoom();
 
 
@@ -3256,7 +3388,7 @@
         var action=item.print?'<button type="button" onclick="printResourceSheet(\''+item.print+'\')">OPEN PRINTABLE</button>':'<a href="'+resourceEscape(item.url)+'" target="_blank" rel="noopener noreferrer">OPEN TRUSTED RESOURCE</a>';
         return '<article class="resource-item"><button class="resource-favorite" type="button" onclick="toggleResourceFavorite(\''+item.id+'\')" aria-label="Save '+resourceEscape(item.title)+' as a favorite">'+(favorites.includes(item.id)?"♥":"♡")+'</button><h3>'+resourceEscape(item.title)+'</h3><p>'+resourceEscape(item.description)+'</p><small>'+(item.source?resourceEscape(item.source):"Saved by you")+'</small><br>'+action+'</article>';
       }).join("");
-      document.querySelectorAll(".resource-category-buttons button").forEach(function(button){button.setAttribute("aria-pressed",String(button.textContent.trim()===category.toUpperCase()))});
+      document.querySelectorAll(".resource-category-buttons button").forEach(function(button){var pressed=onlyFavorites?button.hasAttribute("data-resource-favorites"):button.getAttribute("data-resource-category")===category;button.setAttribute("aria-pressed",String(pressed))});
       resourceSay((onlyFavorites?"Favorite resources: ":"Resources shown: ")+items.length);
     }
     function showResourceFavorites(){document.getElementById("resourceCategory").value="All";document.getElementById("resourceSearch").value="";renderResources(true)}
@@ -3288,8 +3420,89 @@
     }
     function initResourceShed(){renderResources();resourceSay("Trusted starter resources are connected. Choose a category or search for help.")}
 
+
+    var exploreState={category:"Parks",distance:"10 miles",party:"Family",filters:[],locationLabel:""};
+    function exploreSay(message){var node=document.getElementById("exploreStatus");if(node)node.textContent=message}
+    function chooseExploreCategory(category){
+      exploreState.category=category;document.querySelectorAll("[data-explore-category]").forEach(function(button){button.setAttribute("aria-pressed",String(button.getAttribute("data-explore-category")===category))});
+      exploreSay(category+" selected. Choose your filters and location, then show options.");
+    }
+    function setExploreDistance(distance){
+      exploreState.distance=distance;document.querySelectorAll("[data-explore-distance]").forEach(function(button){button.setAttribute("aria-pressed",String(button.getAttribute("data-explore-distance")===distance))});
+      exploreSay("Search distance set to "+distance+".");
+    }
+    function setExploreParty(party){
+      exploreState.party=party;document.querySelectorAll("[data-explore-party]").forEach(function(button){button.setAttribute("aria-pressed",String(button.getAttribute("data-explore-party")===party))});
+      exploreSay(party+" selected.");
+    }
+    function toggleExploreFilter(filter,button){
+      var index=exploreState.filters.indexOf(filter);if(index>=0)exploreState.filters.splice(index,1);else exploreState.filters.push(filter);
+      button.setAttribute("aria-pressed",String(index<0));exploreSay(filter+" filter "+(index<0?"added.":"removed."));
+    }
+    function toggleExploreAdvanced(){var panel=document.getElementById("exploreAdvanced");if(panel)panel.hidden=!panel.hidden}
+    function useExploreLocation(){
+      if(!navigator.geolocation){exploreSay("Current location is not available. Enter a city or ZIP code instead.");return}
+      exploreSay("Waiting for location permission…");
+      navigator.geolocation.getCurrentPosition(function(position){
+        localStorage.setItem("meltdownExploreLocationChoice","device");
+        localStorage.setItem("meltdownExploreLatitude",String(position.coords.latitude));localStorage.setItem("meltdownExploreLongitude",String(position.coords.longitude));
+        exploreState.locationLabel=position.coords.latitude.toFixed(4)+","+position.coords.longitude.toFixed(4);
+        exploreSay("Current location is ready and stored only on this device.");
+      },function(){localStorage.setItem("meltdownExploreLocationChoice","private");exploreSay("Location was not shared. Enter a city or ZIP code instead.")},{enableHighAccuracy:false,timeout:10000,maximumAge:3600000});
+    }
+    function keepExploreLocationPrivate(){
+      localStorage.setItem("meltdownExploreLocationChoice","private");localStorage.removeItem("meltdownExploreLatitude");localStorage.removeItem("meltdownExploreLongitude");exploreState.locationLabel="";
+      exploreSay("Location is private. Enter a city or ZIP code to search.");
+    }
+    function exploreLocation(){
+      var typed=document.getElementById("exploreLocationText").value.trim();if(typed)return typed;
+      var lat=localStorage.getItem("meltdownExploreLatitude"),lng=localStorage.getItem("meltdownExploreLongitude");return lat&&lng?lat+","+lng:"near me";
+    }
+    function exploreQuery(extra){
+      var pieces=[extra||exploreState.category,exploreState.party==="Pets"?"pet friendly":"",exploreState.party==="Kids"||exploreState.party==="Family"?"family friendly":"",exploreState.filters.join(" "),exploreLocation()];
+      return pieces.filter(Boolean).join(" ");
+    }
+    function mapsSearchUrl(query){return "https://www.google.com/maps/search/?api=1&query="+encodeURIComponent(query)}
+    function getExploreFavorites(){try{return JSON.parse(localStorage.getItem("meltdownExploreFavorites")||"[]")}catch(error){return[]}}
+    function getExploreRecent(){try{return JSON.parse(localStorage.getItem("meltdownExploreRecent")||"[]")}catch(error){return[]}}
+    function getExploreTrips(){try{return JSON.parse(localStorage.getItem("meltdownExploreTrips")||"[]")}catch(error){return[]}}
+    function exploreEscape(value){var node=document.createElement("div");node.textContent=value||"";return node.innerHTML}
+    function findExplorePlaces(){
+      var location=exploreLocation();if(location==="near me"&&!localStorage.getItem("meltdownExploreLatitude")){exploreSay("Enter a city or ZIP code, or choose current location, so the results are truly near you.");return}
+      var variants=[exploreState.category,"family friendly "+exploreState.category,"quiet "+exploreState.category,"accessible "+exploreState.category];
+      var results=variants.map(function(label){return{title:label,query:exploreQuery(label),distance:exploreState.distance,party:exploreState.party}});
+      var recent=getExploreRecent();recent.unshift({title:exploreState.category,query:exploreQuery(),date:new Date().toISOString(),distance:exploreState.distance,party:exploreState.party});localStorage.setItem("meltdownExploreRecent",JSON.stringify(recent.slice(0,12)));
+      renderExploreCards(results,"Live nearby searches");exploreSay("Options are ready. Google Maps will show current places, hours, directions, photos, and reviews.");
+    }
+    function renderExploreCards(items,title){
+      var box=document.getElementById("exploreResults");if(!box)return;
+      if(!items.length){box.innerHTML='<article class="explore-result"><h3>No saved places yet</h3><p>Run a search or save a favorite to begin.</p></article>';return}
+      box.innerHTML=items.map(function(item,index){var query=item.query||item.title;return '<article class="explore-result"><h3>'+exploreEscape(item.title)+'</h3><p>'+exploreEscape(item.distance||exploreState.distance)+' • '+exploreEscape(item.party||exploreState.party)+'</p><a href="'+mapsSearchUrl(query)+'" target="_blank" rel="noopener noreferrer">OPEN LIVE MAP RESULTS</a><div class="explore-actions"><button onclick="saveExploreFavorite(\''+encodeURIComponent(JSON.stringify(item))+'\')">SAVE FAVORITE</button></div></article>'}).join("");
+    }
+    function saveExploreFavorite(encoded){
+      var item=JSON.parse(decodeURIComponent(encoded)),favorites=getExploreFavorites();if(!favorites.some(function(saved){return saved.query===item.query}))favorites.unshift(item);
+      localStorage.setItem("meltdownExploreFavorites",JSON.stringify(favorites.slice(0,30)));exploreSay("Saved to Explore favorites on this device.");
+    }
+    function showExploreFavorites(){renderExploreCards(getExploreFavorites(),"Favorites");exploreSay("Showing your saved Explore favorites.")}
+    function showExploreRecent(){renderExploreCards(getExploreRecent(),"Recent places");exploreSay("Showing recent Explore searches from this device.")}
+    function saveExploreTrip(){
+      var date=document.getElementById("exploreTripDate").value,notes=document.getElementById("exploreTripNotes").value.trim();if(!date&&!notes){exploreSay("Add a date or trip note before saving.");return}
+      var trips=getExploreTrips();trips.unshift({title:exploreState.category+" trip",query:exploreQuery(),date:date||"Date not set",party:exploreState.party,distance:exploreState.distance,notes:notes});
+      localStorage.setItem("meltdownExploreTrips",JSON.stringify(trips.slice(0,30)));document.getElementById("exploreTripNotes").value="";exploreSay("Trip saved privately on this device.");
+    }
+    function showExploreTrips(){
+      var trips=getExploreTrips(),box=document.getElementById("exploreResults");if(!box)return;
+      if(!trips.length){renderExploreCards([],"Trips");exploreSay("No trips saved yet.");return}
+      box.innerHTML=trips.map(function(item){return '<article class="explore-result"><h3>'+exploreEscape(item.title)+'</h3><p>'+exploreEscape(item.date)+' • '+exploreEscape(item.party)+'</p><p>'+exploreEscape(item.notes||"")+'</p><a href="'+mapsSearchUrl(item.query)+'" target="_blank" rel="noopener noreferrer">OPEN MAP SEARCH</a></article>'}).join("");exploreSay("Showing saved trips.");
+    }
+    function initExploreNearMe(){
+      chooseExploreCategory(exploreState.category);setExploreDistance(exploreState.distance);setExploreParty(exploreState.party);
+      var typed=document.getElementById("exploreLocationText"),choice=localStorage.getItem("meltdownExploreLocationChoice");if(typed&&choice==="private")typed.placeholder="Enter city, state, or ZIP code";
+      exploreSay("Choose what sounds good today.");
+    }
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "resources", "connect", "plan", "relationship", "outdoor", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "resources", "explore", "connect", "plan", "relationship", "outdoor", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
