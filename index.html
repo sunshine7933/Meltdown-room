@@ -1230,15 +1230,15 @@
           <input id="resourceSearch" type="search" placeholder="Search resources…" oninput="renderResources()" aria-label="Search resources">
         </div>
         <div class="resource-category-buttons">
-          <button type="button" onclick="openResourceCategory('Parenting Support')">PARENTING</button>
-          <button type="button" onclick="openResourceCategory('Learning & Development')">LEARNING</button>
-          <button type="button" onclick="openResourceCategory('Health & Wellness')">WELLNESS</button>
-          <button type="button" onclick="openResourceCategory('Financial Guidance')">FINANCIAL</button>
-          <button type="button" onclick="openResourceCategory('Community Support')">COMMUNITY</button>
-          <button type="button" onclick="openResourceCategory('Education Center')">EDUCATION</button>
-          <button type="button" onclick="openResourceCategory('Safety & Preparedness')">SAFETY</button>
-          <button type="button" onclick="openResourceCategory('Forms & Printables')">PRINTABLES</button>
-          <button type="button" onclick="showResourceFavorites()">MY FAVORITES</button>
+          <button type="button" data-resource-category="Parenting Support" onclick="openResourceCategory('Parenting Support')">PARENTING</button>
+          <button type="button" data-resource-category="Learning & Development" onclick="openResourceCategory('Learning & Development')">LEARNING</button>
+          <button type="button" data-resource-category="Health & Wellness" onclick="openResourceCategory('Health & Wellness')">WELLNESS</button>
+          <button type="button" data-resource-category="Financial Guidance" onclick="openResourceCategory('Financial Guidance')">FINANCIAL</button>
+          <button type="button" data-resource-category="Community Support" onclick="openResourceCategory('Community Support')">COMMUNITY</button>
+          <button type="button" data-resource-category="Education Center" onclick="openResourceCategory('Education Center')">EDUCATION</button>
+          <button type="button" data-resource-category="Safety & Preparedness" onclick="openResourceCategory('Safety & Preparedness')">SAFETY</button>
+          <button type="button" data-resource-category="Forms & Printables" onclick="openResourceCategory('Forms & Printables')">PRINTABLES</button>
+          <button type="button" data-resource-favorites onclick="showResourceFavorites()">MY FAVORITES</button>
         </div>
         <div class="resource-list" id="resourceList"></div>
         <div class="resource-status" id="resourceStatus" role="status" aria-live="polite">Trusted starter resources are connected. Add your own resources below whenever you are ready.</div>
@@ -3388,7 +3388,7 @@
         var action=item.print?'<button type="button" onclick="printResourceSheet(\''+item.print+'\')">OPEN PRINTABLE</button>':'<a href="'+resourceEscape(item.url)+'" target="_blank" rel="noopener noreferrer">OPEN TRUSTED RESOURCE</a>';
         return '<article class="resource-item"><button class="resource-favorite" type="button" onclick="toggleResourceFavorite(\''+item.id+'\')" aria-label="Save '+resourceEscape(item.title)+' as a favorite">'+(favorites.includes(item.id)?"♥":"♡")+'</button><h3>'+resourceEscape(item.title)+'</h3><p>'+resourceEscape(item.description)+'</p><small>'+(item.source?resourceEscape(item.source):"Saved by you")+'</small><br>'+action+'</article>';
       }).join("");
-      document.querySelectorAll(".resource-category-buttons button").forEach(function(button){button.setAttribute("aria-pressed",String(button.textContent.trim()===category.toUpperCase()))});
+      document.querySelectorAll(".resource-category-buttons button").forEach(function(button){var pressed=onlyFavorites?button.hasAttribute("data-resource-favorites"):button.getAttribute("data-resource-category")===category;button.setAttribute("aria-pressed",String(pressed))});
       resourceSay((onlyFavorites?"Favorite resources: ":"Resources shown: ")+items.length);
     }
     function showResourceFavorites(){document.getElementById("resourceCategory").value="All";document.getElementById("resourceSearch").value="";renderResources(true)}
