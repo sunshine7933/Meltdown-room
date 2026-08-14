@@ -926,11 +926,12 @@
       <div class="connect-workspace" id="connectWorkspace"></div>
       <div class="connect-actions">
         <button class="primary" type="button" onclick="saveConnectEntry()">SAVE PRIVATELY</button>
+        <button class="primary" id="connectShareRecipe" type="button" onclick="shareCurrentConnectRecipe()" hidden>SHARE THIS RECIPE</button>
         <button type="button" onclick="newConnectEntry()">NEW ENTRY</button>
         <button type="button" onclick="toggleConnectSaved()">VIEW SAVED</button>
         <button type="button" onclick="printConnectRoom()">PRINT</button>
       </div>
-      <p class="connect-private">Entries stay privately on this device. Secure community sharing will be added separately before anything can be posted publicly.</p>
+      <p class="connect-private">Entries stay privately on this device. Recipe sharing opens your device’s Share menu only when you choose it; nothing is posted automatically.</p>
       <p class="connect-status" id="connectStatus" role="status" aria-live="polite">Everyone has a seat at the table.</p>
     </div>
     <div class="controls">
@@ -2216,7 +2217,7 @@
     function openConnectTab(tab){
       if(!connectDefinitions[tab])return;connectActiveTab=tab;connectShowSaved=false;
       document.querySelectorAll("[data-connect-tab]").forEach(function(button){button.classList.toggle("active",button.getAttribute("data-connect-tab")===tab);});
-      renderConnectWorkspace();document.getElementById("connectStatus").textContent=connectDefinitions[tab].title+" opened.";
+      renderConnectWorkspace();var shareButton=document.getElementById("connectShareRecipe");if(shareButton)shareButton.hidden=tab!=="recipes";document.getElementById("connectStatus").textContent=connectDefinitions[tab].title+" opened.";
     }
     function renderConnectWorkspace(){
       var d=connectDefinitions[connectActiveTab],workspace=document.getElementById("connectWorkspace");
@@ -2238,8 +2239,22 @@
     function renderConnectSaved(){
       var d=connectDefinitions[connectActiveTab],list=connectEntries();
       if(!list.length)return "<div class='connect-saved'><p>No saved entries on this page yet.</p></div>";
-      return "<div class='connect-saved'><h3>Saved privately</h3>"+list.map(function(entry,index){var title=entry.name||entry.person||d.title;var details=d.fields.map(function(field){return entry[field[0]]?"<p><strong>"+connectEscape(field[1])+":</strong> "+connectEscape(entry[field[0]])+"</p>":"";}).join("");return "<article class='connect-entry'><strong>"+connectEscape(title)+"</strong>"+details+"<small>"+new Date(entry.date).toLocaleString()+" &bull; <button type='button' onclick='deleteConnectEntry("+index+")'>DELETE</button></small></article>";}).join("")+"</div>";
+      return "<div class='connect-saved'><h3>Saved privately</h3>"+list.map(function(entry,index){var title=entry.name||entry.person||d.title;var details=d.fields.map(function(field){return entry[field[0]]?"<p><strong>"+connectEscape(field[1])+":</strong> "+connectEscape(entry[field[0]])+"</p>":"";}).join("");var share=connectActiveTab==="recipes"?" &bull; <button type='button' onclick='shareSavedConnectRecipe("+index+")'>SHARE RECIPE</button>":"";return "<article class='connect-entry'><strong>"+connectEscape(title)+"</strong>"+details+"<small>"+new Date(entry.date).toLocaleString()+share+" &bull; <button type='button' onclick='deleteConnectEntry("+index+")'>DELETE</button></small></article>";}).join("")+"</div>";
     }
+    function connectRecipeText(entry){
+      return (entry.name||"Family Recipe")+"\n\nINGREDIENTS\n"+(entry.ingredients||"")+"\n\nDIRECTIONS & STORY\n"+(entry.how||"")+"\n\nShared from The Meltdown Room";
+    }
+    async function performConnectRecipeShare(entry){
+      if(!entry||(!entry.name&&!entry.ingredients&&!entry.how)){document.getElementById("connectStatus").textContent="Add the recipe details before sharing.";return;}
+      var title=entry.name||"Family Recipe",text=connectRecipeText(entry);
+      try{
+        if(navigator.share){await navigator.share({title:title,text:text});document.getElementById("connectStatus").textContent="Recipe shared using your device’s Share menu.";return;}
+        if(navigator.clipboard&&navigator.clipboard.writeText){await navigator.clipboard.writeText(text);document.getElementById("connectStatus").textContent="Recipe copied. Paste it into a message, email, or app.";return;}
+        window.prompt("Copy your recipe:",text);document.getElementById("connectStatus").textContent="Recipe ready to copy.";
+      }catch(error){document.getElementById("connectStatus").textContent=error&&error.name==="AbortError"?"Sharing canceled. Your recipe is still private.":"Sharing was unavailable. Your recipe was not posted.";}
+    }
+    function shareCurrentConnectRecipe(){if(connectActiveTab!=="recipes")return;var entry={};document.querySelectorAll("#connectWorkspace [data-connect-field]").forEach(function(field){entry[field.getAttribute("data-connect-field")]=field.value.trim();});performConnectRecipeShare(entry);}
+    function shareSavedConnectRecipe(index){var entry=connectEntries()[index];performConnectRecipeShare(entry);}
     function deleteConnectEntry(index){if(!window.confirm("Delete this saved entry from this device?"))return;var list=connectEntries();list.splice(index,1);localStorage.setItem(connectKey(),JSON.stringify(list));renderConnectWorkspace();document.getElementById("connectStatus").textContent="Entry deleted.";}
     function printConnectRoom(){document.body.classList.add("printing-connect");window.addEventListener("afterprint",function stopConnectPrint(){document.body.classList.remove("printing-connect");window.removeEventListener("afterprint",stopConnectPrint);});window.print();}
     openConnectTab("directory");
