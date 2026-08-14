@@ -640,6 +640,33 @@
     .meltdown-tool-launchers button { min-height:44px; padding:10px 14px; }
     #hope .scene,#celebration .scene,#reflection .scene,#learn .scene { max-height:62vh; }
 
+  
+    /* Founder blueprint: Plan Room */
+    .plan-room-shell{max-width:1120px;margin:0 auto;padding:18px;background:linear-gradient(180deg,#2a190f,#120b07);color:#f6ead3}
+    .plan-hero{min-height:340px;position:relative;overflow:hidden;border:1px solid #8a6237;border-radius:18px;background:
+      radial-gradient(circle at 20% 22%,rgba(255,193,104,.32),transparent 25%),
+      linear-gradient(rgba(25,12,5,.18),rgba(25,12,5,.72)),
+      repeating-linear-gradient(90deg,#3b2415 0 70px,#302014 70px 73px);
+      box-shadow:inset 0 0 80px #120905,0 16px 35px rgba(0,0,0,.4)}
+    .plan-window{position:absolute;left:6%;top:12%;width:28%;height:48%;border:10px solid #3a2417;border-radius:8px;background:linear-gradient(#d79a56,#6c6d64 56%,#18241d 57%);box-shadow:0 0 28px rgba(246,173,85,.28)}
+    .plan-window:before,.plan-window:after{content:"";position:absolute;background:#3a2417}.plan-window:before{width:8px;height:100%;left:48%}.plan-window:after{height:8px;width:100%;top:48%}
+    .plan-desk{position:absolute;left:8%;right:7%;bottom:0;height:45%;border-radius:55% 55% 0 0/16% 16% 0 0;background:linear-gradient(#86572e,#513019 25%,#2e190d);box-shadow:0 -8px 18px rgba(0,0,0,.45)}
+    .plan-paper{position:absolute;left:33%;bottom:8%;width:37%;height:32%;transform:rotate(-2deg);padding:23px 26px;border-radius:4px;background:#e8d4aa;color:#4a2c1c;box-shadow:0 9px 20px rgba(0,0,0,.45);font-family:Georgia,serif}
+    .plan-paper strong{display:block;font-size:clamp(22px,4vw,38px);font-weight:500}.plan-paper span{display:block;margin-top:8px;border-bottom:1px solid rgba(79,49,28,.35);line-height:1.8}
+    .plan-pen{position:absolute;left:68%;bottom:12%;width:20%;height:8px;border-radius:5px;background:linear-gradient(90deg,#1d211f,#c9a459,#202522);transform:rotate(-18deg);box-shadow:0 4px 5px #1b0c05}
+    .plan-clock{position:absolute;right:7%;top:11%;width:82px;height:82px;border:8px solid #6a4527;border-radius:50%;background:#e2c99b;color:#4c2d19;display:grid;place-items:center;font-family:Georgia,serif;font-size:12px;box-shadow:0 6px 14px #140904}
+    .plan-title{position:absolute;left:38%;right:4%;top:8%;text-align:center;text-shadow:0 3px 5px #000}.plan-title h1{margin:0;font:clamp(27px,5vw,48px) Georgia,serif;color:#f5d59e}.plan-title p{margin:8px 0;color:#f3e5cc}
+    .plan-tabs,.plan-actions{display:flex;flex-wrap:wrap;gap:9px;justify-content:center;margin:16px 0}
+    .plan-tabs button.active{background:#9b6537;border-color:#ecc78d;color:#fff}
+    .plan-workspace{border:1px solid #8a6237;border-radius:15px;padding:18px;background:linear-gradient(135deg,#312015,#1b110b);box-shadow:inset 0 0 40px rgba(0,0,0,.32)}
+    .plan-workspace h2{font-family:Georgia,serif;color:#f0c982;margin:0 0 6px}.plan-workspace>p{color:#d9c5a8}
+    .plan-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.plan-card{padding:14px;border:1px solid #705134;border-radius:11px;background:#25170f}
+    .plan-card label{display:block;color:#f0d7ad;font-weight:700;margin-bottom:7px}.plan-card textarea,.plan-card input{width:100%;min-height:48px;padding:11px;border:1px solid #896845;border-radius:8px;background:#f0dfbd;color:#3b2517;font:16px system-ui}.plan-card textarea{min-height:112px;resize:vertical}
+    .plan-checks{display:grid;gap:8px}.plan-checks label{display:flex;align-items:center;gap:9px;font-weight:500}.plan-checks input{width:20px;min-height:20px}
+    .plan-private{font-size:13px;color:#cdb99a;text-align:center}.plan-status{min-height:24px;text-align:center;color:#f2d69f}
+    @media(max-width:680px){.plan-room-shell{padding:9px}.plan-hero{min-height:300px}.plan-title{left:5%;top:5%}.plan-window{width:35%;top:26%}.plan-paper{left:21%;width:58%;height:35%;padding:14px}.plan-grid{grid-template-columns:1fr}.plan-clock{width:62px;height:62px;right:3%;top:29%}}
+    @media print{body.printing-plan .screen{display:none!important}body.printing-plan #plan{display:block!important}body.printing-plan #plan .topbar,body.printing-plan #plan .scene-wrap,body.printing-plan #plan .plan-tabs,body.printing-plan #plan .plan-actions,body.printing-plan #plan .controls,body.printing-plan #plan .plan-private{display:none!important}body.printing-plan #plan .plan-room-shell,body.printing-plan #plan .plan-workspace{background:#fff;color:#111;box-shadow:none;border:0}body.printing-plan #plan textarea,body.printing-plan #plan input{background:#fff;color:#111;border:1px solid #777}}
+
   </style>
 </head>
 
@@ -686,6 +713,7 @@
           <button type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
           <button type="button" onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
           <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
+          <button type="button" onclick="showScreen('plan')">PLAN ROOM</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -711,6 +739,7 @@
       <button class="primary" type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
       <button class="primary" type="button" onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
       <button class="primary" type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
+      <button class="primary" type="button" onclick="showScreen('plan')">PLAN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
       <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
@@ -853,6 +882,41 @@
     <button onclick="showScreen('home')">HOME</button>
   </div>
 </section>
+
+
+  <section class="screen" id="plan">
+    <div class="topbar">The Meltdown Room &bull; Plan Room</div>
+    <div class="plan-room-shell">
+      <div class="plan-hero" aria-label="Warm rustic Plan Room desk with an open planner">
+        <div class="plan-window" aria-hidden="true"></div>
+        <div class="plan-title"><h1>The Plan Room</h1><p>Routines, schedules, goals. One gentle step at a time.</p></div>
+        <div class="plan-clock" aria-hidden="true">YOUR<br>PACE</div>
+        <div class="plan-desk" aria-hidden="true"></div>
+        <div class="plan-paper" aria-hidden="true"><strong>My Plan</strong><span>What matters today</span><span>One small next step</span></div>
+        <div class="plan-pen" aria-hidden="true"></div>
+      </div>
+      <nav class="plan-tabs" aria-label="Plan Room sections">
+        <button class="active" type="button" data-plan-tab="today" onclick="openPlanTab('today')">TODAY</button>
+        <button type="button" data-plan-tab="routine" onclick="openPlanTab('routine')">WEEKLY ROUTINE</button>
+        <button type="button" data-plan-tab="goals" onclick="openPlanTab('goals')">GOALS</button>
+        <button type="button" data-plan-tab="notes" onclick="openPlanTab('notes')">PRIVATE NOTES</button>
+      </nav>
+      <div class="plan-workspace" id="planWorkspace"></div>
+      <div class="plan-actions">
+        <button class="primary" type="button" onclick="savePlanRoom()">SAVE PRIVATELY</button>
+        <button type="button" onclick="printPlanRoom()">PRINT THIS PAGE</button>
+        <button type="button" onclick="clearPlanRoom()">CLEAR THIS PAGE</button>
+      </div>
+      <p class="plan-private">Your plans stay privately on this device.</p>
+      <p class="plan-status" id="planStatus" role="status" aria-live="polite">Choose a page and plan at your own pace.</p>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
 
 <section class="screen" id="rant">
     <div class="topbar">The Meltdown Room • Rant Room</div>
@@ -2013,10 +2077,76 @@
     function saveLearningQuestion(){var title=document.getElementById("learnQuestionTitle").value.trim(),body=document.getElementById("learnQuestionText").value.trim();if(!body){learnStatus.textContent="Write your question first.";return;}var list=[];try{list=JSON.parse(localStorage.getItem("meltdownLearningQuestions")||"[]");}catch(e){}list.unshift({title:title,text:body,date:new Date().toISOString()});localStorage.setItem("meltdownLearningQuestions",JSON.stringify(list.slice(0,100)));learnStatus.textContent="Question saved privately on this device.";closeLearnWorkspace();}
     function closeLearnWorkspace(){learnWorkspace.classList.remove("open");learnWorkspace.innerHTML="";}
 
+
+    var planActiveTab="today";
+    var planDefinitions={
+      today:{title:"Today’s Plan",intro:"Keep today realistic. Three priorities are enough.",fields:[
+        {key:"priorities",label:"My three priorities",type:"textarea",placeholder:"1.\n2.\n3."},
+        {key:"appointments",label:"Appointments or reminders",type:"textarea",placeholder:"Times, calls, school notes, errands..."},
+        {key:"care",label:"One thing I need today",type:"text",placeholder:"Rest, food, fresh air, quiet, connection..."},
+        {key:"done",label:"Today’s check-in",type:"checks",items:["I chose my priorities","I made room for my needs","I can move unfinished things to another day"]}
+      ]},
+      routine:{title:"Weekly Routine",intro:"Build a flexible rhythm. A routine can support you without controlling you.",fields:[
+        {key:"morning",label:"Morning rhythm",type:"textarea",placeholder:"Wake up, breakfast, medicine, school or work..."},
+        {key:"afternoon",label:"Afternoon rhythm",type:"textarea",placeholder:"Lunch, appointments, learning, quiet break..."},
+        {key:"evening",label:"Evening rhythm",type:"textarea",placeholder:"Dinner, prepare for tomorrow, wind down..."},
+        {key:"week",label:"This week’s important dates",type:"textarea",placeholder:"Monday...\nTuesday...\nWednesday..."}
+      ]},
+      goals:{title:"Goals & Small Steps",intro:"Choose progress that fits your real life—not perfection.",fields:[
+        {key:"goal",label:"What I want to work toward",type:"textarea",placeholder:"A meaningful, realistic goal..."},
+        {key:"why",label:"Why this matters to me",type:"textarea",placeholder:"The reason behind the goal..."},
+        {key:"next",label:"My smallest next step",type:"text",placeholder:"One action I can actually do..."},
+        {key:"celebrate",label:"How I will notice or celebrate progress",type:"text",placeholder:"A kind word, rest, favorite activity..."}
+      ]},
+      notes:{title:"Private Planning Notes",intro:"Use this page for lists, ideas, meal plans, questions, or anything else.",fields:[
+        {key:"notes",label:"My notes",type:"textarea",placeholder:"Write freely here..."},
+        {key:"ask",label:"Help I can ask for",type:"textarea",placeholder:"Who could help, and what could I ask them to do?"},
+        {key:"later",label:"Not today—save for later",type:"textarea",placeholder:"Things I do not need to carry today..."}
+      ]}
+    };
+    function planEscape(value){return String(value||"").replace(/[&<>"']/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[ch];});}
+    function planStorage(tab){try{return JSON.parse(localStorage.getItem("meltdownPlanRoom::"+tab)||"{}");}catch(e){return {};}}
+    function openPlanTab(tab){
+      if(!planDefinitions[tab])return;
+      planActiveTab=tab;
+      document.querySelectorAll("[data-plan-tab]").forEach(function(button){button.classList.toggle("active",button.getAttribute("data-plan-tab")===tab);});
+      var definition=planDefinitions[tab],saved=planStorage(tab);
+      document.getElementById("planWorkspace").innerHTML="<h2>"+planEscape(definition.title)+"</h2><p>"+planEscape(definition.intro)+"</p><div class='plan-grid'>"+
+        definition.fields.map(function(field){
+          if(field.type==="checks"){var checked=saved[field.key]||[];return "<div class='plan-card'><label>"+planEscape(field.label)+"</label><div class='plan-checks'>"+field.items.map(function(item,index){return "<label><input type='checkbox' data-plan-key='"+planEscape(field.key)+"' data-plan-check='"+index+"' "+(checked.indexOf(index)>-1?"checked":"")+"> "+planEscape(item)+"</label>";}).join("")+"</div></div>";}
+          var id="plan-"+tab+"-"+field.key;
+          if(field.type==="textarea")return "<div class='plan-card'><label for='"+planEscape(id)+"'>"+planEscape(field.label)+"</label><textarea id='"+planEscape(id)+"' data-plan-key='"+planEscape(field.key)+"' placeholder='"+planEscape(field.placeholder)+"'>"+planEscape(saved[field.key]||"")+"</textarea></div>";
+          return "<div class='plan-card'><label for='"+planEscape(id)+"'>"+planEscape(field.label)+"</label><input id='"+planEscape(id)+"' data-plan-key='"+planEscape(field.key)+"' placeholder='"+planEscape(field.placeholder)+"' value='"+planEscape(saved[field.key]||"")+"'></div>";
+        }).join("")+"</div>";
+      document.querySelectorAll("#planWorkspace input[data-plan-key]:not([type=checkbox])").forEach(function(input){input.value=saved[input.getAttribute("data-plan-key")]||"";});
+      document.getElementById("planStatus").textContent=definition.title+" opened.";
+    }
+    function savePlanRoom(){
+      var values={};
+      document.querySelectorAll("#planWorkspace [data-plan-key]").forEach(function(field){
+        var key=field.getAttribute("data-plan-key");
+        if(field.type==="checkbox"){if(!values[key])values[key]=[];if(field.checked)values[key].push(Number(field.getAttribute("data-plan-check")));}
+        else values[key]=field.value;
+      });
+      localStorage.setItem("meltdownPlanRoom::"+planActiveTab,JSON.stringify(values));
+      document.getElementById("planStatus").textContent="Saved privately on this device.";
+    }
+    function clearPlanRoom(){
+      if(!window.confirm("Clear this Plan Room page from this device?"))return;
+      localStorage.removeItem("meltdownPlanRoom::"+planActiveTab);openPlanTab(planActiveTab);
+      document.getElementById("planStatus").textContent="This page has been cleared.";
+    }
+    function printPlanRoom(){
+      document.body.classList.add("printing-plan");
+      window.addEventListener("afterprint",function stopPlanPrint(){document.body.classList.remove("printing-plan");window.removeEventListener("afterprint",stopPlanPrint);});
+      window.print();
+    }
+    openPlanTab("today");
+
     window.addEventListener("hashchange",function(){var id=window.location.hash.replace("#","");if(document.getElementById(id)&&id!==currentRoom)showScreen(id);});
 
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "plan", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
