@@ -758,6 +758,42 @@
     .relationship-chat-message.me{background:#cde8e8}
     .relationship-chat-message small{display:block;margin-top:3px;color:#67584a}
     @media(max-width:600px){.relationship-chat-grid{grid-template-columns:1fr}}
+
+    /* Founder-locked Outdoor Room: controls enhance the original Living Property art. */
+    .outdoor-shell{width:min(1180px,100%);margin:0 auto;padding:12px}
+    .outdoor-stage{position:relative;border:2px solid #8b643d;border-radius:16px;overflow:hidden;background:#17110c;box-shadow:0 18px 45px #0008}
+    .outdoor-stage img{display:block;width:100%;height:auto;transition:filter .6s ease}
+    .outdoor-stage.time-morning img{filter:brightness(1.08) saturate(.96) sepia(.08)}
+    .outdoor-stage.time-sunset img{filter:brightness(.92) saturate(1.14) sepia(.18) hue-rotate(-8deg)}
+    .outdoor-stage.time-night img{filter:brightness(.52) saturate(.82) hue-rotate(12deg)}
+    .outdoor-stage.season-spring img{filter:saturate(1.09) brightness(1.03)}
+    .outdoor-stage.season-fall img{filter:sepia(.22) saturate(1.25) hue-rotate(-12deg)}
+    .outdoor-stage.season-winter img{filter:saturate(.52) brightness(1.1) contrast(.92)}
+    .outdoor-stage.time-night.season-winter img{filter:brightness(.48) saturate(.46) hue-rotate(10deg)}
+    .outdoor-stage.weather-cloudy img{filter:brightness(.8) saturate(.74)}
+    .outdoor-stage.weather-storm img{filter:brightness(.48) saturate(.55) contrast(1.14)}
+    .outdoor-stage.paused *{animation-play-state:paused!important}
+    .outdoor-weather{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .4s;background-size:28px 28px}
+    .weather-rain .outdoor-weather{opacity:.62;background-image:repeating-linear-gradient(105deg,transparent 0 12px,#b9def266 13px 14px,transparent 15px 27px);animation:outdoorRain .45s linear infinite}
+    .weather-snow .outdoor-weather{opacity:.8;background-image:radial-gradient(circle,#fff 0 2px,transparent 3px);animation:outdoorSnow 5s linear infinite}
+    .weather-storm .outdoor-weather{opacity:.72;background:linear-gradient(#14202b55,#090b11aa);animation:outdoorFlash 5s steps(1) infinite}
+    @keyframes outdoorRain{to{background-position:-24px 45px}}
+    @keyframes outdoorSnow{to{background-position:35px 110px}}
+    @keyframes outdoorFlash{0%,91%,94%,100%{background-color:transparent}92%,93%{background-color:#d9ecff88}}
+    .outdoor-hotspot{position:absolute;border:2px solid transparent;background:transparent;border-radius:14px;cursor:pointer}
+    .outdoor-hotspot:focus-visible,.outdoor-hotspot:hover{border-color:#dff7ff;background:#b9ecff22;box-shadow:0 0 0 3px #1239}
+    .outdoor-card{margin:14px 0;padding:15px;border:1px solid #aa7d4d;border-radius:14px;background:linear-gradient(145deg,#2e2117,#17100c);color:#f7ead5}
+    .outdoor-card h2,.outdoor-card h3{margin:0 0 8px;font-family:Georgia,serif;color:#f4d6a5}
+    .outdoor-card p{margin:6px 0;line-height:1.45}
+    .outdoor-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+    .outdoor-buttons{display:flex;flex-wrap:wrap;gap:8px}
+    .outdoor-buttons button{flex:1 1 145px;min-height:44px;border:1px solid #bd966d;border-radius:10px;background:#5a3c25;color:#fff7e7;padding:9px;cursor:pointer;font-weight:700}
+    .outdoor-buttons button:hover,.outdoor-buttons button[aria-pressed="true"]{background:#20737a;border-color:#baf2f2}
+    .outdoor-status{min-height:48px;padding:10px;border-radius:9px;background:#0e0b08aa;color:#fff3d7}
+    .outdoor-note{width:100%;min-height:105px;padding:10px;border-radius:10px;border:1px solid #a98662;background:#f7ead3;color:#2d1d13;font:inherit}
+    .outdoor-breathe{font-size:1.45rem;text-align:center;font-family:Georgia,serif;color:#d8f5ef}
+    @media(max-width:720px){.outdoor-grid{grid-template-columns:1fr}.outdoor-shell{padding:7px}.outdoor-hotspot{min-width:34px;min-height:34px}}
+
 </style>
 </head>
 
@@ -807,6 +843,7 @@
           <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
           <button type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
           <button type="button" onclick="showScreen('relationship')">RELATIONSHIP ROOM</button>
+          <button type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
           <button type="button" onclick="showScreen('plan')">PLAN ROOM</button>
           <button type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
@@ -836,6 +873,7 @@
       <button class="primary" type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
       <button class="primary" type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
       <button class="primary" type="button" onclick="showScreen('relationship')">RELATIONSHIP ROOM</button>
+      <button class="primary" type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
       <button class="primary" type="button" onclick="showScreen('plan')">PLAN ROOM</button>
       <button class="primary" type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
       <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
@@ -1437,6 +1475,111 @@
     </div>
   </section>
 
+
+  <section class="screen" id="outdoor">
+    <div class="topbar">The Meltdown Room &bull; Outdoor Room</div>
+    <div class="outdoor-shell">
+      <div class="outdoor-stage time-day season-summer weather-sunny" id="outdoorStage">
+        <img src="founder-locked-assets/living-property-map.png?v=61" alt="The founder-approved Living Property with farmhouse, creek, water wheel, gardens, horses, porch, fire pit, gazebo and trails">
+        <div class="outdoor-weather" aria-hidden="true"></div>
+        <button class="outdoor-hotspot" style="left:4%;top:20%;width:17%;height:23%" type="button" onclick="visitOutdoorPlace('Creek & Water Wheel','stream')" aria-label="Visit the creek and water wheel"></button>
+        <button class="outdoor-hotspot" style="left:50%;top:18%;width:25%;height:26%" type="button" onclick="visitOutdoorPlace('Farmhouse & Front Porch','birds')" aria-label="Visit the farmhouse and front porch"></button>
+        <button class="outdoor-hotspot" style="left:25%;top:35%;width:23%;height:17%" type="button" onclick="visitOutdoorPlace('Horse Meadow','birds')" aria-label="Visit the horse meadow"></button>
+        <button class="outdoor-hotspot" style="left:55%;top:50%;width:20%;height:17%" type="button" onclick="visitOutdoorPlace('Garden','birds')" aria-label="Visit the garden"></button>
+        <button class="outdoor-hotspot" style="left:36%;top:56%;width:16%;height:18%" type="button" onclick="visitOutdoorPlace('Fire Pit','fire')" aria-label="Visit the fire pit"></button>
+        <button class="outdoor-hotspot" style="left:76%;top:46%;width:18%;height:24%" type="button" onclick="visitOutdoorPlace('Adventure Trail','crickets')" aria-label="Walk the adventure trail"></button>
+      </div>
+
+      <div class="outdoor-card">
+        <h2>Your Living Property</h2>
+        <p>Choose a place on the picture or use the working controls below. Sounds begin only after you tap them.</p>
+        <div class="outdoor-status" id="outdoorStatus" role="status" aria-live="polite">Choose a peaceful place to begin.</div>
+      </div>
+
+      <div class="outdoor-grid">
+        <div class="outdoor-card">
+          <h3>Explore</h3>
+          <div class="outdoor-buttons">
+            <button type="button" onclick="visitOutdoorPlace('Front Porch','birds')">FRONT PORCH</button>
+            <button type="button" onclick="visitOutdoorPlace('Garden','birds')">GARDEN</button>
+            <button type="button" onclick="visitOutdoorPlace('Creek & Water Wheel','stream')">CREEK &amp; WATER WHEEL</button>
+            <button type="button" onclick="visitOutdoorPlace('Horse Meadow','birds')">HORSE MEADOW</button>
+            <button type="button" onclick="visitOutdoorPlace('Fire Pit','fire')">FIRE PIT</button>
+            <button type="button" onclick="visitOutdoorPlace('Gazebo','crickets')">GAZEBO</button>
+            <button type="button" onclick="visitOutdoorPlace('Adventure Trail','crickets')">ADVENTURE TRAIL</button>
+          </div>
+        </div>
+
+        <div class="outdoor-card">
+          <h3>Nature Sounds</h3>
+          <div class="outdoor-buttons" id="outdoorSoundButtons">
+            <button type="button" data-outdoor-sound="stream" aria-pressed="false" onclick="toggleOutdoorSound('stream')">STREAM</button>
+            <button type="button" data-outdoor-sound="birds" aria-pressed="false" onclick="toggleOutdoorSound('birds')">BIRDS</button>
+            <button type="button" data-outdoor-sound="crickets" aria-pressed="false" onclick="toggleOutdoorSound('crickets')">CRICKETS</button>
+            <button type="button" data-outdoor-sound="rain" aria-pressed="false" onclick="toggleOutdoorSound('rain')">RAIN</button>
+            <button type="button" data-outdoor-sound="fire" aria-pressed="false" onclick="toggleOutdoorSound('fire')">FIREPLACE</button>
+            <button type="button" data-outdoor-sound="music" aria-pressed="false" onclick="toggleOutdoorSound('music')">AMBIENT MUSIC</button>
+            <button type="button" onclick="stopOutdoorSounds()">STOP ALL</button>
+          </div>
+        </div>
+
+        <div class="outdoor-card">
+          <h3>Time of Day</h3>
+          <div class="outdoor-buttons">
+            <button type="button" data-outdoor-time="morning" onclick="setOutdoorTime('morning')">MORNING</button>
+            <button type="button" data-outdoor-time="day" onclick="setOutdoorTime('day')">DAY</button>
+            <button type="button" data-outdoor-time="sunset" onclick="setOutdoorTime('sunset')">SUNSET</button>
+            <button type="button" data-outdoor-time="night" onclick="setOutdoorTime('night')">NIGHT</button>
+            <button type="button" onclick="setOutdoorTime('auto')">USE LOCAL TIME</button>
+          </div>
+          <h3>Season</h3>
+          <div class="outdoor-buttons">
+            <button type="button" data-outdoor-season="spring" onclick="setOutdoorSeason('spring')">SPRING</button>
+            <button type="button" data-outdoor-season="summer" onclick="setOutdoorSeason('summer')">SUMMER</button>
+            <button type="button" data-outdoor-season="fall" onclick="setOutdoorSeason('fall')">FALL</button>
+            <button type="button" data-outdoor-season="winter" onclick="setOutdoorSeason('winter')">WINTER</button>
+          </div>
+        </div>
+
+        <div class="outdoor-card">
+          <h3>Weather &amp; Movement</h3>
+          <div class="outdoor-buttons">
+            <button type="button" data-outdoor-weather="sunny" onclick="setOutdoorWeather('sunny')">SUNNY</button>
+            <button type="button" data-outdoor-weather="cloudy" onclick="setOutdoorWeather('cloudy')">CLOUDY</button>
+            <button type="button" data-outdoor-weather="rain" onclick="setOutdoorWeather('rain')">RAIN</button>
+            <button type="button" data-outdoor-weather="snow" onclick="setOutdoorWeather('snow')">SNOW</button>
+            <button type="button" data-outdoor-weather="storm" onclick="setOutdoorWeather('storm')">STORM</button>
+            <button type="button" id="outdoorMotionButton" aria-pressed="false" onclick="toggleOutdoorMotion()">STILL MODE</button>
+            <button type="button" onclick="resetOutdoorView()">RESET VIEW</button>
+          </div>
+        </div>
+
+        <div class="outdoor-card">
+          <h3>Reset Outside</h3>
+          <p class="outdoor-breathe" id="outdoorBreathe">Take one slow breath.</p>
+          <div class="outdoor-buttons">
+            <button type="button" onclick="startOutdoorBreathing()">GUIDED BREATHING</button>
+            <button type="button" onclick="nextOutdoorGrounding()">5-4-3-2-1 GROUNDING</button>
+            <button type="button" onclick="startCompanionWalk()">WALK WITH MY COMPANION</button>
+            <button type="button" onclick="saveOutdoorFavorite()">SAVE FAVORITE SPOT</button>
+          </div>
+        </div>
+
+        <div class="outdoor-card">
+          <h3>My Outdoor Notes</h3>
+          <textarea class="outdoor-note" id="outdoorNotes" placeholder="What did you notice, feel, or want to remember?" oninput="saveOutdoorNotes()"></textarea>
+          <p id="outdoorFavorite">No favorite spot saved yet.</p>
+        </div>
+      </div>
+    </div>
+    <div class="controls">
+      <button type="button" onclick="showScreen('great')">BACK TO GREAT ROOM</button>
+      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
+      <button type="button" onclick="showScreen('companion')">MY COMPANION</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </div>
+  </section>
+
   <script>
     var currentRoom = "home";
     var previousRoom = "home";
@@ -1453,6 +1596,7 @@
       if (id !== currentRoom) { previousRoom = currentRoom; currentRoom = id; }
       target.classList.add("active");
       if (typeof updateCompanionDock === "function") updateCompanionDock(id);
+      if (id === "outdoor" && typeof initOutdoorRoom === "function") initOutdoorRoom();
 
 
       if (history.replaceState) {
@@ -1463,6 +1607,8 @@
     }
 
     function cleanUpRoomBeforeLeaving(id) {
+      if (id === "outdoor" && typeof stopOutdoorSounds === "function") stopOutdoorSounds();
+      if (id === "outdoor" && outdoorBreathTimer) { clearInterval(outdoorBreathTimer); outdoorBreathTimer = null; }
       if (id === "meltdown" && typeof closeMeltdownTool === "function") closeMeltdownTool();
       if (id === "thinking" && typeof closeThinkingTool === "function") closeThinkingTool();
       if (id === "smash" && typeof closeSmashTool === "function") closeSmashTool();
@@ -2685,8 +2831,151 @@
 
     window.addEventListener("hashchange",function(){var id=window.location.hash.replace("#","");if(document.getElementById(id)&&id!==currentRoom)showScreen(id);});
 
+
+    var outdoorAudioContext=null;
+    var outdoorSoundState={};
+    var outdoorPlace="";
+    var outdoorGroundStep=0;
+    var outdoorBreathTimer=null;
+    var outdoorStill=false;
+
+    function outdoorSay(message){
+      var status=document.getElementById("outdoorStatus");
+      if(status) status.textContent=message;
+    }
+    function outdoorAudio(){
+      if(!outdoorAudioContext) outdoorAudioContext=new (window.AudioContext||window.webkitAudioContext)();
+      if(outdoorAudioContext.state==="suspended") outdoorAudioContext.resume();
+      return outdoorAudioContext;
+    }
+    function outdoorGain(ctx,level){
+      var gain=ctx.createGain();gain.gain.value=level;gain.connect(ctx.destination);return gain;
+    }
+    function outdoorNoise(ctx,gain,filterType,frequency){
+      var length=ctx.sampleRate*2,buffer=ctx.createBuffer(1,length,ctx.sampleRate),data=buffer.getChannelData(0);
+      for(var i=0;i<length;i++) data[i]=Math.random()*2-1;
+      var src=ctx.createBufferSource(),filter=ctx.createBiquadFilter();
+      filter.type=filterType;filter.frequency.value=frequency;src.buffer=buffer;src.loop=true;src.connect(filter);filter.connect(gain);src.start();
+      return src;
+    }
+    function outdoorChirp(ctx,gain,low,high,duration){
+      var osc=ctx.createOscillator(),g=ctx.createGain(),now=ctx.currentTime;
+      osc.type="sine";osc.frequency.setValueAtTime(low,now);osc.frequency.exponentialRampToValueAtTime(high,now+duration*.45);osc.frequency.exponentialRampToValueAtTime(low*1.15,now+duration);
+      g.gain.setValueAtTime(.0001,now);g.gain.exponentialRampToValueAtTime(.12,now+.03);g.gain.exponentialRampToValueAtTime(.0001,now+duration);
+      osc.connect(g);g.connect(gain);osc.start(now);osc.stop(now+duration+.02);
+    }
+    function startOutdoorSound(name){
+      if(outdoorSoundState[name]) return;
+      var ctx=outdoorAudio(),gain=outdoorGain(ctx,name==="music"?.07:.1),entry={gain:gain,nodes:[],timers:[]};
+      outdoorSoundState[name]=entry;
+      if(name==="stream") entry.nodes.push(outdoorNoise(ctx,gain,"lowpass",1300));
+      if(name==="rain") entry.nodes.push(outdoorNoise(ctx,gain,"highpass",900));
+      if(name==="fire"){
+        entry.nodes.push(outdoorNoise(ctx,gain,"bandpass",520));
+        entry.timers.push(setInterval(function(){outdoorChirp(ctx,gain,180,110,.08)},700));
+      }
+      if(name==="birds"){
+        var bird=function(){outdoorChirp(ctx,gain,1200+Math.random()*500,2600+Math.random()*900,.25)};
+        bird();entry.timers.push(setInterval(bird,1800));
+      }
+      if(name==="crickets"){
+        var cricket=function(){for(var n=0;n<3;n++) setTimeout(function(){outdoorChirp(ctx,gain,3600,4200,.06)},n*110)};
+        cricket();entry.timers.push(setInterval(cricket,1450));
+      }
+      if(name==="music"){
+        [196,246.94,293.66].forEach(function(freq,index){var osc=ctx.createOscillator();osc.type="sine";osc.frequency.value=freq;osc.connect(gain);osc.start();entry.nodes.push(osc)});
+      }
+      var button=document.querySelector('[data-outdoor-sound="'+name+'"]');
+      if(button) button.setAttribute("aria-pressed","true");
+      outdoorSay(name.charAt(0).toUpperCase()+name.slice(1)+" sound is on. Tap it again to turn it off.");
+    }
+    function stopOutdoorSound(name){
+      var entry=outdoorSoundState[name];if(!entry)return;
+      entry.timers.forEach(function(timer){clearInterval(timer)});
+      entry.nodes.forEach(function(node){try{node.stop()}catch(error){}});
+      try{entry.gain.disconnect()}catch(error){}
+      delete outdoorSoundState[name];
+      var button=document.querySelector('[data-outdoor-sound="'+name+'"]');
+      if(button) button.setAttribute("aria-pressed","false");
+    }
+    function toggleOutdoorSound(name){
+      if(outdoorSoundState[name]){stopOutdoorSound(name);outdoorSay(name.charAt(0).toUpperCase()+name.slice(1)+" sound is off.");}
+      else startOutdoorSound(name);
+    }
+    function stopOutdoorSounds(){
+      Object.keys(outdoorSoundState).forEach(stopOutdoorSound);
+      outdoorSay("All Outdoor Room sounds are off.");
+    }
+    function ensureOutdoorSound(name){if(name&&!outdoorSoundState[name])startOutdoorSound(name)}
+    function visitOutdoorPlace(place,sound){
+      outdoorPlace=place;localStorage.setItem("meltdownOutdoorPlace",place);ensureOutdoorSound(sound);
+      outdoorSay("You are at the "+place+". Stay, listen, breathe, or save it as your favorite spot.");
+    }
+    function outdoorSetChoice(kind,value){
+      document.querySelectorAll('[data-outdoor-'+kind+']').forEach(function(button){button.setAttribute("aria-pressed",String(button.getAttribute('data-outdoor-'+kind)===value))});
+      localStorage.setItem("meltdownOutdoor"+kind.charAt(0).toUpperCase()+kind.slice(1),value);
+    }
+    function setOutdoorTime(value){
+      if(value==="auto"){var hour=new Date().getHours();value=hour<10?"morning":hour<17?"day":hour<21?"sunset":"night"}
+      var stage=document.getElementById("outdoorStage");if(!stage)return;
+      ["morning","day","sunset","night"].forEach(function(v){stage.classList.remove("time-"+v)});stage.classList.add("time-"+value);
+      outdoorSetChoice("time",value);outdoorSay("The property is now set to "+value+".");
+    }
+    function setOutdoorSeason(value){
+      var stage=document.getElementById("outdoorStage");if(!stage)return;
+      ["spring","summer","fall","winter"].forEach(function(v){stage.classList.remove("season-"+v)});stage.classList.add("season-"+value);
+      outdoorSetChoice("season",value);outdoorSay("The property is now in "+value+".");
+    }
+    function setOutdoorWeather(value,silent){
+      var stage=document.getElementById("outdoorStage");if(!stage)return;
+      ["sunny","cloudy","rain","snow","storm"].forEach(function(v){stage.classList.remove("weather-"+v)});stage.classList.add("weather-"+value);
+      outdoorSetChoice("weather",value);
+      if(!silent&&(value==="rain"||value==="storm"))ensureOutdoorSound("rain");
+      outdoorSay(value.charAt(0).toUpperCase()+value.slice(1)+" weather is active.");
+    }
+    function toggleOutdoorMotion(){
+      outdoorStill=!outdoorStill;var stage=document.getElementById("outdoorStage"),button=document.getElementById("outdoorMotionButton");
+      if(stage)stage.classList.toggle("paused",outdoorStill);if(button)button.setAttribute("aria-pressed",String(outdoorStill));
+      outdoorSay(outdoorStill?"Still Mode is on. Property movement is paused.":"Property movement is on.");
+    }
+    function resetOutdoorView(){
+      setOutdoorTime("day");setOutdoorSeason("summer");setOutdoorWeather("sunny");
+      if(outdoorStill)toggleOutdoorMotion();stopOutdoorSounds();outdoorSay("The Living Property view has been reset.");
+    }
+    function startOutdoorBreathing(){
+      clearInterval(outdoorBreathTimer);var node=document.getElementById("outdoorBreathe"),steps=["Breathe in… 4","Hold… 2","Breathe out… 6","Rest… 2"],i=0;
+      if(node)node.textContent=steps[0];outdoorSay("Follow the slow breathing guide.");
+      outdoorBreathTimer=setInterval(function(){i++;if(i>=steps.length){clearInterval(outdoorBreathTimer);outdoorBreathTimer=null;if(node)node.textContent="You did it. Take another breath whenever you need.";return}if(node)node.textContent=steps[i]},3000);
+    }
+    function nextOutdoorGrounding(){
+      var prompts=["Name 5 things you can see.","Name 4 things you can feel.","Name 3 things you can hear.","Name 2 things you can smell.","Name 1 thing you can taste or appreciate."];
+      outdoorSay(prompts[outdoorGroundStep]);outdoorGroundStep=(outdoorGroundStep+1)%prompts.length;
+    }
+    function saveOutdoorFavorite(){
+      var place=outdoorPlace||localStorage.getItem("meltdownOutdoorPlace")||"Front Porch";
+      localStorage.setItem("meltdownOutdoorFavorite",place);var node=document.getElementById("outdoorFavorite");if(node)node.textContent="Favorite spot: "+place;
+      outdoorSay(place+" is saved as your favorite Outdoor Room spot.");
+    }
+    function saveOutdoorNotes(){var node=document.getElementById("outdoorNotes");if(node)localStorage.setItem("meltdownOutdoorNotes",node.value)}
+    function startCompanionWalk(){
+      var companion=null;try{companion=JSON.parse(localStorage.getItem("meltdownCompanion")||"null")}catch(error){}
+      if(!companion){outdoorSay("Choose your companion first, then return for a walk.");showScreen("companion");return}
+      var name=companion.name||companion.type||"your companion",place=outdoorPlace||"Adventure Trail";
+      outdoorSay(name+" is walking with you at the "+place+". You choose the pace.");
+    }
+    function initOutdoorRoom(){
+      var notes=document.getElementById("outdoorNotes"),favorite=document.getElementById("outdoorFavorite");
+      if(notes)notes.value=localStorage.getItem("meltdownOutdoorNotes")||"";
+      var savedFavorite=localStorage.getItem("meltdownOutdoorFavorite");if(favorite&&savedFavorite)favorite.textContent="Favorite spot: "+savedFavorite;
+      setOutdoorTime(localStorage.getItem("meltdownOutdoorTime")||"auto");
+      setOutdoorSeason(localStorage.getItem("meltdownOutdoorSeason")||"summer");
+      setOutdoorWeather(localStorage.getItem("meltdownOutdoorWeather")||"sunny",true);
+      outdoorPlace=localStorage.getItem("meltdownOutdoorPlace")||"";
+      outdoorSay(outdoorPlace?"Welcome back to the "+outdoorPlace+".":"Choose a peaceful place to begin.");
+    }
+
     var start = window.location.hash.replace("#", "");
-    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "connect", "plan", "relationship", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
+    if (["home", "entrance", "map", "great", "calm", "hope", "celebration", "reflection", "learn", "connect", "plan", "relationship", "outdoor", "companion", "rant", "meltdown", "thinking", "smash", "axe", "plate", "crumple"].includes(start)) {
       showScreen(start);
     }
   </script>
