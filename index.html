@@ -759,6 +759,18 @@
     .relationship-chat-message small{display:block;margin-top:3px;color:#67584a}
     @media(max-width:600px){.relationship-chat-grid{grid-template-columns:1fr}}
 
+
+    .outdoor-setup{margin:0 0 14px;padding:18px;border:2px solid #c29a67;border-radius:16px;background:linear-gradient(145deg,#342419,#15100c);color:#fff2dc;box-shadow:0 12px 30px #0007}
+    .outdoor-setup[hidden]{display:none}
+    .outdoor-setup h2{margin:0 0 8px;font-family:Georgia,serif;color:#f5d7a6}
+    .outdoor-setup-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:14px 0}
+    .outdoor-setup label{display:block;font-weight:700;color:#f6dfbc}
+    .outdoor-setup select{width:100%;min-height:44px;margin-top:6px;padding:8px;border:1px solid #bd966d;border-radius:9px;background:#f8ead3;color:#2d1d13;font:inherit}
+    .outdoor-check{display:flex!important;align-items:center;gap:9px;min-height:44px;padding:8px;border:1px solid #806343;border-radius:9px;background:#21170f}
+    .outdoor-check input{width:20px;height:20px}
+    .outdoor-location-status{min-height:42px;padding:9px;border-radius:8px;background:#0d0a08aa}
+    @media(max-width:720px){.outdoor-setup-grid{grid-template-columns:1fr}}
+
     /* Founder-locked Outdoor Room: controls enhance the original Living Property art. */
     .outdoor-shell{width:min(1180px,100%);margin:0 auto;padding:12px}
     .outdoor-stage{position:relative;border:2px solid #8b643d;border-radius:16px;overflow:hidden;background:#17110c;box-shadow:0 18px 45px #0008}
@@ -1479,6 +1491,54 @@
   <section class="screen" id="outdoor">
     <div class="topbar">The Meltdown Room &bull; Outdoor Room</div>
     <div class="outdoor-shell">
+
+      <div class="outdoor-setup" id="outdoorSetup" hidden>
+        <h2>Welcome to Your Outdoor Room</h2>
+        <p>Set the property to feel right for you. You can change these choices later.</p>
+        <div class="outdoor-setup-grid">
+          <label class="outdoor-check"><input id="outdoorUseLocalTime" type="checkbox" checked> Use my device's local time automatically</label>
+          <label>Or choose a time
+            <select id="outdoorStartingTime">
+              <option value="morning">Morning</option>
+              <option value="day">Day</option>
+              <option value="sunset">Sunset</option>
+              <option value="night">Night</option>
+            </select>
+          </label>
+          <label class="outdoor-check"><input id="outdoorUseLocalSeason" type="checkbox" checked> Use my current local season</label>
+          <label>Starting weather
+            <select id="outdoorStartingWeather">
+              <option value="sunny">Sunny</option>
+              <option value="cloudy">Cloudy</option>
+              <option value="rain">Rain</option>
+              <option value="snow">Snow</option>
+              <option value="storm">Storm</option>
+            </select>
+          </label>
+          <label>Where would you like to begin?
+            <select id="outdoorStartingPlace">
+              <option value="Front Porch">Front Porch</option>
+              <option value="Garden">Garden</option>
+              <option value="Creek & Water Wheel">Creek &amp; Water Wheel</option>
+              <option value="Horse Meadow">Horse Meadow</option>
+              <option value="Fire Pit">Fire Pit</option>
+              <option value="Gazebo">Gazebo</option>
+              <option value="Adventure Trail">Adventure Trail</option>
+            </select>
+          </label>
+          <div>
+            <label>Location preference</label>
+            <div class="outdoor-buttons">
+              <button type="button" onclick="requestOutdoorLocation()">USE CURRENT LOCATION</button>
+              <button type="button" onclick="keepOutdoorLocationPrivate()">KEEP PRIVATE</button>
+            </div>
+            <div class="outdoor-location-status" id="outdoorLocationStatus" role="status">Location is optional and stays on this device.</div>
+          </div>
+        </div>
+        <div class="outdoor-buttons">
+          <button type="button" onclick="saveOutdoorSetup()">ENTER MY OUTDOOR ROOM</button>
+        </div>
+      </div>
       <div class="outdoor-stage time-day season-summer weather-sunny" id="outdoorStage">
         <img src="founder-locked-assets/living-property-map.png?v=61" alt="The founder-approved Living Property with farmhouse, creek, water wheel, gardens, horses, porch, fire pit, gazebo and trails">
         <div class="outdoor-weather" aria-hidden="true"></div>
@@ -1493,6 +1553,7 @@
       <div class="outdoor-card">
         <h2>Your Living Property</h2>
         <p>Choose a place on the picture or use the working controls below. Sounds begin only after you tap them.</p>
+        <div class="outdoor-buttons"><button type="button" onclick="openOutdoorSetup()">CHANGE STARTUP SETTINGS</button></div>
         <div class="outdoor-status" id="outdoorStatus" role="status" aria-live="polite">Choose a peaceful place to begin.</div>
       </div>
 
@@ -2839,6 +2900,57 @@
     var outdoorBreathTimer=null;
     var outdoorStill=false;
 
+
+    function localOutdoorSeason(){
+      var month=new Date().getMonth()+1;
+      return month>=3&&month<=5?"spring":month>=6&&month<=8?"summer":month>=9&&month<=11?"fall":"winter";
+    }
+    function openOutdoorSetup(){
+      var panel=document.getElementById("outdoorSetup");if(panel)panel.hidden=false;
+      var useTime=document.getElementById("outdoorUseLocalTime"),useSeason=document.getElementById("outdoorUseLocalSeason");
+      if(useTime)useTime.checked=localStorage.getItem("meltdownOutdoorUseLocalTime")!=="false";
+      if(useSeason)useSeason.checked=localStorage.getItem("meltdownOutdoorUseLocalSeason")!=="false";
+      var time=document.getElementById("outdoorStartingTime"),weather=document.getElementById("outdoorStartingWeather"),place=document.getElementById("outdoorStartingPlace");
+      if(time)time.value=localStorage.getItem("meltdownOutdoorTime")||"day";
+      if(weather)weather.value=localStorage.getItem("meltdownOutdoorWeather")||"sunny";
+      if(place)place.value=localStorage.getItem("meltdownOutdoorPlace")||"Front Porch";
+      updateOutdoorLocationStatus();
+      if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});
+    }
+    function updateOutdoorLocationStatus(message){
+      var node=document.getElementById("outdoorLocationStatus");if(!node)return;
+      if(message){node.textContent=message;return}
+      var choice=localStorage.getItem("meltdownOutdoorLocationChoice");
+      node.textContent=choice==="device"?"Current device location is enabled on this device.":choice==="private"?"Location is private. The room still works normally.":"Location is optional and stays on this device.";
+    }
+    function requestOutdoorLocation(){
+      if(!navigator.geolocation){updateOutdoorLocationStatus("Location is not available on this device. You can continue privately.");return}
+      updateOutdoorLocationStatus("Waiting for location permission…");
+      navigator.geolocation.getCurrentPosition(function(position){
+        localStorage.setItem("meltdownOutdoorLocationChoice","device");
+        localStorage.setItem("meltdownOutdoorLatitude",String(position.coords.latitude));
+        localStorage.setItem("meltdownOutdoorLongitude",String(position.coords.longitude));
+        updateOutdoorLocationStatus("Current location enabled. It is saved only on this device.");
+      },function(){
+        localStorage.setItem("meltdownOutdoorLocationChoice","private");
+        updateOutdoorLocationStatus("Location was not shared. The room will work privately.");
+      },{enableHighAccuracy:false,timeout:10000,maximumAge:3600000});
+    }
+    function keepOutdoorLocationPrivate(){
+      localStorage.setItem("meltdownOutdoorLocationChoice","private");
+      localStorage.removeItem("meltdownOutdoorLatitude");localStorage.removeItem("meltdownOutdoorLongitude");
+      updateOutdoorLocationStatus("Location is private. The room still works normally.");
+    }
+    function saveOutdoorSetup(){
+      var useTime=document.getElementById("outdoorUseLocalTime").checked,useSeason=document.getElementById("outdoorUseLocalSeason").checked;
+      var chosenTime=document.getElementById("outdoorStartingTime").value,chosenWeather=document.getElementById("outdoorStartingWeather").value,chosenPlace=document.getElementById("outdoorStartingPlace").value;
+      localStorage.setItem("meltdownOutdoorUseLocalTime",String(useTime));localStorage.setItem("meltdownOutdoorUseLocalSeason",String(useSeason));
+      localStorage.setItem("meltdownOutdoorSetupComplete","true");localStorage.setItem("meltdownOutdoorPlace",chosenPlace);outdoorPlace=chosenPlace;
+      setOutdoorTime(useTime?"auto":chosenTime);setOutdoorSeason(useSeason?localOutdoorSeason():(localStorage.getItem("meltdownOutdoorSeason")||"summer"));setOutdoorWeather(chosenWeather,true);
+      var panel=document.getElementById("outdoorSetup");if(panel)panel.hidden=true;
+      outdoorSay("Welcome to the "+chosenPlace+". Your starting choices are saved on this device.");
+    }
+
     function outdoorSay(message){
       var status=document.getElementById("outdoorStatus");
       if(status) status.textContent=message;
@@ -2964,14 +3076,16 @@
       outdoorSay(name+" is walking with you at the "+place+". You choose the pace.");
     }
     function initOutdoorRoom(){
-      var notes=document.getElementById("outdoorNotes"),favorite=document.getElementById("outdoorFavorite");
+      var notes=document.getElementById("outdoorNotes"),favorite=document.getElementById("outdoorFavorite"),setup=document.getElementById("outdoorSetup");
       if(notes)notes.value=localStorage.getItem("meltdownOutdoorNotes")||"";
       var savedFavorite=localStorage.getItem("meltdownOutdoorFavorite");if(favorite&&savedFavorite)favorite.textContent="Favorite spot: "+savedFavorite;
-      setOutdoorTime(localStorage.getItem("meltdownOutdoorTime")||"auto");
-      setOutdoorSeason(localStorage.getItem("meltdownOutdoorSeason")||"summer");
+      var useLocalTime=localStorage.getItem("meltdownOutdoorUseLocalTime")!=="false",useLocalSeason=localStorage.getItem("meltdownOutdoorUseLocalSeason")!=="false";
+      setOutdoorTime(useLocalTime?"auto":(localStorage.getItem("meltdownOutdoorTime")||"day"));
+      setOutdoorSeason(useLocalSeason?localOutdoorSeason():(localStorage.getItem("meltdownOutdoorSeason")||"summer"));
       setOutdoorWeather(localStorage.getItem("meltdownOutdoorWeather")||"sunny",true);
       outdoorPlace=localStorage.getItem("meltdownOutdoorPlace")||"";
-      outdoorSay(outdoorPlace?"Welcome back to the "+outdoorPlace+".":"Choose a peaceful place to begin.");
+      var firstVisit=localStorage.getItem("meltdownOutdoorSetupComplete")!=="true";if(setup)setup.hidden=!firstVisit;
+      if(firstVisit)openOutdoorSetup();else outdoorSay(outdoorPlace?"Welcome back to the "+outdoorPlace+".":"Choose a peaceful place to begin.");
     }
 
     var start = window.location.hash.replace("#", "");
