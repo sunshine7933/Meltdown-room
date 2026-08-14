@@ -705,6 +705,12 @@
     .companion-choices{display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:8px}
     .companion-choice{border-radius:10px;min-height:48px;padding:10px;background:#4a392d;border-color:#9a784e}
     .companion-choice.active{background:#a75d31;border-color:#efbb77;box-shadow:0 0 0 2px rgba(239,187,119,.22)}
+    .companion-picture-grid{display:grid;grid-template-columns:repeat(3,minmax(86px,1fr));gap:10px}
+    .companion-picture{position:relative;aspect-ratio:1;min-height:92px;padding:0;overflow:hidden;border:2px solid #8f6b43;border-radius:13px;background-image:url("companion-pets.png?v=59");background-size:300% 300%;background-position:var(--pet-x) var(--pet-y);background-repeat:no-repeat}
+    .companion-picture span{position:absolute;left:0;right:0;bottom:0;padding:6px 3px;background:linear-gradient(transparent,rgba(18,10,6,.92));color:#fff3d7;font-size:11px;text-shadow:0 1px 2px #000}
+    .companion-picture.active{border-color:#ffd08a;box-shadow:0 0 0 3px rgba(239,187,119,.35)}
+    .companion-picture:focus-visible{outline:3px solid #9ed7ff;outline-offset:2px}
+    @media(max-width:480px){.companion-picture-grid{grid-template-columns:repeat(3,1fr)}.companion-picture{min-height:78px}}
     .companion-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
     .companion-fields label{display:block;color:#e7d2ae;font-weight:700}.companion-fields input,.companion-fields select,.companion-fields textarea{width:100%;margin-top:5px;padding:11px;border:1px solid #9a774b;border-radius:8px;background:#fff7e8;color:#2d1c12;font:inherit}
     .companion-fields textarea{min-height:85px;resize:vertical}.companion-photo{grid-column:1/-1}
@@ -1033,6 +1039,21 @@
               <button class="companion-choice" type="button" data-value="Other Companion" onclick="chooseCompanionOption('type','Other Companion',this)">OTHER</button>
             </div>
           </div>
+          <div class="companion-group companion-picture-group">
+            <h3>2. Choose a ready-made picture</h3>
+            <p class="companion-private">Pick one of these built-in companions, or add your own private photo below.</p>
+            <div class="companion-picture-grid" id="companionPictureGrid">
+              <button class="companion-picture active" type="button" data-pet-index="0" data-pet-type="Small Dog" style="--pet-x:0%;--pet-y:0%" onclick="chooseCompanionPicture(0,'Small Dog',this)" aria-label="Choose cream terrier"><span>CREAM TERRIER</span></button>
+              <button class="companion-picture" type="button" data-pet-index="1" data-pet-type="Small Dog" style="--pet-x:50%;--pet-y:0%" onclick="chooseCompanionPicture(1,'Small Dog',this)" aria-label="Choose brown spaniel"><span>BROWN SPANIEL</span></button>
+              <button class="companion-picture" type="button" data-pet-index="2" data-pet-type="Large Dog" style="--pet-x:100%;--pet-y:0%" onclick="chooseCompanionPicture(2,'Large Dog',this)" aria-label="Choose golden retriever"><span>GOLDEN RETRIEVER</span></button>
+              <button class="companion-picture" type="button" data-pet-index="3" data-pet-type="Large Dog" style="--pet-x:0%;--pet-y:50%" onclick="chooseCompanionPicture(3,'Large Dog',this)" aria-label="Choose black Labrador"><span>BLACK LAB</span></button>
+              <button class="companion-picture" type="button" data-pet-index="4" data-pet-type="Cat" style="--pet-x:50%;--pet-y:50%" onclick="chooseCompanionPicture(4,'Cat',this)" aria-label="Choose tabby cat"><span>TABBY CAT</span></button>
+              <button class="companion-picture" type="button" data-pet-index="5" data-pet-type="Cat" style="--pet-x:100%;--pet-y:50%" onclick="chooseCompanionPicture(5,'Cat',this)" aria-label="Choose black and white cat"><span>BLACK &amp; WHITE CAT</span></button>
+              <button class="companion-picture" type="button" data-pet-index="6" data-pet-type="Horse" style="--pet-x:0%;--pet-y:100%" onclick="chooseCompanionPicture(6,'Horse',this)" aria-label="Choose chestnut horse"><span>CHESTNUT HORSE</span></button>
+              <button class="companion-picture" type="button" data-pet-index="7" data-pet-type="Horse" style="--pet-x:50%;--pet-y:100%" onclick="chooseCompanionPicture(7,'Horse',this)" aria-label="Choose gray horse"><span>GRAY HORSE</span></button>
+              <button class="companion-picture" type="button" data-pet-index="8" data-pet-type="Other Companion" style="--pet-x:100%;--pet-y:100%" onclick="chooseCompanionPicture(8,'Other Companion',this)" aria-label="Choose lop-eared rabbit"><span>LOP-EARED RABBIT</span></button>
+            </div>
+          </div>
           <div class="companion-fields">
             <label>Name<input id="companionName" maxlength="40" placeholder="What would you like to call them?" oninput="previewCompanion()"></label>
             <label>Appearance<input id="companionAppearance" maxlength="100" placeholder="Color, markings, size, or look" oninput="previewCompanion()"></label>
@@ -1047,7 +1068,7 @@
             <label class="companion-photo">Optional private photo<input id="companionPhoto" type="file" accept="image/*" onchange="chooseCompanionPhoto(this)"><small>Choose a photo from this device. It stays on this device.</small></label>
           </div>
           <div class="companion-group">
-            <h3>2. Choose how they interact</h3>
+            <h3>3. Choose how they interact</h3>
             <div class="companion-choices" data-companion-group="mode">
               <button class="companion-choice active" type="button" data-value="Follows me" onclick="chooseCompanionOption('mode','Follows me',this)">FOLLOWS ME</button>
               <button class="companion-choice" type="button" data-value="Sits nearby" onclick="chooseCompanionOption('mode','Sits nearby',this)">SITS NEARBY</button>
@@ -2383,13 +2404,27 @@
     function printConnectRoom(){document.body.classList.add("printing-connect");window.addEventListener("afterprint",function stopConnectPrint(){document.body.classList.remove("printing-connect");window.removeEventListener("afterprint",stopConnectPrint);});window.print();}
     openConnectTab("directory");
 
-    var companionDraft={type:"Small Dog",mode:"Follows me",photo:""};
+    var companionDraft={type:"Small Dog",mode:"Follows me",photo:"",petIndex:0};
     function companionSaved(){try{return JSON.parse(localStorage.getItem("meltdownCompanion")||"null");}catch(error){return null;}}
     function companionEscape(value){var node=document.createElement("div");node.textContent=value||"";return node.innerHTML;}
     function companionTypeLetter(type){return {"Small Dog":"SD","Large Dog":"LD","Cat":"C","Horse":"H","Other Companion":"OC"}[type]||"C";}
+    function companionDefaultPicture(type){return {"Small Dog":0,"Large Dog":2,"Cat":4,"Horse":6,"Other Companion":8}[type]||0;}
+    function companionSpritePosition(index){var col=index%3,row=Math.floor(index/3);return (col*50)+"% "+(row*50)+"%";}
+    function chooseCompanionPicture(index,type,button){
+      companionDraft.petIndex=index;companionDraft.type=type;companionDraft.photo="";
+      var photoField=document.getElementById("companionPhoto");if(photoField)photoField.value="";
+      document.querySelectorAll(".companion-picture").forEach(function(choice){choice.classList.toggle("active",choice===button);});
+      document.querySelectorAll('[data-companion-group="type"] .companion-choice').forEach(function(choice){choice.classList.toggle("active",choice.getAttribute("data-value")===type);});
+      previewCompanion();
+    }
     function chooseCompanionOption(group,value,button){
       companionDraft[group]=value;
       document.querySelectorAll('[data-companion-group="'+group+'"] .companion-choice').forEach(function(choice){choice.classList.toggle("active",choice===button);});
+      if(group==="type"){
+        companionDraft.photo="";companionDraft.petIndex=companionDefaultPicture(value);
+        var photoField=document.getElementById("companionPhoto");if(photoField)photoField.value="";
+        document.querySelectorAll(".companion-picture").forEach(function(choice){choice.classList.toggle("active",Number(choice.getAttribute("data-pet-index"))===companionDraft.petIndex);});
+      }
       previewCompanion();
     }
     function companionFormValue(id){var field=document.getElementById(id);return field?field.value.trim():"";}
@@ -2403,8 +2438,11 @@
       document.getElementById("companionPresence").textContent=name+" "+companionDraft.mode.toLowerCase()+(place?" and rests "+place.toLowerCase():"")+".";
       var portrait=document.getElementById("companionPortrait"),monogram=document.getElementById("companionMonogram");
       monogram.textContent=companionTypeLetter(companionDraft.type);
-      portrait.style.backgroundImage=companionDraft.photo?'url("'+companionDraft.photo+'")':"";
-      monogram.style.display=companionDraft.photo?"none":"";
+      portrait.style.backgroundImage=companionDraft.photo?'url("'+companionDraft.photo+'")':'url("companion-pets.png?v=59")';
+      portrait.style.backgroundSize=companionDraft.photo?"cover":"300% 300%";
+      portrait.style.backgroundPosition=companionDraft.photo?"center":companionSpritePosition(companionDraft.petIndex);
+      portrait.style.backgroundRepeat="no-repeat";
+      monogram.style.display="none";
     }
     function chooseCompanionPhoto(input){
       var file=input.files&&input.files[0];if(!file)return;
@@ -2414,15 +2452,16 @@
     function saveCompanion(){
       var name=companionFormValue("companionName");
       if(!name){document.getElementById("companionPresence").textContent="Choose a name for your companion first.";document.getElementById("companionName").focus();return;}
-      var state={enabled:true,type:companionDraft.type,mode:companionDraft.mode,name:name,appearance:companionFormValue("companionAppearance"),personality:companionFormValue("companionPersonality"),restingPlace:companionFormValue("companionRestingPlace"),level:document.getElementById("companionLevel").value,sounds:document.getElementById("companionSounds").value,photo:companionDraft.photo};
+      var state={enabled:true,type:companionDraft.type,mode:companionDraft.mode,name:name,appearance:companionFormValue("companionAppearance"),personality:companionFormValue("companionPersonality"),restingPlace:companionFormValue("companionRestingPlace"),level:document.getElementById("companionLevel").value,sounds:document.getElementById("companionSounds").value,photo:companionDraft.photo,petIndex:companionDraft.petIndex};
       try{localStorage.setItem("meltdownCompanion",JSON.stringify(state));document.getElementById("companionPresence").textContent=name+" is ready to join you in the way you chose.";updateCompanionDock("companion");}
       catch(error){document.getElementById("companionPresence").textContent="This device could not save that photo. Try a smaller photo or save without one.";}
     }
     function loadCompanion(){
-      var state=companionSaved()||{type:"Small Dog",mode:"Follows me",name:"",appearance:"",personality:"",restingPlace:"",level:"Gentle",sounds:"off",photo:""};
-      companionDraft={type:state.type||"Small Dog",mode:state.mode||"Follows me",photo:state.photo||""};
+      var state=companionSaved()||{type:"Small Dog",mode:"Follows me",name:"",appearance:"",personality:"",restingPlace:"",level:"Gentle",sounds:"off",photo:"",petIndex:0};
+      companionDraft={type:state.type||"Small Dog",mode:state.mode||"Follows me",photo:state.photo||"",petIndex:Number.isInteger(state.petIndex)?state.petIndex:companionDefaultPicture(state.type||"Small Dog")};
       [["companionName",state.name],["companionAppearance",state.appearance],["companionPersonality",state.personality],["companionRestingPlace",state.restingPlace],["companionLevel",state.level||"Gentle"],["companionSounds",state.sounds||"off"]].forEach(function(pair){var field=document.getElementById(pair[0]);if(field)field.value=pair[1]||"";});
       ["type","mode"].forEach(function(group){document.querySelectorAll('[data-companion-group="'+group+'"] .companion-choice').forEach(function(button){button.classList.toggle("active",button.getAttribute("data-value")===companionDraft[group]);});});
+      document.querySelectorAll(".companion-picture").forEach(function(button){button.classList.toggle("active",Number(button.getAttribute("data-pet-index"))===companionDraft.petIndex);});
       document.getElementById("companionPhoto").value="";previewCompanion();
     }
     function removeCompanion(){
