@@ -952,6 +952,7 @@
           <button type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
           <button type="button" onclick="showScreen('plan')">PLAN ROOM</button>
           <button type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
+          <button type="button" onclick="showScreen('game')">FAMILY &amp; FUN ROOM</button>
           <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
         </div>
       </div>
@@ -3432,7 +3433,10 @@
       var stage=document.getElementById("outdoorStage");if(!stage)return;
       ["sunny","cloudy","rain","snow","storm"].forEach(function(v){stage.classList.remove("weather-"+v)});stage.classList.add("weather-"+value);
       outdoorSetChoice("weather",value);
-      if(!silent&&(value==="rain"||value==="storm"))ensureOutdoorSound("rain");
+      if(!silent){
+        if(value==="rain"||value==="storm")ensureOutdoorSound("rain");
+        else if(outdoorSoundState.rain)stopOutdoorSound("rain");
+      }
       outdoorSay(value.charAt(0).toUpperCase()+value.slice(1)+" weather is active.");
     }
     function toggleOutdoorMotion(){
