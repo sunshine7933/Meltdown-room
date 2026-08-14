@@ -747,6 +747,17 @@
     .relationship-saved article{padding:10px;border:1px solid #725234;border-radius:9px;background:#23160f}
     .relationship-saved small{color:#bea889}
     @media(max-width:680px){.relationship-connectors{grid-template-columns:1fr 1fr}.relationship-card{padding:13px}.relationship-connect-now{left:66%;width:29%}}
+
+    .relationship-chat-choice{margin:14px 0;padding:12px;border:1px solid #7f5d3b;border-radius:12px;background:rgba(21,13,8,.72);text-align:center}
+    .relationship-chat-choice p{margin:7px 0 0;color:#cdb99a;font-size:13px}
+    .relationship-chat-panel{margin-top:12px;padding:12px;border:1px solid #2f7d88;border-radius:12px;background:#151f1f}
+    .relationship-chat-panel[hidden]{display:none}
+    .relationship-chat-grid{display:grid;grid-template-columns:minmax(120px,.35fr) minmax(0,1fr);gap:10px;align-items:end}
+    .relationship-chat-log{min-height:130px;max-height:240px;overflow:auto;margin:10px 0;padding:10px;border:1px solid #5d5844;border-radius:9px;background:#f8efdd;color:#2d1d13;text-align:left}
+    .relationship-chat-message{margin:0 0 8px;padding:8px 10px;border-radius:9px;background:#e7d5b8}
+    .relationship-chat-message.me{background:#cde8e8}
+    .relationship-chat-message small{display:block;margin-top:3px;color:#67584a}
+    @media(max-width:600px){.relationship-chat-grid{grid-template-columns:1fr}}
 </style>
 </head>
 
@@ -1073,6 +1084,28 @@
         <label>Plan time together (optional)
           <input id="relationshipPlanTime" type="datetime-local">
         </label>
+        <div class="relationship-chat-choice">
+          <button class="primary" type="button" onclick="toggleRelationshipChat()">PRIVATE CHAT (OPTIONAL)</button>
+          <p>This choice is private on this device. Secure chat between separate phones will be added with protected accounts before final release.</p>
+        </div>
+        <div class="relationship-chat-panel" id="relationshipChatPanel" hidden>
+          <h3>Private Family Chat</h3>
+          <p>Anyone sharing this device can choose a name and add to the private conversation.</p>
+          <div class="relationship-chat-log" id="relationshipChatLog" role="log" aria-live="polite">No private messages yet.</div>
+          <div class="relationship-chat-grid">
+            <label>Your name
+              <input id="relationshipChatName" maxlength="30" placeholder="Name or nickname">
+            </label>
+            <label>Private message
+              <textarea id="relationshipChatInput" maxlength="800" placeholder="Write a message for this connection..."></textarea>
+            </label>
+          </div>
+          <div class="relationship-actions">
+            <button class="primary" type="button" onclick="sendRelationshipChatMessage()">SEND IN PRIVATE CHAT</button>
+            <button type="button" onclick="clearRelationshipChat()">CLEAR PRIVATE CHAT</button>
+            <button type="button" onclick="toggleRelationshipChat(false)">CLOSE CHAT</button>
+          </div>
+        </div>
         <div class="relationship-actions">
           <button type="button" onclick="nextRelationshipPrompt()">NEW PROMPT</button>
           <button class="primary" type="button" onclick="saveRelationshipMoment()">SAVE PRIVATELY</button>
@@ -2511,12 +2544,37 @@
     function chooseRelationshipConnector(value,button){
       relationshipConnector=value;localStorage.setItem("meltdownRelationshipConnector",value);relationshipPromptIndex=0;
       document.querySelectorAll(".relationship-connector").forEach(function(choice){choice.classList.toggle("active",choice===button);});
-      nextRelationshipPrompt(true);document.getElementById("relationshipStatus").textContent=value+" connector selected.";
+      nextRelationshipPrompt(true);if(!document.getElementById("relationshipChatPanel").hidden)renderRelationshipChat();document.getElementById("relationshipStatus").textContent=value+" connector selected.";
     }
     function nextRelationshipPrompt(keepIndex){
       var list=relationshipPrompts[relationshipConnector]||relationshipPrompts.Partner;
       if(!keepIndex)relationshipPromptIndex=(relationshipPromptIndex+1)%list.length;
       document.getElementById("relationshipPrompt").textContent=list[relationshipPromptIndex];
+    }
+    function toggleRelationshipChat(forceOpen){
+      var panel=document.getElementById("relationshipChatPanel"),open=typeof forceOpen==="boolean"?forceOpen:panel.hidden;
+      panel.hidden=!open;if(open){renderRelationshipChat();document.getElementById("relationshipChatInput").focus();}
+    }
+    function relationshipChatMessages(){try{return JSON.parse(localStorage.getItem("meltdownRelationshipPrivateChat")||"[]");}catch(error){return [];}}
+    function sendRelationshipChatMessage(){
+      var name=document.getElementById("relationshipChatName").value.trim()||"Me",message=document.getElementById("relationshipChatInput").value.trim();
+      if(!message){document.getElementById("relationshipStatus").textContent="Write a private message first.";return;}
+      var list=relationshipChatMessages();list.push({connector:relationshipConnector,name:name,message:message,created:new Date().toISOString()});
+      localStorage.setItem("meltdownRelationshipPrivateChat",JSON.stringify(list.slice(-100)));
+      document.getElementById("relationshipChatInput").value="";document.getElementById("relationshipStatus").textContent="Private chat message saved on this device.";renderRelationshipChat();
+    }
+    function renderRelationshipChat(){
+      var host=document.getElementById("relationshipChatLog");if(!host)return;host.innerHTML="";
+      var list=relationshipChatMessages().filter(function(entry){return entry.connector===relationshipConnector;});
+      if(!list.length){host.textContent="No private messages yet for "+relationshipConnector+".";return;}
+      list.slice(-50).forEach(function(entry){var message=document.createElement("div");message.className="relationship-chat-message"+(entry.name.toLowerCase()==="me"?" me":"");var strong=document.createElement("strong");strong.textContent=entry.name;var text=document.createElement("div");text.textContent=entry.message;var time=document.createElement("small");time.textContent=new Date(entry.created).toLocaleString();message.appendChild(strong);message.appendChild(text);message.appendChild(time);host.appendChild(message);});host.scrollTop=host.scrollHeight;
+    }
+    function clearRelationshipChat(){
+      var list=relationshipChatMessages(),current=list.filter(function(entry){return entry.connector===relationshipConnector;});
+      if(!current.length){document.getElementById("relationshipStatus").textContent="There is no private chat to clear.";return;}
+      if(!window.confirm("Clear the private chat for "+relationshipConnector+" from this device?"))return;
+      localStorage.setItem("meltdownRelationshipPrivateChat",JSON.stringify(list.filter(function(entry){return entry.connector!==relationshipConnector;})));
+      renderRelationshipChat();document.getElementById("relationshipStatus").textContent="Private chat cleared from this device.";
     }
     function relationshipMoments(){try{return JSON.parse(localStorage.getItem("meltdownRelationshipMoments")||"[]");}catch(error){return [];}}
     function saveRelationshipMoment(kind){
