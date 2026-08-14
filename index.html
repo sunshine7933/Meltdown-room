@@ -599,7 +599,7 @@
     @media (min-width: 900px) {
       button { font-size: 17px; padding: 14px 24px; }
     }
-  
+
     .learn-panel { width:min(1100px,96%); margin:0 auto 12px; padding:14px; color:#f4dfb8; background:rgba(38,24,14,.96); border:1px solid #8b6f47; border-radius:14px; text-align:center; }
     .learn-panel h2 { margin:0 0 5px; font-family:Georgia,serif; }
     .learn-shelves { display:grid; grid-template-columns:repeat(auto-fit,minmax(155px,1fr)); gap:8px; }
@@ -635,12 +635,12 @@
     }
 
 
-  
+
     .meltdown-tool-launchers { width:100%; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:10px 12px; background:rgba(36,23,14,.95); border-top:1px solid #8b6f47; }
     .meltdown-tool-launchers button { min-height:44px; padding:10px 14px; }
     #hope .scene,#celebration .scene,#reflection .scene,#learn .scene { max-height:62vh; }
 
-  
+
     /* Founder blueprint: Plan Room */
     .plan-room-shell{max-width:1120px;margin:0 auto;padding:18px;background:linear-gradient(180deg,#2a190f,#120b07);color:#f6ead3}
     .plan-hero{min-height:340px;position:relative;overflow:hidden;border:1px solid #8a6237;border-radius:18px;background:
@@ -671,7 +671,7 @@
     @media(max-width:680px){.plan-room-shell{padding:9px}.plan-hero{min-height:300px}.plan-title{left:5%;top:5%}.plan-window{width:35%;top:26%}.plan-paper{left:21%;width:58%;height:35%;padding:14px}.plan-grid{grid-template-columns:1fr}.plan-clock{width:62px;height:62px;right:3%;top:29%}}
     @media print{body.printing-plan .screen{display:none!important}body.printing-plan #plan{display:block!important}body.printing-plan #plan .topbar,body.printing-plan #plan .scene-wrap,body.printing-plan #plan .plan-tabs,body.printing-plan #plan .plan-actions,body.printing-plan #plan .controls,body.printing-plan #plan .plan-private{display:none!important}body.printing-plan #plan .plan-room-shell,body.printing-plan #plan .plan-workspace{background:#fff;color:#111;box-shadow:none;border:0}body.printing-plan #plan textarea,body.printing-plan #plan input{background:#fff;color:#111;border:1px solid #777}}
 
-  
+
     /* Founder blueprint: Connect / Gathering Room */
     .connect-shell{max-width:1080px;margin:0 auto;padding:14px;background:linear-gradient(#25160d,#120a06);color:#f5e7cf}
     .connect-art{position:relative;border:1px solid #93683b;border-radius:16px;overflow:hidden;background:#160d08;box-shadow:0 15px 38px rgba(0,0,0,.48)}
@@ -832,7 +832,7 @@
     </div>
   </section>
 
-  
+
 
   <section class="screen" id="celebration">
     <div class="topbar">The Meltdown Room &bull; Celebration Room</div>
@@ -907,7 +907,7 @@
 </section>
 
 
-  
+
   <section class="screen" id="connect">
     <div class="topbar">The Meltdown Room &bull; Connect Room</div>
     <div class="connect-shell">
@@ -1202,6 +1202,7 @@
     var previousRoom = "home";
 
     function showScreen(id) {
+      if (id !== currentRoom) cleanUpRoomBeforeLeaving(currentRoom);
       document.querySelectorAll(".screen").forEach(function(screen) {
         screen.classList.remove("active");
       });
@@ -1218,6 +1219,24 @@
       }
 
       window.scrollTo(0, 0);
+    }
+
+    function cleanUpRoomBeforeLeaving(id) {
+      if (id === "meltdown" && typeof closeMeltdownTool === "function") closeMeltdownTool();
+      if (id === "thinking" && typeof closeThinkingTool === "function") closeThinkingTool();
+      if (id === "smash" && typeof closeSmashTool === "function") closeSmashTool();
+      if (id === "calm") {
+        if (typeof stopCalmSound === "function") stopCalmSound();
+        if (typeof closeCalmReflection === "function") closeCalmReflection();
+      }
+      if (id === "hope") {
+        clearInterval(hopeQuietTimer);
+        if (typeof closeHopeTool === "function") closeHopeTool();
+      }
+      if (id === "celebration" && typeof closeCelebrationTool === "function") closeCelebrationTool();
+      if (id === "reflection" && typeof closeReflectionTool === "function") closeReflectionTool();
+      if (id === "learn" && typeof closeLearnWorkspace === "function") closeLearnWorkspace();
+      if (id === "rant" && burnReleaseDialog && burnReleaseDialog.classList.contains("open")) returnFromBurn();
     }
 
     function goBackRoom() {
@@ -1507,8 +1526,8 @@
       } else if (tool === "calm") {
         title = "Calm Down Corner";
         body = '<p id="calmWords">Tap Start Breathing when you are ready.</p><div class="calm-circle" id="calmCircle"></div><div class="tool-actions">' +
-          toolButton("START BREATHING","startCalmBreathing()","primary") +
-          toolButton("STOP","stopCalmBreathing()") + '</div>';
+          toolButton("START BREATHING","startMeltdownBreathing()","primary") +
+          toolButton("STOP","stopMeltdownBreathing()") + '</div>';
       } else if (tool === "notes") {
         title = "Note Wall";
         body = '<p>Leave a private note of support for yourself.</p><textarea id="supportNoteInput" placeholder="You matter. You are doing your best..."></textarea><div class="tool-actions">' +
@@ -1543,15 +1562,19 @@
     }
     function releaseMeltdownJournal() {
       var journal = document.getElementById("meltdownJournal");
+      if (!journal || !journal.value.trim()) { toolStatus("There is nothing to release yet."); return; }
+      if (!window.confirm("Release and permanently clear this private journal page?")) return;
       journal.value = "";
       localStorage.removeItem("meltdownPrivateJournal");
       toolStatus("Released. The page is clear.");
     }
     function clearMeltdownJournal() {
+      if (!localStorage.getItem("meltdownPrivateJournal")) { toolStatus("The private journal is already clear."); return; }
+      if (!window.confirm("Clear the saved private journal from this device?")) return;
       localStorage.removeItem("meltdownPrivateJournal");
       toolStatus("Private journal cleared.");
     }
-    function startCalmBreathing() {
+    function startMeltdownBreathing() {
       var circle = document.getElementById("calmCircle");
       var words = document.getElementById("calmWords");
       circle.classList.add("breathing");
@@ -1562,7 +1585,7 @@
       calmInterval = setInterval(function(){ inhale = !inhale; words.textContent = inhale ? "Breathe in slowly…" : "Breathe out gently…"; },4000);
       meltdownStatus.textContent = "Follow the breathing light.";
     }
-    function stopCalmBreathing() {
+    function stopMeltdownBreathing() {
       clearInterval(calmInterval);
       var circle = document.getElementById("calmCircle");
       if (circle) circle.classList.remove("breathing");
@@ -1583,7 +1606,7 @@
       var notes = getSupportNotes(); notes.unshift(input.value.trim()); notes = notes.slice(0,12);
       localStorage.setItem("meltdownSupportNotes",JSON.stringify(notes)); input.value=""; renderSupportNotes(); toolStatus("Your support note is on the wall.");
     }
-    function clearSupportNotes() { localStorage.removeItem("meltdownSupportNotes"); toolStatus("Note Wall cleared."); }
+    function clearSupportNotes() { var notes=getSupportNotes();if(!notes.length){toolStatus("The Note Wall is already clear.");return;}if(!window.confirm("Clear every private note from the Note Wall?"))return;localStorage.removeItem("meltdownSupportNotes");renderSupportNotes();toolStatus("Note Wall cleared."); }
     function saveCheckIn(feeling) {
       localStorage.setItem("meltdownDailyCheckIn",JSON.stringify({feeling:feeling,date:new Date().toISOString()}));
       toolStatus("Checked in: " + feeling + ". Thank you for noticing how you feel.");
@@ -1899,23 +1922,23 @@
     function startClearHead(){var v=document.getElementById("clearHeadVisual"),w=document.getElementById("clearHeadWords");v.style.setProperty("--sand-time","120s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");var inhale=true,remaining=120;w.textContent="Breathe in slowly…";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;if(remaining<=0){finishClearHead();return;}if(remaining%4===0){inhale=!inhale;w.textContent=(inhale?"Breathe in slowly…":"Breathe out gently…")+" "+remaining+" seconds";}},1000);}
     function finishClearHead(){clearInterval(thinkingTimer);var v=document.getElementById("clearHeadVisual");if(v)v.classList.remove("running");var w=document.getElementById("clearHeadWords");if(w)w.textContent="Take your time. Notice what feels a little lighter.";}
     function getDecision(){try{return JSON.parse(localStorage.getItem("thinkingDecisionBoard")||"{}");}catch(e){return {};}}
-    function loadDecisionBoard(){var d=getDecision();decisionA.value=d.a||"";decisionB.value=d.b||"";decisionOther.value=d.other||"";decisionNotes.value=d.notes||"";}
-    function saveDecisionBoard(){localStorage.setItem("thinkingDecisionBoard",JSON.stringify({a:decisionA.value,b:decisionB.value,other:decisionOther.value,notes:decisionNotes.value}));thinkingStatus("Decision Board saved privately on this device.");}
-    function clearDecisionBoard(){localStorage.removeItem("thinkingDecisionBoard");decisionA.value=decisionB.value=decisionOther.value=decisionNotes.value="";thinkingStatus("Decision Board cleared.");}
-    function saveThinkingWriting(){localStorage.setItem("thinkingPrivateWriting",thinkingWriting.value);thinkingStatus("Writing saved privately on this device.");}
-    function clearThinkingWriting(){thinkingWriting.value="";localStorage.removeItem("thinkingPrivateWriting");thinkingStatus("Released. The page is clear.");}
-    function nextThinkingQuestion(){thinkingQuestionIndex=(thinkingQuestionIndex+1)%thinkingQuestions.length;thinkingQuestion.textContent=thinkingQuestions[thinkingQuestionIndex];thinkingAnswer.value="";}
-    function saveThinkingAnswer(){var answers=[];try{answers=JSON.parse(localStorage.getItem("thinkingAnswers")||"[]");}catch(e){}answers.push({question:thinkingQuestions[thinkingQuestionIndex],answer:thinkingAnswer.value,date:new Date().toISOString()});localStorage.setItem("thinkingAnswers",JSON.stringify(answers));thinkingStatus("Answer saved privately.");nextThinkingQuestion();}
+    function loadDecisionBoard(){var d=getDecision(),a=document.getElementById("decisionA"),b=document.getElementById("decisionB"),other=document.getElementById("decisionOther"),notes=document.getElementById("decisionNotes");if(!a||!b||!other||!notes)return;a.value=d.a||"";b.value=d.b||"";other.value=d.other||"";notes.value=d.notes||"";}
+    function saveDecisionBoard(){var a=document.getElementById("decisionA"),b=document.getElementById("decisionB"),other=document.getElementById("decisionOther"),notes=document.getElementById("decisionNotes");if(!a||!b||!other||!notes)return;if(!a.value.trim()&&!b.value.trim()&&!other.value.trim()&&!notes.value.trim()){thinkingStatus("Add an option or a note before saving.");return;}localStorage.setItem("thinkingDecisionBoard",JSON.stringify({a:a.value,b:b.value,other:other.value,notes:notes.value}));thinkingStatus("Decision Board saved privately on this device.");}
+    function clearDecisionBoard(){var a=document.getElementById("decisionA"),b=document.getElementById("decisionB"),other=document.getElementById("decisionOther"),notes=document.getElementById("decisionNotes");if(!a||!b||!other||!notes)return;if(!a.value.trim()&&!b.value.trim()&&!other.value.trim()&&!notes.value.trim()&&!localStorage.getItem("thinkingDecisionBoard")){thinkingStatus("The Decision Board is already clear.");return;}if(!window.confirm("Clear the entire Decision Board from this device?"))return;localStorage.removeItem("thinkingDecisionBoard");a.value=b.value=other.value=notes.value="";thinkingStatus("Decision Board cleared.");}
+    function saveThinkingWriting(){var writing=document.getElementById("thinkingWriting");if(!writing||!writing.value.trim()){thinkingStatus("Write something first—this page is yours.");return;}localStorage.setItem("thinkingPrivateWriting",writing.value);thinkingStatus("Writing saved privately on this device.");}
+    function clearThinkingWriting(){var writing=document.getElementById("thinkingWriting");if(!writing||!writing.value.trim()){thinkingStatus("There is nothing to release yet.");return;}if(!window.confirm("Release and permanently clear this private writing?"))return;writing.value="";localStorage.removeItem("thinkingPrivateWriting");thinkingStatus("Released. The page is clear.");}
+    function nextThinkingQuestion(){var question=document.getElementById("thinkingQuestion"),answer=document.getElementById("thinkingAnswer");thinkingQuestionIndex=(thinkingQuestionIndex+1)%thinkingQuestions.length;if(question)question.textContent=thinkingQuestions[thinkingQuestionIndex];if(answer)answer.value="";}
+    function saveThinkingAnswer(){var answer=document.getElementById("thinkingAnswer");if(!answer||!answer.value.trim()){thinkingStatus("Write your answer first, or choose Next Question.");return;}var answers=[];try{answers=JSON.parse(localStorage.getItem("thinkingAnswers")||"[]");}catch(e){}answers.push({question:thinkingQuestions[thinkingQuestionIndex],answer:answer.value.trim(),date:new Date().toISOString()});localStorage.setItem("thinkingAnswers",JSON.stringify(answers.slice(-100)));thinkingStatus("Answer saved privately.");nextThinkingQuestion();}
     var selectedThinkingPin="#b83d35";
     function chooseThinkingPin(button){selectedThinkingPin=button.getAttribute("data-pin")||"#b83d35";document.querySelectorAll(".pin-choice").forEach(function(pin){pin.classList.remove("active");});button.classList.add("active");thinkingStatus("Pin selected.");}
     function getBrainstormIdeas(){try{var list=JSON.parse(localStorage.getItem("thinkingBrainstormIdeas")||"[]");return Array.isArray(list)?list.map(function(item){return typeof item==="string"?{text:item,pin:"#b83d35"}:item;}):[];}catch(e){return [];}}
     function renderBrainstormIdeas(){var g=document.getElementById("brainstormGrid");if(!g)return;var ideas=getBrainstormIdeas();g.innerHTML=ideas.length?ideas.map(function(item,i){var text=(item.text||"").replace(/[&<>"]/g,function(ch){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[ch];});return '<button type="button" class="thinking-note-card" style="--pin:'+String(item.pin||"#b83d35").replace(/[^#a-zA-Z0-9(),.% -]/g,"")+'" onclick="removeBrainstormIdea('+i+')" aria-label="Remove idea">'+text+'</button>';}).join(""):"<p>Your board is ready for ideas.</p>";}
     function addBrainstormIdea(){var input=document.getElementById("brainstormInput");if(!input||!input.value.trim()){thinkingStatus("Write an idea first.");return;}var ideas=getBrainstormIdeas();ideas.push({text:input.value.trim(),pin:selectedThinkingPin});localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));input.value="";renderBrainstormIdeas();thinkingStatus("Idea added with your chosen pin. Tap an idea to remove it.");}
     function removeBrainstormIdea(i){var ideas=getBrainstormIdeas();ideas.splice(i,1);localStorage.setItem("thinkingBrainstormIdeas",JSON.stringify(ideas));renderBrainstormIdeas();}
-    function clearBrainstormIdeas(){localStorage.removeItem("thinkingBrainstormIdeas");renderBrainstormIdeas();thinkingStatus("Brainstorm Board cleared.");}
-    function startQuiet(seconds){var v=document.getElementById("quietVisual"),w=document.getElementById("quietWords"),remaining=seconds;v.style.setProperty("--sand-time",seconds+"s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");w.textContent="Quiet time: "+remaining+" seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;w.textContent=remaining>0?"Quiet time: "+remaining+" seconds":"Quiet time complete. Take your next step gently.";if(remaining<=0)clearInterval(thinkingTimer);},1000);}
+    function clearBrainstormIdeas(){if(!getBrainstormIdeas().length){thinkingStatus("The Brainstorm Board is already clear.");return;}if(!window.confirm("Clear every idea from the Brainstorm Board?"))return;localStorage.removeItem("thinkingBrainstormIdeas");renderBrainstormIdeas();thinkingStatus("Brainstorm Board cleared.");}
+    function startQuiet(seconds){var v=document.getElementById("quietVisual"),w=document.getElementById("quietWords"),remaining=seconds;v.style.setProperty("--sand-time",seconds+"s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");w.textContent="Quiet time: "+remaining+" seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;w.textContent=remaining>0?"Quiet time: "+remaining+" seconds":"Quiet time complete. Take your next step gently.";if(remaining<=0){clearInterval(thinkingTimer);v.classList.remove("running");}},1000);}
     function finishQuiet(){clearInterval(thinkingTimer);var v=document.getElementById("quietVisual");if(v)v.classList.remove("running");var w=document.getElementById("quietWords");if(w)w.textContent="Quiet time ended. Keep what helped.";}
-    function startHourglass(){var v=document.getElementById("hourglassVisual"),w=document.getElementById("hourglassWords"),prompts=["What do I really want?","What can I control?","What can I let go of?","What is one small next step?"],i=0;v.style.setProperty("--sand-time","60s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");w.textContent=prompts[0];clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){i=(i+1)%prompts.length;w.textContent=prompts[i];},15000);}
+    function startHourglass(){var v=document.getElementById("hourglassVisual"),w=document.getElementById("hourglassWords"),prompts=["What do I really want?","What can I control?","What can I let go of?","What is one small next step?"],remaining=60;v.style.setProperty("--sand-time","60s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");w.textContent=prompts[0]+" 60 seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;if(remaining<=0){clearInterval(thinkingTimer);v.classList.remove("running");w.textContent="Hourglass complete. Keep the thought that helped.";return;}var index=Math.min(prompts.length-1,Math.floor((60-remaining)/15));w.textContent=prompts[index]+" "+remaining+" seconds";},1000);}
     function stopHourglass(){clearInterval(thinkingTimer);var v=document.getElementById("hourglassVisual");if(v)v.classList.remove("running");var w=document.getElementById("hourglassWords");if(w)w.textContent="Hourglass paused. Take your time.";}
     function setThinkingAmbience(mode){thinkingStage.classList.remove("thinking-rain","thinking-night","thinking-warm");if(mode!=="natural")thinkingStage.classList.add("thinking-"+mode);localStorage.setItem("thinkingAmbience",mode);thinkingStatus("Atmosphere set to "+mode+".");}
     var savedThinkingAmbience=localStorage.getItem("thinkingAmbience")||"natural";if(savedThinkingAmbience!=="natural")thinkingStage.classList.add("thinking-"+savedThinkingAmbience);
@@ -1971,7 +1994,7 @@
     function openCalmReflection(){document.getElementById("calmReflection").classList.add("open");document.getElementById("calmReflectionText").value=localStorage.getItem("calmRoomReflection")||"";document.getElementById("calmReflectionText").focus();calmStatus.textContent="This reflection stays privately on this device.";}
     function closeCalmReflection(){document.getElementById("calmReflection").classList.remove("open");}
     function saveCalmReflection(){localStorage.setItem("calmRoomReflection",document.getElementById("calmReflectionText").value);calmStatus.textContent="Reflection saved privately on this device.";}
-    function clearCalmReflection(){document.getElementById("calmReflectionText").value="";localStorage.removeItem("calmRoomReflection");calmStatus.textContent="Reflection cleared.";}
+    function clearCalmReflection(){var field=document.getElementById("calmReflectionText");if(!field.value.trim()&&!localStorage.getItem("calmRoomReflection")){calmStatus.textContent="The reflection page is already clear.";return;}if(!window.confirm("Clear this private Calm Room reflection?"))return;field.value="";localStorage.removeItem("calmRoomReflection");calmStatus.textContent="Reflection cleared.";}
 
 
     var hopeWorkspace=document.getElementById("hopeWorkspace"),hopeStatus=document.getElementById("hopeStatus"),hopeQuietTimer=null;
@@ -1993,7 +2016,7 @@
     async function shareHopeNote(){var input=document.getElementById("hopeShareText"),text=input.value.trim();if(!text){hopeStatus.textContent="Write a note of hope first.";return;}if(navigator.share){try{await navigator.share({title:"A Note of Hope",text:text});hopeStatus.textContent="Your phone share menu handled the note.";return;}catch(error){if(error.name==="AbortError"){hopeStatus.textContent="Sharing canceled.";return;}}}try{await navigator.clipboard.writeText(text);hopeStatus.textContent="Hope note copied. Paste it wherever you choose.";}catch(error){hopeStatus.textContent="Select and copy your note to share it.";}}
     function renderHopePlant(){var stage=Math.max(0,Math.min(3,Number(localStorage.getItem("hopePlantStage")||0)));hopeWorkspace.innerHTML='<h3>Plant a Hope</h3><div class="hope-plant stage-'+stage+'" id="hopePlant"><div class="hope-stem"></div><span class="hope-leaf leaf-1"></span><span class="hope-leaf leaf-2"></span><span class="hope-leaf leaf-3"></span><span class="hope-leaf leaf-4"></span><span class="hope-flower"></span><span class="hope-pot"></span></div><p id="hopePlantWords">'+(stage===0?"A seed is waiting.":stage===1?"Your hope has sprouted.":stage===2?"Your hope is growing stronger.":"Your hope is blooming.")+'</p><div class="tool-actions"><button class="primary" type="button" onclick="growHopePlant()">NURTURE MY HOPE</button><button type="button" onclick="resetHopePlant()">PLANT NEW SEED</button><button type="button" onclick="closeHopeTool()">CLOSE</button></div>';hopeStatus.textContent="Hope grows in small steps.";}
     function growHopePlant(){var stage=Math.min(3,Number(localStorage.getItem("hopePlantStage")||0)+1);localStorage.setItem("hopePlantStage",stage);renderHopePlant();hopeStatus.textContent=stage===3?"Your hope is blooming.":"Your hope grew a little today.";}
-    function resetHopePlant(){localStorage.setItem("hopePlantStage","0");renderHopePlant();hopeStatus.textContent="A new hope seed is planted.";}
+    function resetHopePlant(){if(!window.confirm("Plant a new seed and restart this Hope Plant?"))return;localStorage.setItem("hopePlantStage","0");renderHopePlant();hopeStatus.textContent="A new hope seed is planted.";}
     function startHopeQuiet(){var remaining=60,words=document.getElementById("hopeQuietWords");clearInterval(hopeQuietTimer);words.textContent="Quiet hope: "+remaining+" seconds.";hopeQuietTimer=setInterval(function(){remaining--;words.textContent=remaining>0?"Quiet hope: "+remaining+" seconds.":"One quiet minute complete. Hope can be small and still be real.";if(remaining<=0)clearInterval(hopeQuietTimer);},1000);}
 
     var celebrationWorkspace=document.getElementById("celebrationWorkspace"),celebrationStatus=document.getElementById("celebrationStatus");
