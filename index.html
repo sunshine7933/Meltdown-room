@@ -617,6 +617,22 @@
     .learn-open:focus-visible { outline:3px solid #e07a3d; outline-offset:2px; }
     .learn-disclaimer,.learn-notice { padding:10px; border-radius:8px; background:#ead8b2; }
     .learn-notice { color:#fff; background:#70402f; border:2px solid #a96e4b; }
+    .learn-tool-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:10px; margin:12px 0; }
+    .learn-tool-card { min-height:120px; display:flex; flex-direction:column; justify-content:center; gap:7px; color:#fff8e9; background:#5d432a; border-radius:12px; text-align:left; }
+    .learn-tool-card strong { font:700 19px Georgia,serif; }
+    .learn-tool-card span { font-size:14px; font-weight:500; }
+    .learn-template-field { display:block; margin:12px 0; }
+    .learn-template-field strong { display:block; margin-bottom:4px; }
+    .learn-template-field textarea { min-height:110px; white-space:pre-wrap; }
+    .learn-template-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
+    .learn-private-note { padding:9px; border-radius:8px; background:#ead8b2; }
+    @media print {
+      body.printing-learn-tool * { visibility:hidden !important; }
+      body.printing-learn-tool #learnWorkspace, body.printing-learn-tool #learnWorkspace .learn-print-sheet, body.printing-learn-tool #learnWorkspace .learn-print-sheet * { visibility:visible !important; }
+      body.printing-learn-tool #learnWorkspace { display:block !important; position:absolute; inset:0; margin:0; padding:24px; color:#111; background:#fff; }
+      body.printing-learn-tool .learn-template-actions { display:none !important; }
+      body.printing-learn-tool .learn-template-field textarea { border:1px solid #333; background:#fff; color:#111; }
+    }
 
 
   
@@ -1932,7 +1948,67 @@
     }
     function markLearned(name,index,button){var key="meltdownLearned";var done=[];try{done=JSON.parse(localStorage.getItem(key)||"[]");}catch(e){}var id=name+"::"+index;if(!done.includes(id))done.push(id);localStorage.setItem(key,JSON.stringify(done));button.textContent="LEARNED ✓";button.disabled=true;learnStatus.textContent="Progress saved privately on this device.";}
     function continueLearning(){var name=localStorage.getItem("meltdownLearningShelf")||"Daily Life Tips";var button=Array.from(document.querySelectorAll(".learn-shelf")).find(function(b){return b.textContent.toLowerCase().includes(name.toLowerCase());});openLearnShelf(name,button);}
-    function openLearnTools(){learnWorkspace.classList.add("open");learnWorkspace.innerHTML='<h3>Tools & Printables</h3><div class="learn-resource">Visual Schedule — build a simple step-by-step routine.</div><div class="learn-resource">Sensory Checklist — note what helps and what feels difficult.</div><div class="learn-resource">Calm Down Plan — save the steps that help you reset.</div><div class="learn-resource">Caregiver Planner — keep important needs in one place.</div><div class="learn-resource">Reward Chart — celebrate steady progress.</div><button onclick="closeLearnWorkspace()">CLOSE</button>';learnStatus.textContent="Learning tools opened.";}
+    var learnTemplates={
+      schedule:{title:"Visual Schedule",intro:"Create a simple, predictable order for the day.",fields:[
+        {key:"morning",label:"Morning steps",placeholder:"Wake up\nGet dressed\nBreakfast"},
+        {key:"afternoon",label:"Afternoon steps",placeholder:"Lunch\nSchool or activity\nQuiet break"},
+        {key:"evening",label:"Evening steps",placeholder:"Dinner\nPrepare for tomorrow\nBedtime routine"}
+      ]},
+      sensory:{title:"Sensory Checklist",intro:"Notice patterns without judgment. Record what helps and what feels difficult.",fields:[
+        {key:"helps",label:"Things that help",placeholder:"Dim lights, headphones, heavy blanket..."},
+        {key:"hard",label:"Things that feel difficult",placeholder:"Crowds, sudden noises, clothing textures..."},
+        {key:"plan",label:"Support plan",placeholder:"What can we prepare, offer, or change?"}
+      ]},
+      calm:{title:"Calm Down Plan",intro:"Write the steps that help when feelings become too much.",fields:[
+        {key:"signals",label:"Early signs I notice",placeholder:"My body, thoughts, or behavior..."},
+        {key:"steps",label:"Steps that help",placeholder:"Move somewhere quiet\nBreathe slowly\nUse a comfort item"},
+        {key:"support",label:"People or support I can ask for",placeholder:"Names, numbers, or a simple phrase to use"}
+      ]},
+      caregiver:{title:"Caregiver Planner",intro:"Keep today's priorities realistic and make space for your own needs.",fields:[
+        {key:"today",label:"Today's important needs",placeholder:"Appointments, calls, school notes..."},
+        {key:"help",label:"What I can ask someone else to help with",placeholder:"Meals, transportation, a short break..."},
+        {key:"self",label:"One thing I need today",placeholder:"Rest, food, fresh air, connection..."}
+      ]},
+      progress:{title:"Progress Celebration Chart",intro:"Celebrate steady effort and meaningful progress without pressure.",fields:[
+        {key:"goal",label:"What we are practicing",placeholder:"A clear, kind, achievable goal"},
+        {key:"steps",label:"Small steps or check-in days",placeholder:"Step 1\nStep 2\nStep 3"},
+        {key:"celebrate",label:"How we will celebrate progress",placeholder:"Praise, shared activity, favorite song..."}
+      ]}
+    };
+    function openLearnTools(){
+      learnWorkspace.classList.add("open");
+      learnWorkspace.innerHTML='<h3>Tools & Printables</h3><p>Choose a tool. Fill it in, save it privately on this device, or print a clean copy.</p><div class="learn-tool-grid">'+
+        Object.keys(learnTemplates).map(function(id){var t=learnTemplates[id];return '<button class="learn-tool-card" onclick="openLearnTemplate(\''+id+'\')"><strong>'+learnEscape(t.title)+'</strong><span>'+learnEscape(t.intro)+'</span></button>';}).join("")+
+        '</div><button onclick="closeLearnWorkspace()">CLOSE</button>';
+      learnStatus.textContent="Working tools and printables opened.";
+    }
+    function learnTemplateValues(id){try{return JSON.parse(localStorage.getItem("meltdownLearnTool::"+id)||"{}");}catch(e){return {};}}
+    function openLearnTemplate(id){
+      var t=learnTemplates[id];if(!t)return;
+      var values=learnTemplateValues(id);
+      learnWorkspace.classList.add("open");
+      learnWorkspace.innerHTML='<div class="learn-print-sheet"><h3>'+learnEscape(t.title)+'</h3><p>'+learnEscape(t.intro)+'</p>'+
+        t.fields.map(function(field){return '<label class="learn-template-field"><strong>'+learnEscape(field.label)+'</strong><textarea data-learn-field="'+learnEscape(field.key)+'" placeholder="'+learnEscape(field.placeholder)+'">'+learnEscape(values[field.key]||"")+'</textarea></label>';}).join("")+
+        '<p class="learn-private-note">Saved information stays privately on this device.</p></div>'+
+        '<div class="learn-template-actions"><button class="primary" onclick="saveLearnTemplate(\''+id+'\')">SAVE PRIVATELY</button><button onclick="printLearnTemplate()">PRINT</button><button onclick="clearLearnTemplate(\''+id+'\')">CLEAR</button><button onclick="openLearnTools()">BACK TO TOOLS</button><button onclick="closeLearnWorkspace()">CLOSE</button></div>';
+      learnStatus.textContent=t.title+" opened.";
+    }
+    function saveLearnTemplate(id){
+      var values={};learnWorkspace.querySelectorAll("[data-learn-field]").forEach(function(field){values[field.getAttribute("data-learn-field")]=field.value;});
+      localStorage.setItem("meltdownLearnTool::"+id,JSON.stringify(values));
+      learnStatus.textContent="Saved privately on this device.";
+    }
+    function clearLearnTemplate(id){
+      if(!window.confirm("Clear this saved tool from this device?"))return;
+      localStorage.removeItem("meltdownLearnTool::"+id);
+      openLearnTemplate(id);
+      learnStatus.textContent="Tool cleared.";
+    }
+    function printLearnTemplate(){
+      document.body.classList.add("printing-learn-tool");
+      window.addEventListener("afterprint",function removePrintMode(){document.body.classList.remove("printing-learn-tool");window.removeEventListener("afterprint",removePrintMode);});
+      window.print();
+    }
     function askLearningQuestion(){learnWorkspace.classList.add("open");learnWorkspace.innerHTML='<h3>Ask. Learn. Grow.</h3><input id="learnQuestionTitle" placeholder="What topic is this about?"><textarea id="learnQuestionText" placeholder="What would you like help understanding?"></textarea><button class="primary" onclick="saveLearningQuestion()">SAVE QUESTION PRIVATELY</button><button onclick="closeLearnWorkspace()">CLOSE</button>';learnStatus.textContent="Write your question. It stays on this device.";}
     function saveLearningQuestion(){var title=document.getElementById("learnQuestionTitle").value.trim(),body=document.getElementById("learnQuestionText").value.trim();if(!body){learnStatus.textContent="Write your question first.";return;}var list=[];try{list=JSON.parse(localStorage.getItem("meltdownLearningQuestions")||"[]");}catch(e){}list.unshift({title:title,text:body,date:new Date().toISOString()});localStorage.setItem("meltdownLearningQuestions",JSON.stringify(list.slice(0,100)));learnStatus.textContent="Question saved privately on this device.";closeLearnWorkspace();}
     function closeLearnWorkspace(){learnWorkspace.classList.remove("open");learnWorkspace.innerHTML="";}
