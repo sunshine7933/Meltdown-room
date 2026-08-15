@@ -629,6 +629,10 @@
 
     .meltdown-tool-launchers { width:100%; display:flex; flex-wrap:wrap; justify-content:center; gap:8px; padding:10px 12px; background:rgba(36,23,14,.95); border-top:1px solid #8b6f47; }
     .meltdown-tool-launchers button { min-height:44px; padding:10px 14px; }
+    #meltdown > .meltdown-tool-launchers,
+    #meltdown > .controls { display:none; }
+    body:has(#meltdown.active) .account-toggle,
+    body:has(#meltdown.active) .still-toggle { display:none; }
     #hope .scene,#celebration .scene,#reflection .scene,#learn .scene { max-height:62vh; }
 
 
