@@ -343,15 +343,6 @@
     .smash-stage .scene { width: 100%; max-height: calc(100vh - 118px); margin: auto; }
     .smash-choice { position: absolute; z-index: 2; width: 12.8%; height: 8.2%; min-height: 0; padding: 0; border: 0; border-radius: 8px; opacity: 0; background: #fff; }
     .smash-choice:focus-visible, .smash-choice.active { opacity: .24; outline: 3px solid #fff; }
-    .smash-choice:nth-of-type(1) { left: 16%; top: 65.2%; }
-    .smash-choice:nth-of-type(2) { left: 29.4%; top: 65.2%; }
-    .smash-choice:nth-of-type(3) { left: 42.8%; top: 65.2%; }
-    .smash-choice:nth-of-type(4) { left: 56.2%; top: 65.2%; }
-    .smash-choice:nth-of-type(5) { left: 69.6%; top: 65.2%; }
-    .smash-choice:nth-of-type(6) { left: 16%; top: 74.6%; }
-    .smash-choice:nth-of-type(7) { left: 29.4%; top: 74.6%; }
-    .smash-choice:nth-of-type(8) { left: 42.8%; top: 74.6%; }
-    .smash-choice:nth-of-type(9) { left: 56.2%; top: 74.6%; }
     .smash-stage.releasing { animation: safeShake .42s ease-in-out 2; }
     .smash-stage { width:min(100%,calc(100vh * 2 / 3)); }
     .smash-stage .scene { max-height:100vh; }
@@ -593,7 +584,7 @@
 
     @media (max-width: 700px) {
       .rant-journal { left: 21%; top: 27%; width: 58%; height: 28%; padding: 10px; }
-      .map-panel { inset: 4%; grid-template-columns: 1fr; overflow: auto; }
+      .map-panel { inset: 4%; grid-template-columns: 1fr; overflow: auto; align-content: start; }
     }
 
     @media (min-width: 900px) {
