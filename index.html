@@ -898,10 +898,24 @@
     .game-shell[data-mood="bright"] .game-stage{filter:brightness(1.12) saturate(1.05)}
     .game-shell[data-mood="quiet"] .game-stage{filter:saturate(.75) brightness(.9)}
     @media(max-width:720px){.game-shell{padding:7px}.game-choice-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.game-filter-grid,.game-memory-actions{grid-template-columns:1fr}.game-hotspot{min-width:30px;min-height:30px}}
+
+    .account-toggle{position:fixed;top:8px;left:10px;z-index:80;min-height:36px;padding:7px 12px;font-size:12px;font-weight:800;letter-spacing:.04em;color:#fff8e8;background:rgba(63,52,43,.94);border:1px solid #a98658;border-radius:9px;box-shadow:0 3px 12px #0006}
+    .account-toggle[data-online="true"]{border-color:#d7b46a}.account-shade{position:fixed;inset:0;z-index:190;display:grid;place-items:center;padding:18px;background:#0d0805b8;backdrop-filter:blur(4px)}.account-shade[hidden]{display:none!important}
+    .account-panel{width:min(440px,100%);max-height:92vh;overflow:auto;color:#f8edd8;background:linear-gradient(160deg,#34251a,#17100b);border:1px solid #aa8556;border-radius:16px;padding:20px;box-shadow:0 18px 60px #0009}.account-panel h2{margin:0 42px 6px 0;font-family:Georgia,serif;color:#f3d39a}.account-panel p{line-height:1.45;color:#e7d8c1}.account-close{float:right;min-width:40px;min-height:40px;margin:-6px -4px 0 8px;border-radius:50%;font-size:22px;background:#493728;color:#fff}.account-panel label{display:block;margin:14px 0 6px;font-weight:800}.account-panel input{width:100%;min-height:46px;padding:10px 12px;color:#22150d;background:#fffaf0;border:2px solid #9b7447;border-radius:9px;font-size:16px}.account-actions{display:grid;gap:9px;margin-top:14px}.account-actions button{min-height:46px;padding:10px 14px;border-radius:9px;font-weight:850;color:#fff9ec;background:#6b4226;border:1px solid #c39962}.account-actions button.secondary{background:#3c332b}.account-status{min-height:24px;margin:12px 0 0;padding:9px 10px;border-radius:8px;background:#ffffff12;color:#f2dfbd}.account-note{font-size:13px;color:#cdbda7!important}.account-user{overflow-wrap:anywhere;color:#f3d39a;font-weight:800}@media(max-width:620px){.account-toggle{top:7px;left:7px;padding:6px 9px;font-size:11px}.account-panel{padding:17px}}
+
 </style>
 </head>
 
 <body>
+
+  <button class="account-toggle" id="accountButton" type="button" data-online="false" onclick="openAccountPanel()" aria-haspopup="dialog">ACCOUNT • DEVICE</button>
+  <div class="account-shade" id="accountShade" hidden onclick="closeAccountPanel(event)"><section class="account-panel" role="dialog" aria-modal="true" aria-labelledby="accountTitle" onclick="event.stopPropagation()">
+    <button class="account-close" type="button" onclick="closeAccountPanel()" aria-label="Close account panel">×</button><h2 id="accountTitle">Your Meltdown Room Account</h2>
+    <div id="accountSignedOut"><p>Sign in to safely back up your room entries and settings across your devices.</p><label for="accountEmail">Email address</label><input id="accountEmail" type="email" inputmode="email" autocomplete="email" placeholder="you@example.com"><div class="account-actions"><button type="button" onclick="sendAccountLink()">EMAIL ME A SIGN-IN LINK</button></div><p class="account-note">No password is needed. Open the private link sent to your email on this device.</p></div>
+    <div id="accountSignedIn" hidden><p>Signed in as <span class="account-user" id="accountUserEmail"></span></p><div class="account-actions"><button type="button" onclick="syncDeviceToCloud()">BACK UP THIS DEVICE</button><button class="secondary" type="button" onclick="restoreCloudToDevice()">RESTORE FROM CLOUD</button><button class="secondary" type="button" onclick="signOutAccount()">SIGN OUT</button></div><p class="account-note">Restore replaces matching saved room entries on this device. It never changes room artwork.</p></div>
+    <p class="account-status" id="accountStatus" role="status" aria-live="polite">Account tools are loading…</p>
+  </section></div>
+
 
   <button class="still-toggle" id="stillModeButton" type="button" onclick="toggleStillMode()" aria-pressed="false">STILL MODE</button>
   <button class="companion-dock" id="companionDock" type="button" onclick="showScreen('companion')" aria-label="Open Companion Experience"><strong id="companionDockName">MY COMPANION</strong><small id="companionDockMode">Calm background presence</small></button>
@@ -2028,7 +2042,25 @@
     </div>
   </section>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/dist/umd/supabase.min.js"></script>
+
   <script>
+
+    var SUPABASE_URL="https://bbppgqznghrqtezkgwwq.supabase.co",SUPABASE_PUBLISHABLE_KEY="sb_publishable_Rc1CtgIXPSPMVor0ZySZ5g_t4TmmJyw";
+    var cloudClient=null,cloudUser=null,cloudPrefixes=["meltdown","thinking","rant","calm","hope","celebration","reflection","plan","companion","outdoor","game","connect","relationship","resource","learn","explore"];
+    function accountMessage(m){var e=document.getElementById("accountStatus");if(e)e.textContent=m}
+    function openAccountPanel(){document.getElementById("accountShade").hidden=false;setTimeout(function(){var e=cloudUser?document.querySelector("#accountSignedIn button"):document.getElementById("accountEmail");if(e)e.focus()},20)}
+    function closeAccountPanel(e){if(e&&e.target!==document.getElementById("accountShade"))return;document.getElementById("accountShade").hidden=true;document.getElementById("accountButton").focus()}
+    function updateAccountView(u){cloudUser=u||null;document.getElementById("accountSignedOut").hidden=!!cloudUser;document.getElementById("accountSignedIn").hidden=!cloudUser;var b=document.getElementById("accountButton");b.dataset.online=cloudUser?"true":"false";b.textContent=cloudUser?"ACCOUNT • CLOUD":"ACCOUNT • DEVICE";document.getElementById("accountUserEmail").textContent=cloudUser&&cloudUser.email?cloudUser.email:"";accountMessage(cloudUser?"Cloud backup is ready.":"Your current entries remain saved on this device.")}
+    async function initCloudAccount(){if(!window.supabase||!window.supabase.createClient){accountMessage("Cloud tools could not load. Your device entries are still safe.");return}try{cloudClient=window.supabase.createClient(SUPABASE_URL,SUPABASE_PUBLISHABLE_KEY,{auth:{flowType:"pkce",persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});var r=await cloudClient.auth.getSession();updateAccountView(r.data&&r.data.session?r.data.session.user:null);cloudClient.auth.onAuthStateChange(function(e,s){updateAccountView(s?s.user:null);if(e==="SIGNED_IN")accountMessage("Signed in. You can now back up this device.")})}catch(e){accountMessage("Cloud connection is unavailable right now. Your device entries are still safe.")}}
+    async function sendAccountLink(){var e=document.getElementById("accountEmail").value.trim();if(!e||!/^\S+@\S+\.\S+$/.test(e)){accountMessage("Please enter a complete email address.");return}if(!cloudClient){accountMessage("Cloud tools are not ready. Please try again.");return}accountMessage("Sending your private sign-in link…");var r=await cloudClient.auth.signInWithOtp({email:e,options:{emailRedirectTo:location.origin+location.pathname}});accountMessage(r.error?r.error.message:"Check your email, then open the sign-in link on this device.")}
+    async function signOutAccount(){if(!cloudClient)return;var r=await cloudClient.auth.signOut();accountMessage(r.error?r.error.message:"Signed out. Device entries remain here.")}
+    function isCloudRoomKey(k){var s=String(k||""),l=s.toLowerCase();return s.length<=120&&cloudPrefixes.some(function(p){return l.indexOf(p)===0})}
+    function collectCloudItems(){var a=[];for(var i=0;i<localStorage.length;i++){var k=localStorage.key(i);if(k&&isCloudRoomKey(k))a.push({user_id:cloudUser.id,room:"local-storage",item_key:k,payload:{value:localStorage.getItem(k)},updated_at:new Date().toISOString()})}return a}
+    async function syncDeviceToCloud(){if(!cloudClient||!cloudUser){accountMessage("Sign in before backing up.");return}var a=collectCloudItems();if(!a.length){accountMessage("There are no saved room entries on this device yet.");return}accountMessage("Backing up your saved room entries…");var r=await cloudClient.from("synced_room_items").upsert(a,{onConflict:"user_id,room,item_key"});accountMessage(r.error?r.error.message:a.length+" saved item"+(a.length===1?"":"s")+" backed up securely.")}
+    async function restoreCloudToDevice(){if(!cloudClient||!cloudUser){accountMessage("Sign in before restoring.");return}if(!confirm("Restore matching saved room entries from the cloud onto this device?"))return;accountMessage("Restoring your saved room entries…");var r=await cloudClient.from("synced_room_items").select("item_key,payload").eq("room","local-storage");if(r.error){accountMessage(r.error.message);return}(r.data||[]).forEach(function(x){if(isCloudRoomKey(x.item_key)&&x.payload&&typeof x.payload.value==="string")localStorage.setItem(x.item_key,x.payload.value)});accountMessage((r.data||[]).length+" saved item"+((r.data||[]).length===1?"":"s")+" restored. Refresh the app to display them.")}
+    document.addEventListener("keydown",function(e){if(e.key==="Escape"&&!document.getElementById("accountShade").hidden)closeAccountPanel()});setTimeout(initCloudAccount,0);
+
     var currentRoom = "home";
     var previousRoom = "home";
 
