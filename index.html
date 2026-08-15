@@ -727,6 +727,11 @@
     .learn-bottomnav-3{left:40.20%;top:95.6%;width:19.35%;height:3.8%}
     .learn-bottomnav-4{left:60.05%;top:95.6%;width:19.35%;height:3.8%}
     .learn-bottomnav-5{left:79.90%;top:95.6%;width:19.35%;height:3.8%}
+    #resources .resource-panel { display:none; }
+    #resources .resource-shell.resource-open .resource-panel { display:block; }
+    #resources .resource-category-buttons button:not([data-resource-favorites]) { display:none; }
+    #resources .resource-category-buttons { justify-content:center; }
+    #resources > .controls { display:none; }
 
 
     /* Founder blueprint: Plan Room */
@@ -1518,6 +1523,13 @@
         <button class="resource-hotspot" style="left:3%;top:42%;width:14%;height:4.5%" onclick="showScreen('relationship')" aria-label="Go to the Gathering and Relationship Room"></button>
         <button class="resource-hotspot" style="left:82%;top:2%;width:8%;height:11%" onclick="showScreen('home')" aria-label="Go Home"></button>
         <button class="resource-hotspot" style="left:91%;top:2%;width:8%;height:11%" onclick="showScreen('outdoor')" aria-label="Go to the Water Wheel and Outdoor Room"></button>
+        <button class="resource-hotspot" style="left:22%;top:22%;width:22%;height:23%" onclick="openResourceCategory('Forms & Printables')" aria-label="Open Helpful Tools and Printables"></button>
+        <button class="resource-hotspot" style="left:78%;top:44%;width:20%;height:5%" onclick="openResourceHub()" aria-label="View All Resources"></button>
+        <button class="resource-hotspot" style="left:.5%;top:92%;width:19.2%;height:7%" onclick="showScreen('home')" aria-label="Home"></button>
+        <button class="resource-hotspot" style="left:20.2%;top:92%;width:19.2%;height:7%" onclick="showScreen('explore')" aria-label="Explore"></button>
+        <button class="resource-hotspot" style="left:39.9%;top:92%;width:19.2%;height:7%" onclick="showScreen('connect')" aria-label="Community"></button>
+        <button class="resource-hotspot" style="left:59.6%;top:92%;width:19.2%;height:7%" onclick="openResourceHub()" aria-label="Updates and Resources"></button>
+        <button class="resource-hotspot" style="left:79.3%;top:92%;width:20.2%;height:7%" onclick="showScreen('home')" aria-label="My Home"></button>
       </div>
 
       <div class="resource-panel">
@@ -3696,7 +3708,15 @@
     function getCustomResources(){try{return JSON.parse(localStorage.getItem("meltdownCustomResources")||"[]")}catch(error){return[]}}
     function resourceEscape(value){var node=document.createElement("div");node.textContent=value||"";return node.innerHTML}
     function allResources(){return resourceCatalog.concat(getCustomResources())}
+    function openResourceHub(){
+      var shell=document.querySelector("#resources .resource-shell");if(shell)shell.classList.add("resource-open");
+      var select=document.getElementById("resourceCategory");if(select)select.value="All";
+      var search=document.getElementById("resourceSearch");if(search)search.value="";
+      renderResources();
+      var panel=document.querySelector("#resources .resource-panel");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});
+    }
     function openResourceCategory(category){
+      var shell=document.querySelector("#resources .resource-shell");if(shell)shell.classList.add("resource-open");
       var select=document.getElementById("resourceCategory");if(select)select.value=category;
       var search=document.getElementById("resourceSearch");if(search)search.value="";
       renderResources();var panel=document.getElementById("resourceList");if(panel)panel.scrollIntoView({behavior:"smooth",block:"start"});
@@ -3717,7 +3737,7 @@
       document.querySelectorAll(".resource-category-buttons button").forEach(function(button){var pressed=onlyFavorites?button.hasAttribute("data-resource-favorites"):button.getAttribute("data-resource-category")===category;button.setAttribute("aria-pressed",String(pressed))});
       resourceSay((onlyFavorites?"Favorite resources: ":"Resources shown: ")+items.length);
     }
-    function showResourceFavorites(){document.getElementById("resourceCategory").value="All";document.getElementById("resourceSearch").value="";renderResources(true)}
+    function showResourceFavorites(){var shell=document.querySelector("#resources .resource-shell");if(shell)shell.classList.add("resource-open");document.getElementById("resourceCategory").value="All";document.getElementById("resourceSearch").value="";renderResources(true)}
     function toggleResourceFavorite(id){
       var favorites=getResourceFavorites(),index=favorites.indexOf(id);if(index>=0)favorites.splice(index,1);else favorites.push(id);
       localStorage.setItem("meltdownResourceFavorites",JSON.stringify(favorites));renderResources();resourceSay(index>=0?"Removed from favorites.":"Saved to favorites on this device.");
