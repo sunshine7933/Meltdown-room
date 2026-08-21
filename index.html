@@ -1010,7 +1010,58 @@
     .account-toggle[data-online="true"]{border-color:#d7b46a}.account-shade{position:fixed;inset:0;z-index:190;display:grid;place-items:center;padding:18px;background:#0d0805b8;backdrop-filter:blur(4px)}.account-shade[hidden]{display:none!important}
     .account-panel{width:min(440px,100%);max-height:92vh;overflow:auto;color:#f8edd8;background:linear-gradient(160deg,#34251a,#17100b);border:1px solid #aa8556;border-radius:16px;padding:20px;box-shadow:0 18px 60px #0009}.account-panel h2{margin:0 42px 6px 0;font-family:Georgia,serif;color:#f3d39a}.account-panel p{line-height:1.45;color:#e7d8c1}.account-close{float:right;min-width:40px;min-height:40px;margin:-6px -4px 0 8px;border-radius:50%;font-size:22px;background:#493728;color:#fff}.account-panel label{display:block;margin:14px 0 6px;font-weight:800}.account-panel input{width:100%;min-height:46px;padding:10px 12px;color:#22150d;background:#fffaf0;border:2px solid #9b7447;border-radius:9px;font-size:16px}.account-actions{display:grid;gap:9px;margin-top:14px}.account-actions button{min-height:46px;padding:10px 14px;border-radius:9px;font-weight:850;color:#fff9ec;background:#6b4226;border:1px solid #c39962}.account-actions button.secondary{background:#3c332b}.account-status{min-height:24px;margin:12px 0 0;padding:9px 10px;border-radius:8px;background:#ffffff12;color:#f2dfbd}.account-note{font-size:13px;color:#cdbda7!important}.account-user{overflow-wrap:anywhere;color:#f3d39a;font-weight:800}.account-remember{display:flex!important;align-items:center;gap:9px;margin:12px 0!important;font-weight:700!important}.account-remember input{width:auto!important;min-height:0!important;accent-color:#9c6a36}.account-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#cdbda7;font-size:12px;font-weight:800;letter-spacing:.08em}.account-divider:before,.account-divider:after{content:"";height:1px;flex:1;background:#896a47}.account-password-help{margin-top:12px;padding-top:12px;border-top:1px solid #785a3b}@media(max-width:620px){.account-toggle{top:7px;left:7px;padding:6px 9px;font-size:11px}.account-panel{padding:17px}}
 
-</style>
+
+    /* Final in-room navigation: keep approved artwork visible and remove bottom button bars. */
+    .screen > .controls {
+      position: absolute;
+      top: 92px;
+      right: max(10px, env(safe-area-inset-right));
+      bottom: auto;
+      left: auto;
+      width: min(280px, calc(100vw - 24px));
+      max-height: calc(100vh - 112px);
+      overflow-y: auto;
+      display: none;
+      flex-direction: column;
+      align-items: stretch;
+      justify-content: flex-start;
+      flex-wrap: nowrap;
+      gap: 8px;
+      padding: 12px;
+      border: 1px solid rgba(211, 167, 100, .75);
+      border-radius: 14px;
+      background: rgba(30, 19, 11, .94);
+      box-shadow: 0 12px 32px rgba(0, 0, 0, .48);
+      backdrop-filter: blur(8px);
+      z-index: 46;
+    }
+    .screen > .controls.controls-open { display: flex; }
+    .screen > .controls > button { width: 100%; }
+    .room-menu-toggle {
+      position: absolute;
+      top: 50px;
+      right: max(10px, env(safe-area-inset-right));
+      z-index: 47;
+      min-height: 38px;
+      padding: 8px 12px;
+      border-color: #b99055;
+      background: rgba(45, 29, 17, .94);
+      color: #f8e6c2;
+      box-shadow: 0 5px 18px rgba(0, 0, 0, .38);
+    }
+    .screen:not(.active) > .room-menu-toggle { display: none; }
+    #home > .room-menu-toggle { top: 12px; }
+    @media (max-width: 640px) {
+      .screen > .controls {
+        top: 96px;
+        width: min(82vw, 290px);
+        max-height: calc(100vh - 116px);
+      }
+      .room-menu-toggle { top: 52px; }
+      #home > .room-menu-toggle { top: 10px; }
+    }
+
+  </style>
 </head>
 
 <body>
@@ -3818,7 +3869,55 @@
       },sheet=sheets[type]||sheets.family,popup=window.open("","_blank");
       if(!popup){resourceSay("Please allow pop-ups to open the printable.");return}
       var rows=sheet.lines.map(function(line){return "<section><strong>"+line+"</strong><div></div></section>"}).join("");
-      popup.document.write("<!doctype html><html><head><title>"+sheet.title+"</title><style>body{font-family:Georgia,serif;max-width:760px;margin:30px auto;padding:20px;color:#2b2118}h1{border-bottom:3px solid #74502f;padding-bottom:10px}section{margin:22px 0}section div{height:60px;border-bottom:1px solid #777}.note{font-size:12px;color:#555}@media print{button{display:none}}</style></head><body><h1>The Meltdown Room — "+sheet.title+"</h1><p>One step at a time. Progress over perfection.</p>"+rows+"<p class='note'>This planning sheet is not medical, legal, or emergency advice.</p><button onclick='window.print()'>PRINT</button></body></html>");
+      popup.document.write("<!doctype html><html><head><title>"+sheet.title+"</title><style>body{font-family:Georgia,serif;max-width:760px;margin:30px auto;padding:20px;color:#2b2118}h1{border-bottom:3px solid #74502f;padding-bottom:10px}section{margin:22px 0}section div{height:60px;border-bottom:1px solid #777}.note{font-size:12px;color:#555}@media print{button{display:none}}</style></head><body><h1>The Meltdown Room — "+sheet.title+"</h1><p>One step at a time. Progress over perfection.</p>"+rows+"<p class='note'>This planning sheet is not medical, legal, or emergency advice.</p><button onclick='window.print()'>PRINT</button>
+<script id="in-room-navigation-upgrade">
+(function () {
+  function closeRoomMenus(except) {
+    document.querySelectorAll('.screen > .controls.controls-open').forEach(function (panel) {
+      if (panel === except) return;
+      panel.classList.remove('controls-open');
+      var toggle = panel.previousElementSibling;
+      if (toggle && toggle.classList.contains('room-menu-toggle')) toggle.setAttribute('aria-expanded', 'false');
+    });
+  }
+
+  document.querySelectorAll('.screen > .controls').forEach(function (panel, index) {
+    if (panel.previousElementSibling && panel.previousElementSibling.classList.contains('room-menu-toggle')) return;
+    var screen = panel.closest('.screen');
+    var toggle = document.createElement('button');
+    var panelId = panel.id || 'roomNavigation' + index;
+    panel.id = panelId;
+    toggle.type = 'button';
+    toggle.className = 'room-menu-toggle';
+    toggle.textContent = 'ROOM MENU';
+    toggle.setAttribute('aria-controls', panelId);
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.addEventListener('click', function (event) {
+      event.stopPropagation();
+      var opening = !panel.classList.contains('controls-open');
+      closeRoomMenus(panel);
+      panel.classList.toggle('controls-open', opening);
+      toggle.setAttribute('aria-expanded', opening ? 'true' : 'false');
+    });
+    panel.parentNode.insertBefore(toggle, panel);
+    panel.addEventListener('click', function (event) {
+      if (event.target.closest('button')) {
+        window.setTimeout(function () { closeRoomMenus(); }, 0);
+      }
+    });
+  });
+
+  document.addEventListener('click', function (event) {
+    if (!event.target.closest('.controls') && !event.target.closest('.room-menu-toggle')) closeRoomMenus();
+  });
+  document.addEventListener('keydown', function (event) {
+    if (event.key === 'Escape') closeRoomMenus();
+  });
+  window.addEventListener('hashchange', function () { closeRoomMenus(); });
+})();
+</script>
+
+</body></html>");
       popup.document.close();resourceSay(sheet.title+" opened and is ready to print.");
     }
     function initResourceShed(){renderResources();resourceSay("Trusted starter resources are connected. Choose a category or search for help.")}
