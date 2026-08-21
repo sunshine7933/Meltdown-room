@@ -1052,6 +1052,27 @@
       #home .scene, #entrance .scene, #home .scene-wrap::after, #entrance .scene-wrap::after { animation: none !important; }
     }
 
+
+    /* Make the approved picture buttons themselves tappable. */
+    .front-action-stage { position: relative; }
+    .front-picture-hotspot {
+      position: absolute;
+      z-index: 12;
+      min-height: 0;
+      padding: 0;
+      border: 0;
+      border-radius: 20px;
+      background: transparent;
+      opacity: 0;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    .front-picture-hotspot:focus-visible { opacity: .22; background: #fff; outline: 4px solid #fff; }
+    .home-enter-hotspot { left: 30%; top: 70%; width: 40%; height: 25%; }
+    .entrance-door-hotspot { left: 22%; top: 10%; width: 56%; height: 82%; }
+    #home > .room-menu-toggle { display: none !important; }
+    .room-menu-toggle { pointer-events: auto !important; }
+
 </style>
 </head>
 
@@ -1071,8 +1092,9 @@
 
   <section class="screen active" id="home">
     <div class="topbar">The Meltdown Room • Home</div>
-    <div class="scene-wrap">
+    <div class="scene-wrap front-action-stage">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
+      <button class="front-picture-hotspot home-enter-hotspot" type="button" onclick="showScreen('entrance')" aria-label="Enter The Meltdown Room property"></button>
     </div>
     <div class="controls">
       <button class="primary" type="button" onclick="showScreen('entrance')">ENTER PROPERTY</button>
@@ -1081,8 +1103,9 @@
 
   <section class="screen" id="entrance">
     <div class="topbar">The Meltdown Room • Entrance</div>
-    <div class="scene-wrap">
+    <div class="scene-wrap front-action-stage">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
+      <button class="front-picture-hotspot entrance-door-hotspot" type="button" onclick="showScreen('great')" aria-label="Open the door and enter the Great Room"></button>
     </div>
     <div class="controls">
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
