@@ -1023,6 +1023,11 @@
     #home .horse-motion-one{clip-path:polygon(3% 37%,13.5% 37%,13.5% 51%,3% 51%);transform-origin:8% 46%;}
     #home .horse-motion-two{clip-path:polygon(11% 36%,23% 36%,23% 51%,11% 51%);transform-origin:17% 45%;}
     #home .front-fountain-motion{display:none;}
+
+    /* Rotate the actual wheel pixels from the locked Home artwork. */
+    #home .front-wheel-motion{display:none!important}
+    #home .wheel-motion-copy{clip-path:circle(8.6% at 95% 53.2%);transform-origin:95% 53.2%;animation:actualWheelTurn 20s linear infinite;}
+    @keyframes actualWheelTurn{to{transform:rotate(360deg)}}
 </style>
 </head>
 
@@ -1047,7 +1052,7 @@
         <img class="scene" src="home.png" alt="The Meltdown Room Home">
         <img class="front-motion-copy horse-motion-one" src="home.png" alt="" aria-hidden="true">
         <img class="front-motion-copy horse-motion-two" src="home.png" alt="" aria-hidden="true">
-        <div class="front-wheel-motion" aria-hidden="true"></div>
+        <img class="front-motion-copy wheel-motion-copy" src="home.png" alt="" aria-hidden="true">
         <div class="front-water-motion" aria-hidden="true"></div>
         <div class="front-fountain-motion" aria-hidden="true"></div>
         <div class="front-fireflies" aria-hidden="true"></div>
