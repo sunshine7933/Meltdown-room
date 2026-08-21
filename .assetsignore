@@ -1,0 +1,11 @@
+.git
+.git/**
+.github
+.github/**
+.gitignore
+.assetsignore
+wrangler.jsonc
+AGENTS.md
+FOUNDER-LOCKED-BLUEPRINT.md
+README.md
+*.log
