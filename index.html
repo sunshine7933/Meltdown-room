@@ -1010,69 +1010,6 @@
     .account-toggle[data-online="true"]{border-color:#d7b46a}.account-shade{position:fixed;inset:0;z-index:190;display:grid;place-items:center;padding:18px;background:#0d0805b8;backdrop-filter:blur(4px)}.account-shade[hidden]{display:none!important}
     .account-panel{width:min(440px,100%);max-height:92vh;overflow:auto;color:#f8edd8;background:linear-gradient(160deg,#34251a,#17100b);border:1px solid #aa8556;border-radius:16px;padding:20px;box-shadow:0 18px 60px #0009}.account-panel h2{margin:0 42px 6px 0;font-family:Georgia,serif;color:#f3d39a}.account-panel p{line-height:1.45;color:#e7d8c1}.account-close{float:right;min-width:40px;min-height:40px;margin:-6px -4px 0 8px;border-radius:50%;font-size:22px;background:#493728;color:#fff}.account-panel label{display:block;margin:14px 0 6px;font-weight:800}.account-panel input{width:100%;min-height:46px;padding:10px 12px;color:#22150d;background:#fffaf0;border:2px solid #9b7447;border-radius:9px;font-size:16px}.account-actions{display:grid;gap:9px;margin-top:14px}.account-actions button{min-height:46px;padding:10px 14px;border-radius:9px;font-weight:850;color:#fff9ec;background:#6b4226;border:1px solid #c39962}.account-actions button.secondary{background:#3c332b}.account-status{min-height:24px;margin:12px 0 0;padding:9px 10px;border-radius:8px;background:#ffffff12;color:#f2dfbd}.account-note{font-size:13px;color:#cdbda7!important}.account-user{overflow-wrap:anywhere;color:#f3d39a;font-weight:800}.account-remember{display:flex!important;align-items:center;gap:9px;margin:12px 0!important;font-weight:700!important}.account-remember input{width:auto!important;min-height:0!important;accent-color:#9c6a36}.account-divider{display:flex;align-items:center;gap:10px;margin:16px 0;color:#cdbda7;font-size:12px;font-weight:800;letter-spacing:.08em}.account-divider:before,.account-divider:after{content:"";height:1px;flex:1;background:#896a47}.account-password-help{margin-top:12px;padding-top:12px;border-top:1px solid #785a3b}@media(max-width:620px){.account-toggle{top:7px;left:7px;padding:6px 9px;font-size:11px}.account-panel{padding:17px}}
 
-
-    /* Final in-room navigation */
-    .screen > .controls{position:absolute;top:92px;right:max(10px,env(safe-area-inset-right));bottom:auto;left:auto;width:min(280px,calc(100vw - 24px));max-height:calc(100vh - 112px);overflow-y:auto;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;flex-wrap:nowrap;gap:8px;padding:12px;border:1px solid rgba(211,167,100,.75);border-radius:14px;background:rgba(30,19,11,.94);box-shadow:0 12px 32px rgba(0,0,0,.48);backdrop-filter:blur(8px);z-index:46}.screen > .controls.controls-open{display:flex}.screen > .controls > button{width:100%}.room-menu-toggle{position:absolute;top:50px;right:max(10px,env(safe-area-inset-right));z-index:47;min-height:38px;padding:8px 12px;border-color:#b99055;background:rgba(45,29,17,.94);color:#f8e6c2;box-shadow:0 5px 18px rgba(0,0,0,.38)}.screen:not(.active) > .room-menu-toggle{display:none}#home > .room-menu-toggle{top:12px}@media(max-width:640px){.screen > .controls{top:96px;width:min(82vw,290px);max-height:calc(100vh - 116px)}.room-menu-toggle{top:52px}#home > .room-menu-toggle{top:10px}}
-
-    /* Launch fix: navigation drawers and gentle front-page motion. */
-    .screen > .controls {
-      position: absolute !important;
-      top: 92px !important;
-      right: max(10px, env(safe-area-inset-right)) !important;
-      bottom: auto !important;
-      left: auto !important;
-      display: none !important;
-    }
-    .screen > .controls.controls-open { display: flex !important; }
-    #home .scene-wrap, #entrance .scene-wrap { position: relative; overflow: hidden; }
-    #home .scene, #entrance .scene {
-      transform-origin: 50% 55%;
-      animation: frontSceneBreathe 14s ease-in-out infinite alternate;
-    }
-    #home .scene-wrap::after, #entrance .scene-wrap::after {
-      content: "";
-      position: absolute;
-      inset: 0;
-      pointer-events: none;
-      background: linear-gradient(110deg, transparent 28%, rgba(255,220,158,.13) 48%, transparent 67%);
-      transform: translateX(-65%);
-      animation: frontLightSweep 9s ease-in-out infinite;
-      mix-blend-mode: screen;
-    }
-    @keyframes frontSceneBreathe {
-      from { transform: scale(1); filter: brightness(1) saturate(1); }
-      to { transform: scale(1.025); filter: brightness(1.06) saturate(1.05); }
-    }
-    @keyframes frontLightSweep {
-      0%, 20% { transform: translateX(-70%); opacity: 0; }
-      45% { opacity: .85; }
-      75%, 100% { transform: translateX(70%); opacity: 0; }
-    }
-    @media (prefers-reduced-motion: reduce) {
-      #home .scene, #entrance .scene, #home .scene-wrap::after, #entrance .scene-wrap::after { animation: none !important; }
-    }
-
-
-    /* Make the approved picture buttons themselves tappable. */
-    .front-action-stage { position: relative; }
-    .front-picture-hotspot {
-      position: absolute;
-      z-index: 12;
-      min-height: 0;
-      padding: 0;
-      border: 0;
-      border-radius: 20px;
-      background: transparent;
-      opacity: 0;
-      cursor: pointer;
-      touch-action: manipulation;
-    }
-    .front-picture-hotspot:focus-visible { opacity: .22; background: #fff; outline: 4px solid #fff; }
-    .home-enter-hotspot { left: 30%; top: 70%; width: 40%; height: 25%; }
-    .entrance-door-hotspot { left: 22%; top: 10%; width: 56%; height: 82%; }
-    #home > .room-menu-toggle { display: none !important; }
-    .room-menu-toggle { pointer-events: auto !important; }
-
 </style>
 </head>
 
@@ -1092,9 +1029,8 @@
 
   <section class="screen active" id="home">
     <div class="topbar">The Meltdown Room • Home</div>
-    <div class="scene-wrap front-action-stage">
+    <div class="scene-wrap">
       <img class="scene" src="home.png" alt="The Meltdown Room Home">
-      <button class="front-picture-hotspot home-enter-hotspot" type="button" onclick="showScreen('entrance')" aria-label="Enter The Meltdown Room property"></button>
     </div>
     <div class="controls">
       <button class="primary" type="button" onclick="showScreen('entrance')">ENTER PROPERTY</button>
@@ -1103,9 +1039,8 @@
 
   <section class="screen" id="entrance">
     <div class="topbar">The Meltdown Room • Entrance</div>
-    <div class="scene-wrap front-action-stage">
+    <div class="scene-wrap">
       <img class="scene" src="entrance.png" alt="The Meltdown Room Entrance">
-      <button class="front-picture-hotspot entrance-door-hotspot" type="button" onclick="showScreen('great')" aria-label="Open the door and enter the Great Room"></button>
     </div>
     <div class="controls">
       <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
@@ -4129,6 +4064,5 @@
     }
   </script>
 
-<script id="in-room-navigation-upgrade">(function(){function c(e){document.querySelectorAll('.screen > .controls.controls-open').forEach(function(p){if(p===e)return;p.classList.remove('controls-open');var t=p.previousElementSibling;if(t&&t.classList.contains('room-menu-toggle'))t.setAttribute('aria-expanded','false')})}document.querySelectorAll('.screen > .controls').forEach(function(p,i){var t=document.createElement('button'),n=p.id||'roomNavigation'+i;p.id=n;t.type='button';t.className='room-menu-toggle';t.textContent='ROOM MENU';t.setAttribute('aria-controls',n);t.setAttribute('aria-expanded','false');t.addEventListener('click',function(e){e.stopPropagation();var o=!p.classList.contains('controls-open');c(p);p.classList.toggle('controls-open',o);t.setAttribute('aria-expanded',o?'true':'false')});p.parentNode.insertBefore(t,p);p.addEventListener('click',function(e){if(e.target.closest('button'))setTimeout(function(){c()},0)})});document.addEventListener('click',function(e){if(!e.target.closest('.controls')&&!e.target.closest('.room-menu-toggle'))c()});document.addEventListener('keydown',function(e){if(e.key==='Escape')c()});window.addEventListener('hashchange',function(){c()})})();</script>
 </body>
 </html>
