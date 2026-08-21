@@ -1013,6 +1013,45 @@
 
     /* Final in-room navigation */
     .screen > .controls{position:absolute;top:92px;right:max(10px,env(safe-area-inset-right));bottom:auto;left:auto;width:min(280px,calc(100vw - 24px));max-height:calc(100vh - 112px);overflow-y:auto;display:none;flex-direction:column;align-items:stretch;justify-content:flex-start;flex-wrap:nowrap;gap:8px;padding:12px;border:1px solid rgba(211,167,100,.75);border-radius:14px;background:rgba(30,19,11,.94);box-shadow:0 12px 32px rgba(0,0,0,.48);backdrop-filter:blur(8px);z-index:46}.screen > .controls.controls-open{display:flex}.screen > .controls > button{width:100%}.room-menu-toggle{position:absolute;top:50px;right:max(10px,env(safe-area-inset-right));z-index:47;min-height:38px;padding:8px 12px;border-color:#b99055;background:rgba(45,29,17,.94);color:#f8e6c2;box-shadow:0 5px 18px rgba(0,0,0,.38)}.screen:not(.active) > .room-menu-toggle{display:none}#home > .room-menu-toggle{top:12px}@media(max-width:640px){.screen > .controls{top:96px;width:min(82vw,290px);max-height:calc(100vh - 116px)}.room-menu-toggle{top:52px}#home > .room-menu-toggle{top:10px}}
+
+    /* Launch fix: navigation drawers and gentle front-page motion. */
+    .screen > .controls {
+      position: absolute !important;
+      top: 92px !important;
+      right: max(10px, env(safe-area-inset-right)) !important;
+      bottom: auto !important;
+      left: auto !important;
+      display: none !important;
+    }
+    .screen > .controls.controls-open { display: flex !important; }
+    #home .scene-wrap, #entrance .scene-wrap { position: relative; overflow: hidden; }
+    #home .scene, #entrance .scene {
+      transform-origin: 50% 55%;
+      animation: frontSceneBreathe 14s ease-in-out infinite alternate;
+    }
+    #home .scene-wrap::after, #entrance .scene-wrap::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background: linear-gradient(110deg, transparent 28%, rgba(255,220,158,.13) 48%, transparent 67%);
+      transform: translateX(-65%);
+      animation: frontLightSweep 9s ease-in-out infinite;
+      mix-blend-mode: screen;
+    }
+    @keyframes frontSceneBreathe {
+      from { transform: scale(1); filter: brightness(1) saturate(1); }
+      to { transform: scale(1.025); filter: brightness(1.06) saturate(1.05); }
+    }
+    @keyframes frontLightSweep {
+      0%, 20% { transform: translateX(-70%); opacity: 0; }
+      45% { opacity: .85; }
+      75%, 100% { transform: translateX(70%); opacity: 0; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      #home .scene, #entrance .scene, #home .scene-wrap::after, #entrance .scene-wrap::after { animation: none !important; }
+    }
+
 </style>
 </head>
 
