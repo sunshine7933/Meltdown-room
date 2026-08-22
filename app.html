@@ -1022,6 +1022,19 @@
     .explore-result-links a{display:inline-block;padding:.7rem .85rem;border:1px solid #b98a4a;border-radius:8px;background:#3a281b;color:#fff2cf;text-decoration:none;font-weight:700}
     @media(max-width:620px){.home-live-clock{border-radius:3px}.explore-result-links a{width:100%;text-align:center}}
 
+  
+    /* Phone navigation repair: preserve the Great Room artwork and collapse secondary destinations. */
+    #great > .controls{display:none}
+    .great-compact-nav{position:sticky;bottom:0;z-index:40;display:grid;grid-template-columns:auto minmax(145px,1fr) auto auto;gap:7px;align-items:end;padding:8px max(8px,env(safe-area-inset-left)) calc(8px + env(safe-area-inset-bottom));background:rgba(24,15,9,.96);border-top:1px solid #8b6f47}
+    .great-compact-nav button,.great-room-menu summary{min-height:44px;padding:10px 12px;border:1px solid #b08a5f;border-radius:999px;background:#3a281b;color:#fff2cf;font:700 13px/1.1 system-ui,sans-serif;text-align:center;cursor:pointer;box-sizing:border-box}
+    .great-room-menu{position:relative}
+    .great-room-menu summary{display:flex;align-items:center;justify-content:center;list-style:none;background:#b45a25;color:white}
+    .great-room-menu summary::-webkit-details-marker{display:none}
+    .great-room-menu-grid{position:absolute;left:50%;bottom:52px;transform:translateX(-50%);width:min(340px,calc(100vw - 20px));max-height:min(62vh,520px);overflow:auto;display:grid;grid-template-columns:1fr 1fr;gap:7px;padding:10px;background:rgba(24,15,9,.98);border:1px solid #8b6f47;border-radius:16px;box-shadow:0 12px 30px rgba(0,0,0,.5)}
+    .great-room-menu:not([open]) .great-room-menu-grid{display:none}
+    .great-room-menu-grid button{border-radius:10px;font-size:12px}
+    @media(max-width:430px){.great-compact-nav{grid-template-columns:auto minmax(130px,1fr) auto}.great-compact-nav>button:last-child{display:none}}
+
   </style>
 </head>
 
@@ -1112,28 +1125,33 @@
     <div class="scene-wrap">
       <img class="scene" src="great-room.png" alt="The Meltdown Room Great Room">
     </div>
-    <div class="controls">
+    <nav class="great-compact-nav" aria-label="Great Room navigation">
       <button type="button" onclick="showScreen('entrance')">BACK</button>
-      <button class="primary" type="button" onclick="showScreen('rant')">RANT ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('calm')">CALM ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('hope')">HOPE ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
-      <button class="primary" type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
-      <button class="primary" type="button" onclick="showScreen('resources')">RESOURCE SHED</button>
-      <button class="primary" type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('relationship')">RELATIONSHIP ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
-      <button class="primary" type="button" onclick="showScreen('plan')">PLAN ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
-      <button class="primary" type="button" onclick="showScreen('game')">FAMILY &amp; FUN ROOM</button>
-      <button class="primary" type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
-      <button type="button" onclick="showScreen('map')">PROPERTY MAP</button>
-      <button type="button" onclick="showScreen('home')">TAKE ME HOME</button>
-    </div>
+      <details class="great-room-menu">
+        <summary>CHOOSE A ROOM</summary>
+        <div class="great-room-menu-grid">
+          <button type="button" onclick="showScreen('rant')">RANT ROOM</button>
+          <button type="button" onclick="showScreen('meltdown')">MELTDOWN ROOM</button>
+          <button type="button" onclick="showScreen('thinking')">THINKING ROOM</button>
+          <button type="button" onclick="showScreen('calm')">CALM ROOM</button>
+          <button type="button" onclick="showScreen('hope')">HOPE ROOM</button>
+          <button type="button" onclick="showScreen('celebration')">CELEBRATION ROOM</button>
+          <button type="button" onclick="showScreen('reflection')">REFLECTION LIBRARY</button>
+          <button type="button" onclick="showScreen('learn')">LEARNING CABIN</button>
+          <button type="button" onclick="showScreen('resources')">RESOURCE SHED</button>
+          <button type="button" onclick="showScreen('connect')">CONNECT ROOM</button>
+          <button type="button" onclick="showScreen('relationship')">RELATIONSHIP ROOM</button>
+          <button type="button" onclick="showScreen('outdoor')">OUTDOOR ROOM</button>
+          <button type="button" onclick="showScreen('explore')">EXPLORE NEAR ME</button>
+          <button type="button" onclick="showScreen('plan')">PLAN ROOM</button>
+          <button type="button" onclick="showScreen('companion')">COMPANION EXPERIENCE</button>
+          <button type="button" onclick="showScreen('game')">FAMILY &amp; FUN ROOM</button>
+          <button type="button" onclick="showScreen('smash')">SMASH &amp; RELEASE</button>
+        </div>
+      </details>
+      <button type="button" onclick="showScreen('map')">MAP</button>
+      <button type="button" onclick="showScreen('home')">HOME</button>
+    </nav>
   </section>
 
 
