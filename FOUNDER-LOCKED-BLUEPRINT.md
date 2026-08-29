@@ -12,20 +12,26 @@ This image is the source of truth for the property, entrance, Great Room, room p
 
 Keep Sunshine's original artwork and approved rooms unchanged. Add functionality around or over the locked artwork without generating replacement scenes or redesigning an approved area. Any proposed visual replacement requires Sunshine's explicit approval for that specific asset.
 
-## Locked room list
+## Current Founder-Locked required room list
 
 1. Great Room
 2. Meltdown Room
-3. Calm Room
-4. Vent Room
-5. Cry Room
-6. Laugh Room
-7. Learn Room
-8. Plan Room
-9. Connect Room
-10. Relationship Room
-11. Self Room
-12. Outdoor Room
+3. Learn Room
+4. Plan Room
+5. Connect Room
+6. Relationship Room
+7. Outdoor Room
+
+### Removed from the required blueprint
+
+Do **not** build or restore these merely because they appeared in an older room list:
+
+- Calm Room
+- Vent Room
+- Cry Room
+- Laugh Room
+
+Existing approved/working v23 spaces such as Rant, Thinking, Smash & Release, Hope, Quiet Support, Celebration, Memorial, and Explore may remain while the required Founder-Locked rooms above are restored and connected. They must not replace the required rooms without Sunshine's explicit approval.
 
 ## Required world and design elements
 
@@ -38,6 +44,10 @@ Keep Sunshine's original artwork and approved rooms unchanged. Add functionality
 - Local time-of-day and seasonal changes
 - Great Room as the main hub
 - No autism puzzle-piece imagery
+
+## Navigation rule
+
+The experience is non-linear. Users enter the property/Great Room hub, choose any available room, use it, and may stay, return to the Great Room, return Home, or choose another room. Do not force a Room 1 → Room 2 → Room 3 progression.
 
 ## Working method
 
