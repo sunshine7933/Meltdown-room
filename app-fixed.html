@@ -84,6 +84,26 @@ frame.addEventListener('load',()=>{
     /* Dragging the flame should burn the paper, never select its text. */
     .burn-fireplace,.burn-paper{-webkit-user-select:none!important;user-select:none!important}
     #accountButton,#stillModeButton{min-height:44px!important}
+    /* The Thinking Room calls this a Water Hourglass: use quiet liquid levels instead of shrinking sand wedges. */
+    .hourglass-visual{filter:drop-shadow(0 9px 9px rgba(0,0,0,.42))!important}
+    .hourglass-visual::before,.hourglass-visual::after{border-color:#9f7448!important;background:linear-gradient(90deg,rgba(255,255,255,.34),rgba(194,229,234,.09) 28% 72%,rgba(255,255,255,.25))!important;box-shadow:inset 0 0 12px rgba(196,232,237,.24),inset 2px 0 2px rgba(255,255,255,.22)!important}
+    .hourglass-top-sand,.hourglass-bottom-sand{overflow:hidden;background:transparent!important;transform:none!important}
+    .hourglass-top-sand::before,.hourglass-bottom-sand::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(139,196,209,.88),rgba(66,132,151,.94));box-shadow:inset 0 3px 0 rgba(222,247,249,.38);will-change:transform}
+    .hourglass-top-sand::after,.hourglass-bottom-sand::after{content:"";position:absolute;left:8%;right:8%;height:3px;border-radius:50%;background:rgba(224,249,250,.45);filter:blur(.2px);will-change:transform}
+    .hourglass-top-sand::after{top:2px}.hourglass-bottom-sand::after{bottom:2px}
+    .hourglass-stream{left:62px!important;width:2px!important;border-radius:2px!important;background:linear-gradient(90deg,#8ccbd5,#4e9bad)!important;box-shadow:0 0 3px rgba(130,207,219,.45)!important}
+    .hourglass-visual.running{animation:hourglassTurn .8s ease, mrWaterGlow 5s .8s ease-in-out infinite!important}
+    .hourglass-visual.running .hourglass-top-sand,.hourglass-visual.running .hourglass-bottom-sand{animation:none!important}
+    .hourglass-visual.running .hourglass-top-sand::before{animation:mrWaterDrain var(--sand-time) .8s linear forwards}
+    .hourglass-visual.running .hourglass-top-sand::after{animation:mrWaterMeniscusDown var(--sand-time) .8s linear forwards}
+    .hourglass-visual.running .hourglass-bottom-sand::before{animation:mrWaterFill var(--sand-time) .8s linear forwards}
+    .hourglass-visual.running .hourglass-bottom-sand::after{animation:mrWaterMeniscusUp var(--sand-time) .8s linear forwards}
+    @keyframes mrWaterDrain{from{transform:translateY(0)}to{transform:translateY(98%)}}
+    @keyframes mrWaterFill{from{transform:translateY(92%)}to{transform:translateY(0)}}
+    @keyframes mrWaterMeniscusDown{from{transform:translateY(0)}to{transform:translateY(51px)}}
+    @keyframes mrWaterMeniscusUp{from{transform:translateY(51px)}to{transform:translateY(0)}}
+    @keyframes mrWaterGlow{50%{filter:drop-shadow(0 7px 10px rgba(73,145,163,.34))}}
+    body.still-mode .hourglass-visual.running,body.still-mode .hourglass-visual.running *{animation-play-state:paused!important}
   `;
   d.head.appendChild(style);
 
