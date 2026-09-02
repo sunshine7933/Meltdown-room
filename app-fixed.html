@@ -283,7 +283,9 @@ frame.addEventListener('load',()=>{
 
   // Make small controls consistently tappable without changing Founder-Locked artwork.
   d.querySelectorAll('button,[role="button"]').forEach(el=>{
-    if(!el.getAttribute('aria-label')&&!el.textContent.trim()){el.setAttribute('aria-label',el.title||'Control')}
+    const existing=(el.getAttribute('aria-label')||'').trim();
+    const visibleText=(el.textContent||'').replace(/\s+/g,' ').trim();
+    if(!existing)el.setAttribute('aria-label',visibleText||el.title||'Control');
   });
 
   renderMemorialCards();
