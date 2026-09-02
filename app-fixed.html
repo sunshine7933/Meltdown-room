@@ -35,8 +35,9 @@ frame.addEventListener('load',()=>{
     button,a,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     button{min-width:44px;min-height:44px}
     .controls button,.nav button,.toolbar button,[class*="control"] button,[class*="nav"] button{min-height:44px!important}
+    button[class*="hotspot"]{min-width:44px!important;min-height:44px!important}
     .mr-global-nav{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:99999;display:flex;gap:8px;align-items:center;padding:7px 9px;border:1px solid rgba(216,185,130,.5);border-radius:999px;background:rgba(22,15,10,.88);backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,.38)}
-    .mr-global-nav button{position:relative;overflow:hidden;min-height:42px!important;padding:9px 13px!important;border-radius:999px!important;border:1px solid rgba(203,231,238,.65)!important;color:#fff!important;background:linear-gradient(135deg,rgba(80,139,157,.95),rgba(48,96,111,.95))!important;font:800 13px system-ui!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 3px 12px rgba(0,0,0,.22)!important}
+    .mr-global-nav button{position:relative;overflow:hidden;min-height:44px!important;padding:9px 13px!important;border-radius:999px!important;border:1px solid rgba(203,231,238,.65)!important;color:#fff!important;background:linear-gradient(135deg,rgba(80,139,157,.95),rgba(48,96,111,.95))!important;font:800 13px system-ui!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 3px 12px rgba(0,0,0,.22)!important}
     .mr-global-nav button::before{content:"";position:absolute;inset:-60% -20%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-70%);animation:mrShimmer 4.6s ease-in-out infinite;pointer-events:none}
     @keyframes mrShimmer{0%,65%{transform:translateX(-70%)}85%,100%{transform:translateX(70%)}}
     .mr-ripple{position:absolute!important;border-radius:50%!important;pointer-events:none!important;background:rgba(255,255,255,.38)!important;transform:scale(0);animation:mrRipple .5s ease-out forwards!important}
@@ -56,6 +57,19 @@ frame.addEventListener('load',()=>{
     if(ss.length){ss.forEach(s=>s.classList.remove('active'));el.classList.add('active','mr-enter');setTimeout(()=>el.classList.remove('mr-enter'),380);w.scrollTo(0,0);return true}
     el.scrollIntoView({behavior:d.body.classList.contains('still-mode')?'auto':'smooth',block:'start'});return true;
   }
+  function navigateTo(el){
+    if(!el)return false;
+    if(el.id&&typeof w.showScreen==='function'){
+      w.showScreen(el.id);
+      try{w.scrollTo(0,0)}catch(_e){}
+      return true;
+    }
+    return activate(el);
+  }
+  function navigateToId(id){
+    const el=d.getElementById(id);
+    return navigateTo(el);
+  }
   function buttonByText(re){return [...d.querySelectorAll('button,a,[role="button"]')].find(x=>re.test((x.textContent||x.getAttribute('aria-label')||'').trim()));}
   function findGreatRoom(){
     return d.querySelector('.screen[id*="great" i],.screen[data-room*="great" i],.screen[data-name*="great" i]') ||
@@ -64,21 +78,26 @@ frame.addEventListener('load',()=>{
   }
   function goGreatRoom(){
     const target=findGreatRoom();
-    if(activate(target))return;
-    const b=buttonByText(/^(great room|return to great room|back to great room|hub)$/i); if(b)b.click();
+    if(navigateTo(target))return;
+    const b=buttonByText(/^(great room|return to great room|back to great room|hub)$/i);if(b)b.click();
   }
   function goHome(){
+    if(navigateToId('home'))return;
     const b=buttonByText(/^(home|property|entrance|welcome|main)$/i);if(b){b.click();return}
-    const ss=screens();if(ss[0])activate(ss[0]);else location.href='index.html';
+    const ss=screens();if(ss[0])navigateTo(ss[0]);else location.href='index.html';
   }
 
-  const history=[];let lastActive=null;
+  const history=[];let lastActive=activeScreen(),suppressNextHistory=false;
   const observer=new MutationObserver(()=>{
     const a=activeScreen();
-    if(a&&a!==lastActive){if(lastActive)history.push(lastActive);lastActive=a;a.classList.add('mr-enter');setTimeout(()=>a.classList.remove('mr-enter'),380)}
+    if(a&&a!==lastActive){
+      if(lastActive&&!suppressNextHistory)history.push(lastActive);
+      suppressNextHistory=false;
+      lastActive=a;
+      a.classList.add('mr-enter');setTimeout(()=>a.classList.remove('mr-enter'),380);
+    }
   });
   observer.observe(d.body,{subtree:true,attributes:true,attributeFilter:['class','style']});
-  lastActive=activeScreen();
 
   const nav=d.createElement('div');nav.className='mr-global-nav';nav.setAttribute('aria-label','Room navigation');
   nav.innerHTML='<button type="button" data-act="back" aria-label="Go back">← Back</button><button type="button" data-act="hub" aria-label="Return to Great Room">Great Room</button><button type="button" data-act="home" aria-label="Return home">Home</button>';
@@ -87,7 +106,10 @@ frame.addEventListener('load',()=>{
     const b=e.target.closest('button');if(!b)return;
     if(b.dataset.act==='hub')goGreatRoom();
     if(b.dataset.act==='home')goHome();
-    if(b.dataset.act==='back'){const prev=history.pop();if(prev)activate(prev);else goGreatRoom()}
+    if(b.dataset.act==='back'){
+      const prev=history.pop();
+      if(prev){suppressNextHistory=true;navigateTo(prev)}else goGreatRoom();
+    }
   });
 
   d.addEventListener('pointerdown',e=>{
@@ -104,12 +126,19 @@ frame.addEventListener('load',()=>{
   }
   d.querySelectorAll('img').forEach(img=>img.addEventListener('error',()=>repairImage(img),{once:false}));
 
-  // Make small controls consistently tappable without changing founder-locked artwork.
+  // The Property Map must use the recovered Founder-Locked map, not the Home hero image.
+  const propertyMap=d.querySelector('#map .map-stage img.scene');
+  if(propertyMap&&/(^|\/)home\.png(?:\?|$)/i.test(propertyMap.getAttribute('src')||'')){
+    propertyMap.src='founder-locked-assets/living-property-map.png?v=qa-20260901';
+    propertyMap.alt='The Founder-Locked Living Property map';
+  }
+
+  // Make small controls consistently tappable without changing Founder-Locked artwork.
   d.querySelectorAll('button,[role="button"]').forEach(el=>{
     if(!el.getAttribute('aria-label')&&!el.textContent.trim()){el.setAttribute('aria-label',el.title||'Control')}
   });
 
-  // Escape key returns to the Great Room on desktop keyboards.
+  // Escape uses the app's own navigation path so room cleanup still runs.
   d.addEventListener('keydown',e=>{if(e.key==='Escape')goGreatRoom()});
 });
 </script>
