@@ -104,8 +104,28 @@ frame.addEventListener('load',()=>{
     @keyframes mrWaterMeniscusUp{from{transform:translateY(51px)}to{transform:translateY(0)}}
     @keyframes mrWaterGlow{50%{filter:drop-shadow(0 7px 10px rgba(73,145,163,.34))}}
     body.still-mode .hourglass-visual.running,body.still-mode .hourglass-visual.running *{animation-play-state:paused!important}
+    /* Subtle hearth light over the existing Founder-Locked Great Room fireplace. */
+    #great .scene-wrap{position:relative}
+    .mr-great-twinkle{position:absolute;left:50%;top:50.5%;width:clamp(54px,8.8vw,114px);height:clamp(54px,8.8vw,114px);transform:translate(-50%,-50%);pointer-events:none;z-index:2;mix-blend-mode:screen;filter:blur(.15px)}
+    .mr-great-twinkle span{position:absolute;left:50%;bottom:12%;width:34%;height:58%;border-radius:58% 42% 62% 38%;transform-origin:50% 100%;background:radial-gradient(ellipse at 50% 78%,rgba(255,250,176,.9) 0 12%,rgba(255,179,54,.65) 30%,rgba(231,86,22,.24) 54%,transparent 70%);filter:drop-shadow(0 0 8px rgba(255,139,35,.58));animation:mrHearthTwinkle 1.75s ease-in-out infinite alternate}
+    .mr-great-twinkle span:nth-child(2){left:31%;bottom:9%;width:27%;height:45%;animation-duration:2.25s;animation-delay:-.9s}
+    .mr-great-twinkle span:nth-child(3){left:64%;bottom:10%;width:24%;height:40%;animation-duration:1.95s;animation-delay:-1.35s}
+    .mr-great-twinkle::after{content:"";position:absolute;left:13%;right:13%;bottom:4%;height:32%;border-radius:50%;background:radial-gradient(ellipse,rgba(255,118,28,.34),transparent 68%);animation:mrEmberPulse 2.4s ease-in-out infinite}
+    @keyframes mrHearthTwinkle{0%{opacity:.38;transform:translateX(-50%) scale(.86,1.02) rotate(-2deg)}55%{opacity:.72;transform:translateX(-50%) scale(1.04,.92) rotate(2deg)}100%{opacity:.48;transform:translateX(-50%) scale(.92,1.08) rotate(-1deg)}}
+    @keyframes mrEmberPulse{50%{opacity:.45;transform:scale(1.08)}}
+    body.still-mode .mr-great-twinkle span,body.still-mode .mr-great-twinkle::after{animation:none!important;opacity:.42!important}
+    @media(prefers-reduced-motion:reduce){.mr-great-twinkle span,.mr-great-twinkle::after{animation:none!important;opacity:.42!important}}
   `;
   d.head.appendChild(style);
+
+  const greatSceneWrap=d.querySelector('#great .scene-wrap');
+  if(greatSceneWrap&&!greatSceneWrap.querySelector('.mr-great-twinkle')){
+    const twinkle=d.createElement('div');
+    twinkle.className='mr-great-twinkle';
+    twinkle.setAttribute('aria-hidden','true');
+    twinkle.innerHTML='<span></span><span></span><span></span>';
+    greatSceneWrap.appendChild(twinkle);
+  }
 
   function screens(){return [...d.querySelectorAll('.screen')];}
   function activeScreen(){return d.querySelector('.screen.active')||screens().find(x=>getComputedStyle(x).display!=='none');}
