@@ -1,1 +1,0 @@
-QA branch only. See QA-SWEEP-2026-09-01.md in the repository for the full static audit. This marker file is intentionally ignored by the deploy pattern only if explicitly added later; it is not part of production behavior.
