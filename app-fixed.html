@@ -75,6 +75,15 @@ frame.addEventListener('load',()=>{
     @media(max-width:520px){.mr-global-nav{max-width:96vw;gap:5px;padding:5px 6px}.mr-global-nav button{font-size:11px!important;padding:7px 8px!important}.mr-memorial-room{padding-bottom:105px}.mr-memorial-grid{grid-template-columns:1fr 1fr}.mr-memorial-card{min-height:130px!important;padding:13px!important}.mr-memorial-card span{font-size:14px}}
     @media(max-width:390px){.mr-memorial-grid{grid-template-columns:1fr}.mr-global-nav button{font-size:10px!important;padding:6px 7px!important}}
     body.still-mode .mr-global-nav button::before,body.still-mode .mr-memorial-candles span::before{animation:none!important}
+    /* Keep the persistent QA navigation from intercepting room-specific bottom controls. */
+    .screen>.controls,.great-compact-nav{padding-bottom:calc(78px + env(safe-area-inset-bottom))!important}
+    body:has([role="dialog"].open) .mr-global-nav{display:none!important}
+    /* Match the percentage hotspot layer to the Founder-Locked Meltdown artwork's 1402:1122 aspect ratio. */
+    .meltdown-stage{width:min(100%,calc((100vh - 118px) * 1.2495543672))!important}
+    .meltdown-stage>.scene{width:100%!important;margin-inline:auto!important}
+    /* Dragging the flame should burn the paper, never select its text. */
+    .burn-fireplace,.burn-paper{-webkit-user-select:none!important;user-select:none!important}
+    #accountButton,#stillModeButton{min-height:44px!important}
   `;
   d.head.appendChild(style);
 
