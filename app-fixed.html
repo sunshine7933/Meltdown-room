@@ -44,8 +44,37 @@ frame.addEventListener('load',()=>{
     @keyframes mrRipple{to{transform:scale(4);opacity:0}}
     .screen.mr-enter{animation:mrRoomIn .32s ease-out}
     @keyframes mrRoomIn{from{opacity:.35;transform:scale(.995)}to{opacity:1;transform:scale(1)}}
-    @media(max-width:520px){.mr-global-nav{max-width:96vw}.mr-global-nav button{font-size:12px!important;padding:8px 10px!important}}
-    body.still-mode .mr-global-nav button::before{animation:none!important}
+    .mr-memorial-room{box-sizing:border-box;min-height:100vh;overflow:auto;padding:clamp(18px,4vw,46px) clamp(14px,4vw,44px) 110px;color:#f7e3bd;background:radial-gradient(circle at 50% 0,rgba(116,87,52,.34),transparent 42%),linear-gradient(180deg,#24170f,#130d09 72%);font-family:Georgia,serif}
+    .mr-memorial-shell{width:min(940px,100%);margin:0 auto}
+    .mr-memorial-kicker{text-align:center;text-transform:uppercase;letter-spacing:.19em;color:#d9b478;font:800 12px system-ui;margin:5px 0 8px}
+    .mr-memorial-room h1{text-align:center;margin:0;font-size:clamp(34px,7vw,64px);line-height:1;color:#fff0ce;text-shadow:0 3px 18px rgba(0,0,0,.65)}
+    .mr-memorial-intro{max-width:700px;margin:14px auto 7px;text-align:center;font-size:clamp(16px,2.4vw,20px);line-height:1.55;color:#ead9ba}
+    .mr-memorial-private{max-width:680px;margin:0 auto 22px;text-align:center;color:#b7d6de;font:700 13px/1.5 system-ui}
+    .mr-memorial-candles{display:flex;justify-content:center;gap:14px;margin:19px 0 25px;opacity:.95}
+    .mr-memorial-candles span{position:relative;width:13px;height:31px;border-radius:3px 3px 2px 2px;background:linear-gradient(#f7dfae,#b78b54);box-shadow:inset 0 0 4px rgba(255,255,255,.4)}
+    .mr-memorial-candles span::before{content:"";position:absolute;left:50%;top:-16px;width:10px;height:17px;border-radius:60% 40% 60% 40%;background:radial-gradient(circle at 50% 65%,#fff8bb 0 19%,#efb34e 43%,rgba(222,114,34,.35) 67%,transparent 70%);transform:translateX(-50%) rotate(7deg);filter:drop-shadow(0 0 7px rgba(243,183,74,.78));animation:mrCandle 2.6s ease-in-out infinite alternate}
+    .mr-memorial-candles span:nth-child(2n)::before{animation-delay:-1.1s}.mr-memorial-candles span:nth-child(3n)::before{animation-delay:-1.8s}
+    @keyframes mrCandle{from{transform:translateX(-50%) rotate(-5deg) scale(.95)}to{transform:translateX(-50%) rotate(6deg) scale(1.06)}}
+    .mr-memorial-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:14px;margin:0 auto 23px}
+    .mr-memorial-card{width:100%;min-height:145px!important;padding:18px!important;text-align:left;border-radius:16px!important;border:1px solid rgba(217,180,120,.48)!important;color:#f8e6c7!important;background:linear-gradient(145deg,rgba(68,48,31,.96),rgba(36,26,18,.96))!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.08),0 10px 24px rgba(0,0,0,.28)!important}
+    .mr-memorial-card strong{display:block;margin-bottom:10px;color:#f3cc8a;font:800 15px system-ui;text-transform:uppercase;letter-spacing:.07em}
+    .mr-memorial-card span{display:block;color:#e4d2b4;font:16px/1.45 Georgia,serif}
+    .mr-memorial-card .empty{color:#b9cdd1;font-style:italic}
+    .mr-memorial-actions{display:flex;flex-wrap:wrap;justify-content:center;gap:10px;margin:12px 0 4px}
+    .mr-memorial-actions button,.mr-memorial-editor-actions button{padding:10px 15px!important;border-radius:999px!important;border:1px solid rgba(217,180,120,.55)!important;color:#fff4dc!important;background:#513720!important;font:800 13px system-ui!important}
+    .mr-memorial-actions button.primary,.mr-memorial-editor-actions button.primary{background:linear-gradient(135deg,#4d8191,#315c68)!important;border-color:#a9d0da!important}
+    .mr-memorial-status{min-height:24px;text-align:center;color:#b9d7dd;font:700 13px/1.4 system-ui;margin-top:12px}
+    .mr-memorial-editor{position:fixed;inset:0;z-index:100001;display:none;place-items:center;padding:18px;background:rgba(12,8,6,.78);backdrop-filter:blur(8px)}
+    .mr-memorial-editor.open{display:grid}
+    .mr-memorial-editor-box{box-sizing:border-box;width:min(680px,100%);max-height:min(80vh,700px);overflow:auto;padding:22px;border:1px solid rgba(217,180,120,.65);border-radius:19px;background:linear-gradient(160deg,#322216,#17100b);box-shadow:0 24px 70px rgba(0,0,0,.58)}
+    .mr-memorial-editor h2{margin:0 0 7px;color:#ffe7bd;font:700 clamp(25px,5vw,38px) Georgia,serif}
+    .mr-memorial-editor p{color:#d8c8aa;line-height:1.5}
+    .mr-memorial-editor textarea{box-sizing:border-box;width:100%;min-height:210px;resize:vertical;padding:14px;border:1px solid #8e6b43;border-radius:12px;color:#2b2119;background:#f3e4c4;font:17px/1.5 Georgia,serif}
+    .mr-memorial-editor-actions{display:flex;flex-wrap:wrap;gap:9px;margin-top:13px}
+    .mr-memorial-editor-actions .danger{background:#66372f!important}
+    @media(max-width:520px){.mr-global-nav{max-width:96vw;gap:5px;padding:5px 6px}.mr-global-nav button{font-size:11px!important;padding:7px 8px!important}.mr-memorial-room{padding-bottom:105px}.mr-memorial-grid{grid-template-columns:1fr 1fr}.mr-memorial-card{min-height:130px!important;padding:13px!important}.mr-memorial-card span{font-size:14px}}
+    @media(max-width:390px){.mr-memorial-grid{grid-template-columns:1fr}.mr-global-nav button{font-size:10px!important;padding:6px 7px!important}}
+    body.still-mode .mr-global-nav button::before,body.still-mode .mr-memorial-candles span::before{animation:none!important}
   `;
   d.head.appendChild(style);
 
@@ -60,9 +89,10 @@ frame.addEventListener('load',()=>{
   function navigateTo(el){
     if(!el)return false;
     if(el.id&&typeof w.showScreen==='function'){
-      w.showScreen(el.id);
-      try{w.scrollTo(0,0)}catch(_e){}
-      return true;
+      try{
+        w.showScreen(el.id);
+        if(el.classList.contains('active')){try{w.scrollTo(0,0)}catch(_e){};return true}
+      }catch(_e){}
     }
     return activate(el);
   }
@@ -87,6 +117,123 @@ frame.addEventListener('load',()=>{
     const ss=screens();if(ss[0])navigateTo(ss[0]);else location.href='index.html';
   }
 
+  function escapeHTML(value){return String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
+  function readMemorialStore(){
+    let all={};
+    try{all=JSON.parse(w.localStorage.getItem('meltdownReflectionLibrary')||'{}')||{}}catch(_e){all={}}
+    const raw=Array.isArray(all.memorial)?all.memorial.slice(0,6):[];
+    while(raw.length<6)raw.push('');
+    const entries=raw.map(item=>typeof item==='string'?item:(item&&typeof item.text==='string'?item.text:''));
+    return {all,raw,entries};
+  }
+  function writeMemorialSlot(slot,text){
+    const store=readMemorialStore();
+    const memorial=store.raw.slice(0,6);while(memorial.length<6)memorial.push('');
+    memorial[slot]=text;
+    store.all.memorial=memorial;
+    w.localStorage.setItem('meltdownReflectionLibrary',JSON.stringify(store.all));
+  }
+
+  const memorial=d.createElement('section');
+  memorial.className='screen mr-memorial-room';
+  memorial.id='memorial';
+  memorial.setAttribute('aria-labelledby','mrMemorialTitle');
+  memorial.innerHTML=`
+    <div class="mr-memorial-shell">
+      <div class="mr-memorial-kicker">Private remembrance space</div>
+      <h1 id="mrMemorialTitle">Memorial Room</h1>
+      <p class="mr-memorial-intro">A quiet place to remember, honor, write, and keep what matters to you.</p>
+      <p class="mr-memorial-private">🔒 Private by default. These memories stay on this device unless you choose to share them somewhere else.</p>
+      <div class="mr-memorial-candles" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+      <div class="mr-memorial-grid" id="mrMemorialGrid" aria-label="Saved memorial memories"></div>
+      <div class="mr-memorial-actions">
+        <button type="button" class="primary" data-memorial-route="reflection">Reflection Library</button>
+        <button type="button" data-memorial-route="great">Great Room</button>
+        <button type="button" data-memorial-route="home">Home</button>
+      </div>
+      <p class="mr-memorial-status" id="mrMemorialStatus" role="status" aria-live="polite"></p>
+    </div>
+    <div class="mr-memorial-editor" id="mrMemorialEditor" role="dialog" aria-modal="true" aria-labelledby="mrMemorialEditorTitle">
+      <div class="mr-memorial-editor-box">
+        <h2 id="mrMemorialEditorTitle">Memorial Memory</h2>
+        <p>Write what you want to remember, honor, or say here. There is no right way to remember someone or something important.</p>
+        <textarea id="mrMemorialText" placeholder="Write your memory here…"></textarea>
+        <div class="mr-memorial-editor-actions">
+          <button type="button" class="primary" data-memorial-edit="save">Save Privately</button>
+          <button type="button" data-memorial-edit="close">Close</button>
+          <button type="button" class="danger" data-memorial-edit="delete">Delete This Memory</button>
+        </div>
+      </div>
+    </div>`;
+  d.body.appendChild(memorial);
+
+  const memorialGrid=memorial.querySelector('#mrMemorialGrid');
+  const memorialEditor=memorial.querySelector('#mrMemorialEditor');
+  const memorialText=memorial.querySelector('#mrMemorialText');
+  const memorialEditorTitle=memorial.querySelector('#mrMemorialEditorTitle');
+  const memorialStatus=memorial.querySelector('#mrMemorialStatus');
+  let memorialSlot=0;
+
+  function renderMemorialCards(){
+    const entries=readMemorialStore().entries;
+    memorialGrid.innerHTML=entries.map((text,index)=>{
+      const trimmed=text.trim();
+      const preview=trimmed?(trimmed.length>120?trimmed.slice(0,117)+'…':trimmed):'Tap to add a memory.';
+      return '<button type="button" class="mr-memorial-card" data-memorial-slot="'+index+'" aria-label="Open memorial memory '+(index+1)+'"><strong>Memorial '+(index+1)+'</strong><span class="'+(trimmed?'':'empty')+'">'+escapeHTML(preview)+'</span></button>';
+    }).join('');
+  }
+  function openMemorialEditor(slot){
+    memorialSlot=Math.max(0,Math.min(5,Number(slot)||0));
+    const entry=readMemorialStore().entries[memorialSlot]||'';
+    memorialEditorTitle.textContent='Memorial Memory '+(memorialSlot+1);
+    memorialText.value=entry;
+    memorialEditor.classList.add('open');
+    setTimeout(()=>memorialText.focus(),30);
+  }
+  function closeMemorialEditor(){memorialEditor.classList.remove('open');}
+  function openMemorialRoom(slot){
+    renderMemorialCards();
+    memorialStatus.textContent='';
+    navigateTo(memorial);
+    if(Number.isInteger(slot))setTimeout(()=>openMemorialEditor(slot),40);
+  }
+  function saveMemorial(){
+    writeMemorialSlot(memorialSlot,memorialText.value);
+    renderMemorialCards();
+    closeMemorialEditor();
+    memorialStatus.textContent='Memory saved privately.';
+  }
+  function deleteMemorial(){
+    if(!memorialText.value.trim()&&!readMemorialStore().entries[memorialSlot].trim()){closeMemorialEditor();return}
+    if(!w.confirm('Delete this memorial memory?'))return;
+    writeMemorialSlot(memorialSlot,'');
+    memorialText.value='';
+    renderMemorialCards();
+    closeMemorialEditor();
+    memorialStatus.textContent='That memorial memory was deleted.';
+  }
+
+  memorial.addEventListener('click',e=>{
+    const slot=e.target.closest('[data-memorial-slot]');if(slot){openMemorialEditor(Number(slot.dataset.memorialSlot));return}
+    const edit=e.target.closest('[data-memorial-edit]');if(edit){
+      if(edit.dataset.memorialEdit==='save')saveMemorial();
+      if(edit.dataset.memorialEdit==='close')closeMemorialEditor();
+      if(edit.dataset.memorialEdit==='delete')deleteMemorial();
+      return;
+    }
+    const route=e.target.closest('[data-memorial-route]');if(!route)return;
+    if(route.dataset.memorialRoute==='reflection')navigateToId('reflection');
+    if(route.dataset.memorialRoute==='great')goGreatRoom();
+    if(route.dataset.memorialRoute==='home')goHome();
+  });
+  memorialEditor.addEventListener('click',e=>{if(e.target===memorialEditor)closeMemorialEditor()});
+
+  // Existing Memorial Shelf buttons now lead into the dedicated Memorial Room while reusing the same private storage.
+  [...d.querySelectorAll('[data-library-type="memorial"]')].forEach((button,index)=>{
+    button.setAttribute('aria-label','Open Memorial Room memory '+(index+1));
+    button.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();openMemorialRoom(index)},true);
+  });
+
   const history=[];let lastActive=activeScreen(),suppressNextHistory=false;
   const observer=new MutationObserver(()=>{
     const a=activeScreen();
@@ -100,11 +247,12 @@ frame.addEventListener('load',()=>{
   observer.observe(d.body,{subtree:true,attributes:true,attributeFilter:['class','style']});
 
   const nav=d.createElement('div');nav.className='mr-global-nav';nav.setAttribute('aria-label','Room navigation');
-  nav.innerHTML='<button type="button" data-act="back" aria-label="Go back">← Back</button><button type="button" data-act="hub" aria-label="Return to Great Room">Great Room</button><button type="button" data-act="home" aria-label="Return home">Home</button>';
+  nav.innerHTML='<button type="button" data-act="back" aria-label="Go back">← Back</button><button type="button" data-act="hub" aria-label="Return to Great Room">Great Room</button><button type="button" data-act="memorial" aria-label="Open Memorial Room">Memorial</button><button type="button" data-act="home" aria-label="Return home">Home</button>';
   d.body.appendChild(nav);
   nav.addEventListener('click',e=>{
     const b=e.target.closest('button');if(!b)return;
     if(b.dataset.act==='hub')goGreatRoom();
+    if(b.dataset.act==='memorial')openMemorialRoom();
     if(b.dataset.act==='home')goHome();
     if(b.dataset.act==='back'){
       const prev=history.pop();
@@ -138,8 +286,14 @@ frame.addEventListener('load',()=>{
     if(!el.getAttribute('aria-label')&&!el.textContent.trim()){el.setAttribute('aria-label',el.title||'Control')}
   });
 
-  // Escape uses the app's own navigation path so room cleanup still runs.
-  d.addEventListener('keydown',e=>{if(e.key==='Escape')goGreatRoom()});
+  renderMemorialCards();
+
+  // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
+  d.addEventListener('keydown',e=>{
+    if(e.key!=='Escape')return;
+    if(memorialEditor.classList.contains('open')){closeMemorialEditor();return}
+    goGreatRoom();
+  });
 });
 </script>
 </body>
