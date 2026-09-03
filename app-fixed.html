@@ -676,7 +676,7 @@ frame.addEventListener('load',()=>{
   const originalContinueLearning=typeof w.continueLearning==='function'?w.continueLearning.bind(w):null;
   w.continueLearning=function(){
     const active=d.activeElement;
-    if(active&&((active.textContent||'').trim().toUpperCase()==='MY LEARNING PATH')){
+    {
       const screen=d.getElementById('learn');
       const workspace=screen&&screen.querySelector('#learnWorkspace,.learn-workspace,[class*="learnWorkspace"]');
       if(workspace){
