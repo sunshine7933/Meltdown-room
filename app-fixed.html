@@ -115,6 +115,14 @@ frame.addEventListener('load',()=>{
     @keyframes mrEmberPulse{50%{opacity:.45;transform:scale(1.08)}}
     body.still-mode .mr-great-twinkle span,body.still-mode .mr-great-twinkle::after{animation:none!important;opacity:.42!important}
     @media(prefers-reduced-motion:reduce){.mr-great-twinkle span,.mr-great-twinkle::after{animation:none!important;opacity:.42!important}}
+    /* QA mobile clearance: keep room controls above the fixed navigation and phone safe area. */
+    .screen.active{box-sizing:border-box;padding-bottom:calc(90px + env(safe-area-inset-bottom))!important}
+    .screen.active > .controls{bottom:calc(74px + env(safe-area-inset-bottom))!important}
+    /* Respect the device-level reduced-motion preference across every room. */
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
+      .mr-great-twinkle span,.mr-great-twinkle::after{animation:none!important;opacity:.42!important}
+    }
     /* Founder correction: realistic brown granular sand with a warm illuminated glass. */
     .hourglass-visual{filter:drop-shadow(0 0 10px rgba(255,205,119,.72)) drop-shadow(0 9px 9px rgba(0,0,0,.5))!important}
     .hourglass-visual::before,.hourglass-visual::after{border-color:#c7955d!important;background:linear-gradient(90deg,rgba(255,255,255,.42),rgba(255,224,166,.09) 25% 72%,rgba(255,255,255,.32))!important;box-shadow:inset 0 0 18px rgba(255,224,159,.38),0 0 13px rgba(246,184,82,.48)!important}
