@@ -394,6 +394,80 @@ frame.addEventListener('load',()=>{
     if(!existing)el.setAttribute('aria-label',visibleText||el.title||'Control');
   });
 
+  /* QA Connect Room upgrades: starter recipes plus explicit person-to-person contact actions. */
+  const connectUpgradeStyle=d.createElement('style');
+  connectUpgradeStyle.textContent='.mr-starter-recipes{margin:18px 0 22px;padding:16px;border:1px solid rgba(217,180,120,.48);border-radius:18px;background:rgba(255,244,218,.06)}.mr-starter-recipes h3,.mr-connect-now h3{margin:0 0 6px;color:#f3d49c;font:800 20px Georgia,serif}.mr-starter-recipes p,.mr-connect-now p{margin:0 0 12px;line-height:1.5}.mr-recipe-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:10px}.mr-recipe-card{display:flex;flex-direction:column;align-items:flex-start;gap:5px;min-height:96px!important;padding:14px!important;text-align:left!important;border:1px solid rgba(217,180,120,.55)!important;border-radius:14px!important;color:#fff2d2!important;background:linear-gradient(145deg,rgba(110,70,37,.94),rgba(63,39,23,.96))!important}.mr-recipe-card strong{font-size:16px}.mr-recipe-card span{font-size:13px;opacity:.82}.mr-connect-now{margin:18px 0 6px;padding:16px;border:1px solid rgba(119,175,189,.55);border-radius:18px;background:rgba(79,135,151,.12)}.mr-contact-actions{display:flex;flex-wrap:wrap;gap:10px}.mr-contact-actions button{padding:10px 16px!important;border-radius:999px!important;color:#fff!important;background:linear-gradient(135deg,#528b9c,#315f6d)!important;border:1px solid rgba(204,237,244,.65)!important}.mr-contact-actions button:disabled{opacity:.45;cursor:not-allowed}.mr-connect-hint{margin-top:10px!important;font-size:13px;opacity:.86}@media(max-width:600px){.mr-recipe-grid{grid-template-columns:1fr}.mr-contact-actions button{flex:1 1 120px}}';
+  d.head.appendChild(connectUpgradeStyle);
+
+  const starterRecipes=[
+    {name:'Homemade Mac & Cheese',summary:'Creamy baked comfort food',ingredients:'1 lb elbow macaroni\n4 tbsp butter\n1/4 cup flour\n3 cups milk\n3 cups shredded sharp cheddar\n1 cup shredded mozzarella\n1 tsp salt\n1/2 tsp black pepper\n1/2 tsp mustard powder\n1/2 cup breadcrumbs (optional)',directions:'Heat oven to 375°F. Cook macaroni until just tender and drain. Melt butter, whisk in flour for 1 minute, then slowly whisk in milk until smooth and thick. Remove from heat and stir in most of the cheese, salt, pepper, and mustard powder. Fold in macaroni, pour into a buttered baking dish, top with remaining cheese and breadcrumbs, and bake 20–25 minutes until bubbling and golden.'},
+    {name:'Classic Apple Pie',summary:'Warm cinnamon apples in a flaky crust',ingredients:'2 pie crusts\n6 cups peeled, sliced apples\n3/4 cup sugar\n2 tbsp flour\n1 1/2 tsp cinnamon\n1/4 tsp nutmeg\n1 tbsp lemon juice\n1 tbsp butter\n1 egg beaten with 1 tbsp water',directions:'Heat oven to 425°F. Line a 9-inch pie plate with one crust. Toss apples with sugar, flour, cinnamon, nutmeg, and lemon juice. Spoon into crust and dot with butter. Add the top crust, seal and flute the edges, cut vents, and brush with egg wash. Bake 20 minutes, reduce heat to 375°F, and bake 35–40 minutes more until golden and bubbling. Cool before slicing.'},
+    {name:'Chicken Noodle Soup',summary:'A cozy one-pot family favorite',ingredients:'2 tbsp olive oil\n1 onion, diced\n3 carrots, sliced\n3 celery stalks, sliced\n8 cups chicken broth\n3 cups cooked shredded chicken\n2 cups egg noodles\n1 tsp thyme\nSalt and pepper\n2 tbsp chopped parsley',directions:'Warm oil in a large pot. Cook onion, carrots, and celery for 6–8 minutes. Add broth and thyme and bring to a simmer. Add noodles and cook until tender. Stir in chicken and heat through. Season with salt and pepper and finish with parsley.'},
+    {name:'Sunday Pot Roast',summary:'Slow-cooked beef, carrots, and potatoes',ingredients:'3–4 lb chuck roast\n1 tbsp oil\n1 onion, chopped\n4 carrots, cut in chunks\n1 1/2 lb potatoes, cut in chunks\n3 cups beef broth\n2 tbsp tomato paste\n1 tsp thyme\n1 tsp rosemary\nSalt and pepper',directions:'Season roast well. Brown it in oil in a heavy pot. Add onion, broth, tomato paste, thyme, and rosemary. Cover and cook at 325°F for 2 hours. Add carrots and potatoes, cover again, and cook 1–1 1/2 hours until fork-tender. Rest the roast 10 minutes before serving.'}
+  ];
+
+  function connectWorkspace(){return d.getElementById('connectWorkspace')||d.querySelector('.connectWorkspace,[data-connect-workspace]');}
+  function fillRecipe(recipe){
+    const name=d.getElementById('connect-name'),ingredients=d.getElementById('connect-ingredients'),directions=d.getElementById('connect-how');
+    if(name)name.value=recipe.name;if(ingredients)ingredients.value=recipe.ingredients;if(directions)directions.value=recipe.directions;
+    [name,ingredients,directions].forEach(el=>{if(el)el.dispatchEvent(new Event('input',{bubbles:true}))});
+    const status=[...d.querySelectorAll('[role="status"]')].find(el=>/recipe|family/i.test(el.textContent||''))||d.querySelector('#connectStatus');
+    if(status)status.textContent=recipe.name+' loaded. You can edit it or save your own copy privately.';
+    if(name)name.focus();
+  }
+  function addStarterRecipes(workspace){
+    if(!workspace||workspace.querySelector('.mr-starter-recipes'))return;
+    const heading=workspace.querySelector('h1,h2,h3');
+    if(!heading||!/family recipes/i.test(heading.textContent||''))return;
+    const library=d.createElement('section');library.className='mr-starter-recipes';library.setAttribute('aria-label','Starter family recipes');
+    library.innerHTML='<h3>Ready-to-use family recipes</h3><p>Choose one to see the full ingredients and directions. You can change it and save your own copy privately.</p><div class="mr-recipe-grid"></div>';
+    const grid=library.querySelector('.mr-recipe-grid');
+    starterRecipes.forEach((recipe,index)=>{
+      const button=d.createElement('button');button.type='button';button.className='mr-recipe-card';
+      button.setAttribute('aria-label','Open recipe: '+recipe.name);
+      button.innerHTML='<strong>'+escapeHTML(recipe.name)+'</strong><span>'+escapeHTML(recipe.summary)+'</span>';
+      button.addEventListener('click',()=>fillRecipe(starterRecipes[index]));grid.appendChild(button);
+    });
+    const intro=heading.nextElementSibling;workspace.insertBefore(library,intro?intro.nextSibling:heading.nextSibling);
+  }
+  function contactValue(){
+    const field=d.getElementById('connect-contact');return field?(field.value||'').trim():'';
+  }
+  function contactKind(value){
+    if(/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value))return 'email';
+    const digits=value.replace(/\D/g,'');if(digits.length>=7)return 'phone';
+    return '';
+  }
+  function addConnectNow(workspace){
+    if(!workspace||workspace.querySelector('.mr-connect-now'))return;
+    const heading=workspace.querySelector('h1,h2,h3');
+    if(!heading||!/connection hub/i.test(heading.textContent||''))return;
+    const box=d.createElement('section');box.className='mr-connect-now';box.setAttribute('aria-label','Connect with someone now');
+    box.innerHTML='<h3>Connect with someone</h3><p>Add their phone number or email under “How to connect,” then choose what you want to do.</p><div class="mr-contact-actions"><button type="button" data-contact-action="call">Call</button><button type="button" data-contact-action="text">Text</button><button type="button" data-contact-action="email">Email</button></div><p class="mr-connect-hint" role="status">Nothing is sent automatically. A choice only opens your phone or email app.</p>';
+    const actions=box.querySelectorAll('[data-contact-action]');
+    function refresh(){
+      const value=contactValue(),kind=contactKind(value);
+      actions.forEach(button=>{const action=button.dataset.contactAction;button.disabled=(action==='email'?kind!=='email':kind!=='phone')});
+    }
+    box.addEventListener('click',e=>{
+      const button=e.target.closest('[data-contact-action]');if(!button||button.disabled)return;
+      const value=contactValue(),safe=value.replace(/[^\d+@._a-zA-Z-]/g,'');
+      if(button.dataset.contactAction==='email')w.location.href='mailto:'+safe;
+      if(button.dataset.contactAction==='call')w.location.href='tel:'+safe;
+      if(button.dataset.contactAction==='text')w.location.href='sms:'+safe;
+    });
+    workspace.appendChild(box);
+    const field=d.getElementById('connect-contact');if(field)field.addEventListener('input',refresh);refresh();
+  }
+  function enhanceConnectArea(){
+    const workspace=connectWorkspace();if(!workspace)return;
+    addStarterRecipes(workspace);addConnectNow(workspace);
+  }
+  const connectObserver=new MutationObserver(()=>enhanceConnectArea());
+  const connectScreen=d.getElementById('connect');if(connectScreen)connectObserver.observe(connectScreen,{subtree:true,childList:true});
+  d.addEventListener('click',e=>{if(e.target.closest('[aria-label*="Family Recipes"],[aria-label*="connection hub" i]'))setTimeout(enhanceConnectArea,0)},true);
+  enhanceConnectArea();
+
   renderMemorialCards();
 
   // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
