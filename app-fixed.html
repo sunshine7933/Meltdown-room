@@ -658,6 +658,20 @@ frame.addEventListener('load',()=>{
   let learningPathTries=0;
   const learningPathTimer=w.setInterval(()=>{learningPathTries++;if(ensureLearningPathButton()||learningPathTries>=20)w.clearInterval(learningPathTimer)},250);
 
+  // Permanent delegated repair survives Learning Cabin redraws.
+  d.addEventListener('click',event=>{
+    const button=event.target.closest&&event.target.closest('#learn button');
+    if(!button||(button.textContent||'').trim().toUpperCase()!=='MY LEARNING PATH')return;
+    event.preventDefault();event.stopPropagation();event.stopImmediatePropagation();
+    const screen=d.getElementById('learn');
+    const workspace=screen&&screen.querySelector('#learnWorkspace,.learn-workspace,[class*="learnWorkspace"]');
+    if(!workspace)return;
+    workspace.innerHTML='<h3>My Learning Path</h3><p>Choose one small next step. You can return to any shelf whenever you are ready.</p><ol style="text-align:left;max-width:620px;margin:12px auto;line-height:1.65"><li>Understand needs and strengths.</li><li>Try one practical support tool.</li><li>Save questions for an expert.</li><li>Notice and celebrate progress.</li></ol><button type="button" id="mrLearningPathStart">OPEN FEATURED RESOURCE</button><button type="button" id="mrLearningPathClose">CLOSE</button>';
+    workspace.querySelector('#mrLearningPathStart').addEventListener('click',()=>{const featured=Array.from(screen.querySelectorAll('button')).find(b=>(b.textContent||'').trim().toUpperCase()==='FEATURED RESOURCE');if(featured)featured.click()});
+    workspace.querySelector('#mrLearningPathClose').addEventListener('click',()=>{workspace.innerHTML=''});
+    const status=screen.querySelector('[role="status"]');if(status)status.textContent='Your learning path is ready.';
+  },true);
+
   renderMemorialCards();
 
   // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
