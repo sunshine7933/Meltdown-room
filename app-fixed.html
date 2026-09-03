@@ -690,6 +690,12 @@ frame.addEventListener('load',()=>{
     if(originalContinueLearning)return originalContinueLearning();
   };
 
+  // Remove the cabin's stale inline action before a Learning Path click is dispatched.
+  d.addEventListener('pointerdown',event=>{
+    const button=event.target.closest&&event.target.closest('#learn button');
+    if(button&&(button.textContent||'').trim().toUpperCase()==='MY LEARNING PATH')button.removeAttribute('onclick');
+  },true);
+
   renderMemorialCards();
 
   // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
