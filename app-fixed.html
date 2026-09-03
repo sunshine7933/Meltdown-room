@@ -187,8 +187,7 @@ frame.addEventListener('load',()=>{
   if(accountPanel&&!accountPanel.querySelector('.mr-account-policy-links')){
     const policyLinks=d.createElement('div');policyLinks.className='mr-account-policy-links';
     policyLinks.innerHTML='<a href="privacy.html" target="_top">PRIVACY POLICY</a><a href="delete-account.html" target="_top">DELETE MY ACCOUNT</a>';
-    const accountBody=d.getElementById('accountSignedIn')||d.getElementById('accountSignedOut')||accountPanel;
-    accountBody.appendChild(policyLinks);
+    accountPanel.appendChild(policyLinks);
   }
 
     /* Wire the eight room tiles painted into the Founder-Locked Great Room scene. */
