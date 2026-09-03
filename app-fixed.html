@@ -182,9 +182,56 @@ frame.addEventListener('load',()=>{
     else homeScreen.appendChild(companionButton);
   }
 
-  /* Keep every puzzle mode playable on touch screens instead of rendering hundreds of tiny controls. */
-  const puzzleLevels={25:25,50:36,100:49,500:64};
+  /* Touch-friendly puzzle engine. Large advertised challenges use progressive, playable boards. */
+  const puzzleLevels={25:[5,5],50:[6,6],100:[7,7],500:[8,8]};
   const gameScreen=d.getElementById('game');
+  let touchPuzzle=null;
+  function shuffleTouchPuzzle(){
+    const p=touchPuzzle;
+    for(let n=0;n<p.count*12;n++){
+      const blank=p.tiles.indexOf(-1),r=Math.floor(blank/p.cols),c=blank%p.cols,moves=[];
+      if(r>0)moves.push(blank-p.cols);if(r<p.rows-1)moves.push(blank+p.cols);
+      if(c>0)moves.push(blank-1);if(c<p.cols-1)moves.push(blank+1);
+      const pick=moves[Math.floor(Math.random()*moves.length)];
+      p.tiles[blank]=p.tiles[pick];p.tiles[pick]=-1;
+    }
+  }
+  function renderTouchPuzzle(message){
+    const p=touchPuzzle,box=d.getElementById('gameWorkspace');if(!p||!box)return;
+    box.innerHTML='';
+    const heading=d.createElement('h3');heading.textContent=p.advertised+'-Piece Puzzle Challenge';box.appendChild(heading);
+    const help=d.createElement('p');help.textContent='Slide a piece beside the empty space. This '+p.count+'-tile board keeps the challenge usable on phones and tablets.';box.appendChild(help);
+    const board=d.createElement('div');board.className='puzzle-board';board.style.gridTemplateColumns='repeat('+p.cols+',1fr)';board.style.gridTemplateRows='repeat('+p.rows+',1fr)';
+    p.tiles.forEach((tile,index)=>{
+      const button=d.createElement('button');button.type='button';
+      if(tile<0){button.className='puzzle-tile blank';button.setAttribute('aria-label','Empty puzzle space');}
+      else{
+        button.className='puzzle-tile';button.setAttribute('aria-label','Puzzle piece '+(tile+1));
+        const row=Math.floor(tile/p.cols),col=tile%p.cols;
+        button.style.setProperty('background-size',(p.cols*100)+'% '+(p.rows*100)+'%','important');
+        button.style.setProperty('background-position',(col/(p.cols-1)*100)+'% '+(row/(p.rows-1)*100)+'%','important');
+        button.addEventListener('click',()=>moveTouchPuzzle(index));
+      }
+      board.appendChild(button);
+    });
+    box.appendChild(board);
+    const shuffle=d.createElement('button');shuffle.type='button';shuffle.textContent='SHUFFLE AGAIN';
+    shuffle.addEventListener('click',()=>{shuffleTouchPuzzle();renderTouchPuzzle('Puzzle shuffled again.')});box.appendChild(shuffle);
+    const status=d.getElementById('gameWorkspaceStatus');
+    if(status)status.textContent=message||p.advertised+'-piece challenge ready as a '+p.count+'-tile touch-friendly board.';
+  }
+  function moveTouchPuzzle(index){
+    const p=touchPuzzle,blank=p.tiles.indexOf(-1),r=Math.floor(index/p.cols),c=index%p.cols,br=Math.floor(blank/p.cols),bc=blank%p.cols;
+    if(Math.abs(r-br)+Math.abs(c-bc)!==1){const status=d.getElementById('gameWorkspaceStatus');if(status)status.textContent='Choose a piece beside the empty space.';return}
+    p.tiles[blank]=p.tiles[index];p.tiles[index]=-1;
+    const solved=p.tiles.every((tile,i)=>i===p.count-1?tile===-1:tile===i);
+    renderTouchPuzzle(solved?'Puzzle complete — you did it!':'Piece moved.');
+  }
+  function startTouchPuzzle(advertised){
+    const dims=puzzleLevels[advertised]||puzzleLevels[25],count=dims[0]*dims[1];
+    touchPuzzle={advertised,rows:dims[0],cols:dims[1],count,tiles:Array.from({length:count},(_,i)=>i)};
+    touchPuzzle.tiles[count-1]=-1;shuffleTouchPuzzle();renderTouchPuzzle();
+  }
   if(gameScreen){
     const chooseHeading=[...gameScreen.querySelectorAll('h2,h3')].find(el=>/choose your fun/i.test(el.textContent||''));
     if(chooseHeading&&!gameScreen.querySelector('.mr-game-puzzle-note')){
@@ -193,19 +240,15 @@ frame.addEventListener('load',()=>{
       chooseHeading.parentNode.insertBefore(note,chooseHeading.nextSibling);
     }
     [...gameScreen.querySelectorAll('button[onclick*="openGameTool"][onclick*="puzzle"]')].forEach(button=>{
-      const call=button.getAttribute('onclick')||'',match=call.match(/puzzle['"],\s*(\d+)/);
-      if(!match)return;
-      const advertised=Number(match[1]),playable=puzzleLevels[advertised]||25;
-      button.setAttribute('onclick',"openGameTool('puzzle',"+playable+")");
-      button.setAttribute('aria-label','Start '+advertised+'-piece puzzle challenge, optimized as a '+playable+'-tile touch board');
-      button.addEventListener('click',()=>setTimeout(()=>{
-        const status=d.getElementById('gameWorkspaceStatus');
-        if(status)status.textContent=advertised+'-piece challenge ready as a '+playable+'-tile touch-friendly board.';
-      },0));
+      const call=button.getAttribute('onclick')||'',match=call.match(/puzzle['"],\s*(\d+)/);if(!match)return;
+      const advertised=Number(match[1]),dims=puzzleLevels[advertised]||puzzleLevels[25],count=dims[0]*dims[1];
+      button.removeAttribute('onclick');
+      button.setAttribute('aria-label','Start '+advertised+'-piece puzzle challenge, optimized as a '+count+'-tile touch board');
+      button.addEventListener('click',e=>{e.preventDefault();e.stopImmediatePropagation();startTouchPuzzle(advertised)},true);
     });
   }
 
-    /* Store-required privacy and account-deletion access inside Account & Device. */
+  /* Store-required privacy and account-deletion access inside Account & Device. */
   const accountPanel=d.getElementById('accountPanel')||d.querySelector('[aria-labelledby="accountTitle"]');
   if(accountPanel&&!accountPanel.querySelector('.mr-account-policy-links')){
     const policyLinks=d.createElement('div');policyLinks.className='mr-account-policy-links';
