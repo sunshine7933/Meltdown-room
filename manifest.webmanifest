@@ -1,0 +1,16 @@
+{
+  "name": "The Meltdown Room",
+  "short_name": "Meltdown Room",
+  "description": "A private, supportive space to feel, breathe, connect, and reset.",
+  "id": "/app-fixed.html",
+  "start_url": "/app-fixed.html",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#21150d",
+  "theme_color": "#6f4028",
+  "categories": [
+    "lifestyle",
+    "health-fitness"
+  ]
+}
