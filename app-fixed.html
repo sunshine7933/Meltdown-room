@@ -128,7 +128,7 @@ frame.addEventListener('load',()=>{
     .mr-great-hotspot{position:absolute;z-index:5;bottom:5.8%;height:18.8%;border:0!important;background:transparent!important;opacity:0;min-height:44px!important;padding:0!important}
     .mr-great-hotspot:focus-visible{opacity:.2!important;background:#fff!important;outline:3px solid #ffe2a8!important}
     .mr-home-companion{display:block!important;width:min(92%,420px)!important;margin:14px auto 92px!important;padding:14px 22px!important;border:1px solid rgba(246,215,161,.82)!important;border-radius:999px!important;color:#fff4d8!important;background:linear-gradient(135deg,#9a562d,#5f3624)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 7px 22px rgba(0,0,0,.34)!important;font:900 clamp(15px,2.4vw,18px) system-ui!important;letter-spacing:.05em!important}
-    .mr-home-companion:hover,.mr-home-companion:focus-visible{filter:brightness(1.14);outline:3px solid rgba(255,226,168,.72)!important;outline-offset:3px}\n    .mr-account-policy-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(217,180,120,.35)}\n    .mr-account-policy-links a{flex:1 1 150px;min-height:44px;display:grid;place-items:center;padding:9px 12px;border:1px solid rgba(119,175,189,.58);border-radius:12px;color:#dff7ff!important;background:rgba(69,118,133,.18);font:800 13px system-ui;text-align:center;text-decoration:none}\n  `;
+    .mr-home-companion:hover,.mr-home-companion:focus-visible{filter:brightness(1.14);outline:3px solid rgba(255,226,168,.72)!important;outline-offset:3px}\n    .mr-account-policy-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(217,180,120,.35)}\n    .mr-account-policy-links a{flex:1 1 150px;min-height:44px;display:grid;place-items:center;padding:9px 12px;border:1px solid rgba(119,175,189,.58);border-radius:12px;color:#dff7ff!important;background:rgba(69,118,133,.18);font:800 13px system-ui;text-align:center;text-decoration:none}\n    .mr-game-puzzle-note{margin:12px 0 16px;padding:11px 14px;border:1px solid rgba(217,180,120,.48);border-radius:12px;color:#f6dfb7;background:rgba(80,48,27,.6);font:600 14px/1.45 system-ui}\n  `;
   d.head.appendChild(style);
 
   const greatSceneWrap=d.querySelector('#great .scene-wrap');
@@ -182,7 +182,30 @@ frame.addEventListener('load',()=>{
     else homeScreen.appendChild(companionButton);
   }
 
-  /* Store-required privacy and account-deletion access inside Account & Device. */
+  /* Keep every puzzle mode playable on touch screens instead of rendering hundreds of tiny controls. */
+  const puzzleLevels={25:25,50:36,100:49,500:64};
+  const gameScreen=d.getElementById('game');
+  if(gameScreen){
+    const chooseHeading=[...gameScreen.querySelectorAll('h2,h3')].find(el=>/choose your fun/i.test(el.textContent||''));
+    if(chooseHeading&&!gameScreen.querySelector('.mr-game-puzzle-note')){
+      const note=d.createElement('p');note.className='mr-game-puzzle-note';
+      note.textContent='Puzzle challenge sizes are optimized for phones and tablets so every piece stays large enough to move.';
+      chooseHeading.parentNode.insertBefore(note,chooseHeading.nextSibling);
+    }
+    [...gameScreen.querySelectorAll('button[onclick*="openGameTool"][onclick*="puzzle"]')].forEach(button=>{
+      const call=button.getAttribute('onclick')||'',match=call.match(/puzzle['"],\s*(\d+)/);
+      if(!match)return;
+      const advertised=Number(match[1]),playable=puzzleLevels[advertised]||25;
+      button.setAttribute('onclick',"openGameTool('puzzle',"+playable+")");
+      button.setAttribute('aria-label','Start '+advertised+'-piece puzzle challenge, optimized as a '+playable+'-tile touch board');
+      button.addEventListener('click',()=>setTimeout(()=>{
+        const status=d.getElementById('gameWorkspaceStatus');
+        if(status)status.textContent=advertised+'-piece challenge ready as a '+playable+'-tile touch-friendly board.';
+      },0));
+    });
+  }
+
+    /* Store-required privacy and account-deletion access inside Account & Device. */
   const accountPanel=d.getElementById('accountPanel')||d.querySelector('[aria-labelledby="accountTitle"]');
   if(accountPanel&&!accountPanel.querySelector('.mr-account-policy-links')){
     const policyLinks=d.createElement('div');policyLinks.className='mr-account-policy-links';
