@@ -672,6 +672,24 @@ frame.addEventListener('load',()=>{
     const status=screen.querySelector('[role="status"]');if(status)status.textContent='Your learning path is ready.';
   },true);
 
+  // Route the cabin's shared inline continueLearning() call by the button that invoked it.
+  const originalContinueLearning=typeof w.continueLearning==='function'?w.continueLearning.bind(w):null;
+  w.continueLearning=function(){
+    const active=d.activeElement;
+    if(active&&((active.textContent||'').trim().toUpperCase()==='MY LEARNING PATH')){
+      const screen=d.getElementById('learn');
+      const workspace=screen&&screen.querySelector('#learnWorkspace,.learn-workspace,[class*="learnWorkspace"]');
+      if(workspace){
+        workspace.innerHTML='<h3>My Learning Path</h3><p>Choose one small next step. You can return to any shelf whenever you are ready.</p><ol style="text-align:left;max-width:620px;margin:12px auto;line-height:1.65"><li>Understand needs and strengths.</li><li>Try one practical support tool.</li><li>Save questions for an expert.</li><li>Notice and celebrate progress.</li></ol><button type="button" id="mrLearningPathStart">OPEN FEATURED RESOURCE</button><button type="button" id="mrLearningPathClose">CLOSE</button>';
+        workspace.querySelector('#mrLearningPathStart').addEventListener('click',()=>{const featured=Array.from(screen.querySelectorAll('button')).find(b=>(b.textContent||'').trim().toUpperCase()==='FEATURED RESOURCE');if(featured)featured.click()});
+        workspace.querySelector('#mrLearningPathClose').addEventListener('click',()=>{workspace.innerHTML=''});
+        const status=screen.querySelector('[role="status"]');if(status)status.textContent='Your learning path is ready.';
+        return;
+      }
+    }
+    if(originalContinueLearning)return originalContinueLearning();
+  };
+
   renderMemorialCards();
 
   // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
