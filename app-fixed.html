@@ -396,19 +396,23 @@ frame.addEventListener('load',()=>{
   function closeMemorialEditor(){memorialEditor.classList.remove('open');}
   function openMemorialRoom(slot){
     // Founder-Locked Memorial Room is a first-class Property Map destination.
-  const mapScreen=d.getElementById('map');
-  if(mapScreen&&!Array.from(mapScreen.querySelectorAll('button')).some(b=>/MEMORIAL ROOM/i.test(b.textContent||''))){
+  function ensureMapMemorial(){
+    const mapScreen=d.getElementById('map');
+    if(!mapScreen||Array.from(mapScreen.querySelectorAll('button')).some(b=>/MEMORIAL ROOM/i.test(b.textContent||'')))return false;
     const greatMapButton=Array.from(mapScreen.querySelectorAll('button')).find(b=>/^GREAT ROOM$/i.test((b.textContent||'').trim()));
-    if(greatMapButton&&greatMapButton.parentElement){
-      const memorialMapButton=d.createElement('button');
-      memorialMapButton.type='button';
-      memorialMapButton.className=greatMapButton.className;
-      memorialMapButton.textContent='MEMORIAL ROOM';
-      memorialMapButton.setAttribute('aria-label','Open Memorial Room');
-      memorialMapButton.addEventListener('click',openMemorialRoom);
-      greatMapButton.parentElement.appendChild(memorialMapButton);
-    }
+    if(!greatMapButton||!greatMapButton.parentElement)return false;
+    const memorialMapButton=d.createElement('button');
+    memorialMapButton.type='button';
+    memorialMapButton.className=greatMapButton.className;
+    memorialMapButton.textContent='MEMORIAL ROOM';
+    memorialMapButton.setAttribute('aria-label','Open Memorial Room');
+    memorialMapButton.addEventListener('click',openMemorialRoom);
+    greatMapButton.parentElement.appendChild(memorialMapButton);
+    return true;
   }
+  ensureMapMemorial();
+  let mapMemorialTries=0;
+  const mapMemorialTimer=w.setInterval(()=>{mapMemorialTries++;if(ensureMapMemorial()||mapMemorialTries>=20)w.clearInterval(mapMemorialTimer)},250);
 
   // Make the Celebration Room's smallest affirmation hotspot visibly respond.
   const youMatterButton=Array.from(d.querySelectorAll('#celebration button')).find(b=>/YOU MATTER ALWAYS/i.test((b.textContent||b.getAttribute('aria-label')||'').trim()));
