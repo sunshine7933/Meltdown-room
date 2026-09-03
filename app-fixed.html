@@ -35,7 +35,7 @@ frame.addEventListener('load',()=>{
     button,a,[role="button"]{touch-action:manipulation;-webkit-tap-highlight-color:transparent}
     button{min-width:44px;min-height:44px}
     .controls button,.nav button,.toolbar button,[class*="control"] button,[class*="nav"] button{min-height:44px!important}
-    button[class*="hotspot"]{min-height:44px!important}\n    .home-hotspot,.great-hotspot{min-width:0!important;max-width:none!important}
+    button[class*="hotspot"]{min-height:44px!important}\n    .home-hotspot,.great-hotspot{box-sizing:border-box!important;min-width:0!important;max-width:none!important;padding-left:0!important;padding-right:0!important}
     .mr-global-nav{position:fixed;left:50%;bottom:max(10px,env(safe-area-inset-bottom));transform:translateX(-50%);z-index:99999;display:flex;gap:8px;align-items:center;padding:7px 9px;border:1px solid rgba(216,185,130,.5);border-radius:999px;background:rgba(22,15,10,.88);backdrop-filter:blur(12px);box-shadow:0 8px 30px rgba(0,0,0,.38)}
     .mr-global-nav button{position:relative;overflow:hidden;min-height:44px!important;padding:9px 13px!important;border-radius:999px!important;border:1px solid rgba(203,231,238,.65)!important;color:#fff!important;background:linear-gradient(135deg,rgba(80,139,157,.95),rgba(48,96,111,.95))!important;font:800 13px system-ui!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.32),0 3px 12px rgba(0,0,0,.22)!important}
     .mr-global-nav button::before{content:"";position:absolute;inset:-60% -20%;background:linear-gradient(115deg,transparent 35%,rgba(255,255,255,.28) 50%,transparent 65%);transform:translateX(-70%);animation:mrShimmer 4.6s ease-in-out infinite;pointer-events:none}
