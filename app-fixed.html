@@ -395,7 +395,22 @@ frame.addEventListener('load',()=>{
   }
   function closeMemorialEditor(){memorialEditor.classList.remove('open');}
   function openMemorialRoom(slot){
-    renderMemorialCards();
+    // Founder-Locked Memorial Room is a first-class Property Map destination.
+  const mapScreen=d.getElementById('map');
+  if(mapScreen&&!Array.from(mapScreen.querySelectorAll('button')).some(b=>/MEMORIAL ROOM/i.test(b.textContent||''))){
+    const greatMapButton=Array.from(mapScreen.querySelectorAll('button')).find(b=>/^GREAT ROOM$/i.test((b.textContent||'').trim()));
+    if(greatMapButton&&greatMapButton.parentElement){
+      const memorialMapButton=d.createElement('button');
+      memorialMapButton.type='button';
+      memorialMapButton.className=greatMapButton.className;
+      memorialMapButton.textContent='MEMORIAL ROOM';
+      memorialMapButton.setAttribute('aria-label','Open Memorial Room');
+      memorialMapButton.addEventListener('click',openMemorialRoom);
+      greatMapButton.parentElement.appendChild(memorialMapButton);
+    }
+  }
+
+  renderMemorialCards();
     memorialStatus.textContent='';
     navigateTo(memorial);
     if(Number.isInteger(slot))setTimeout(()=>openMemorialEditor(slot),40);
