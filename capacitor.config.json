@@ -1,0 +1,16 @@
+{
+  "appId": "com.sunshine.themeltdownroom",
+  "appName": "The Meltdown Room",
+  "webDir": "www",
+  "bundledWebRuntime": false,
+  "server": {
+    "androidScheme": "https"
+  },
+  "android": {
+    "allowMixedContent": false
+  },
+  "ios": {
+    "contentInset": "automatic",
+    "preferredContentMode": "mobile"
+  }
+}
