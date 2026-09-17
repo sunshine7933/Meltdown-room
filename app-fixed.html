@@ -2,7 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">\n<meta name="theme-color" content="#6f4028">\n<link rel="manifest" href="manifest.webmanifest">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#6f4028">
+<link rel="manifest" href="manifest.webmanifest">
 <title>The Meltdown Room</title>
 <style>
 html,body{margin:0;width:100%;height:100%;background:#21150d;overflow:hidden}
@@ -17,6 +19,8 @@ html,body{margin:0;width:100%;height:100%;background:#21150d;overflow:hidden}
 <script>
 const frame=document.getElementById('app');
 const loading=document.getElementById('loading');
+// Carry direct destinations and explicit preview mode into the app.
+if(location.search||location.hash)frame.src='app.html'+location.search+location.hash;
 const ROOM_IMAGE_FALLBACKS={
   'meltdown-room.png':'meltdown-room.jpg',
   'thinking-room.png':'thinking-room.jpg',
@@ -115,8 +119,6 @@ frame.addEventListener('load',()=>{
     body.still-mode .mr-great-twinkle span,body.still-mode .mr-great-twinkle::after{animation:none!important;opacity:.42!important}
     @media(prefers-reduced-motion:reduce){.mr-great-twinkle span,.mr-great-twinkle::after{animation:none!important;opacity:.42!important}}
     /* QA mobile clearance: keep room controls above the fixed navigation and phone safe area. */
-    .screen.active{box-sizing:border-box;padding-bottom:90px!important}
-    .screen.active > .controls{bottom:calc(74px + env(safe-area-inset-bottom))!important}
     /* Respect the device-level reduced-motion preference across every room. */
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
@@ -447,20 +449,6 @@ frame.addEventListener('load',()=>{
     }
   });
   observer.observe(d.body,{subtree:true,attributes:true,attributeFilter:['class','style']});
-
-  const nav=d.createElement('div');nav.className='mr-global-nav';nav.setAttribute('aria-label','Room navigation');
-  nav.innerHTML='<button type="button" data-act="back" aria-label="Go back">← Back</button><button type="button" data-act="hub" aria-label="Return to Great Room">Great Room</button><button type="button" data-act="memorial" aria-label="Open Memorial Room">Memorial</button><button type="button" data-act="home" aria-label="Return home">Home</button>';
-  d.body.appendChild(nav);
-  nav.addEventListener('click',e=>{
-    const b=e.target.closest('button');if(!b)return;
-    if(b.dataset.act==='hub')goGreatRoom();
-    if(b.dataset.act==='memorial')openMemorialRoom();
-    if(b.dataset.act==='home')goHome();
-    if(b.dataset.act==='back'){
-      const prev=history.pop();
-      if(prev){suppressNextHistory=true;navigateTo(prev)}else goGreatRoom();
-    }
-  });
 
   d.addEventListener('pointerdown',e=>{
     const b=e.target.closest('button,.mr-global-nav button');if(!b)return;
