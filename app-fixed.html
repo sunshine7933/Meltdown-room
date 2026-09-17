@@ -21,6 +21,12 @@ const frame=document.getElementById('app');
 const loading=document.getElementById('loading');
 // Carry direct destinations and explicit preview mode into the app.
 if(location.search||location.hash)frame.src='app.html'+location.search+location.hash;
+window.addEventListener('hashchange',()=>{
+  const target=location.hash.slice(1);
+  const inner=frame.contentWindow;
+  if(inner&&typeof inner.showScreen==='function')inner.showScreen(target||'home');
+  else frame.src='app.html'+location.search+location.hash;
+});
 const ROOM_IMAGE_FALLBACKS={
   'meltdown-room.png':'meltdown-room.jpg',
   'thinking-room.png':'thinking-room.jpg',
@@ -396,7 +402,35 @@ frame.addEventListener('load',()=>{
   }
   function closeMemorialEditor(){memorialEditor.classList.remove('open');}
   function openMemorialRoom(slot){
-      renderMemorialCards();
+    
+  // Complete the small Great Room controls on the original image, without replacing it.
+  const greatArt=d.querySelector('#great .mr-great-stage');
+  if(greatArt){
+    const addGreatTarget=(label,left,top,width,height,action)=>{
+      const b=d.createElement('button');b.type='button';b.className='mr-great-hotspot mr-great-small';
+      b.setAttribute('aria-label',label);b.style.cssText='left:'+left+'%;top:'+top+'%;width:'+width+'%;height:'+height+'%;bottom:auto;min-height:0!important;min-width:0!important';
+      b.addEventListener('click',action);greatArt.appendChild(b);return b;
+    };
+    const menu=d.createElement('dialog');menu.setAttribute('aria-label','Choose a room');
+    menu.style.cssText='max-width:560px;width:85%;max-height:80vh;overflow:auto;background:#291c13;color:#fff0d8;border:1px solid #c69a64;border-radius:16px;padding:20px';
+    const title=d.createElement('h2');title.textContent='Choose a room';menu.appendChild(title);
+    [['Great Room','great'],['Meltdown Room','meltdown'],['Calm Room','calm'],['Rant Room','rant'],['Smash and Release','smash'],['Thinking Room','thinking'],['Hope Room','hope'],['Celebration Room','celebration'],['Reflection Library','reflection'],['Learning Cabin','learn'],['Plan Room','plan'],['Connect and Recipes','connect'],['Relationship Room','relationship'],['Outdoor Room','outdoor'],['Resource Shed','resources'],['Explore Nearby','explore'],['Game Room','game'],['Companion','companion']].forEach(([label,id])=>{
+      const b=d.createElement('button');b.type='button';b.textContent=label;b.style.cssText='min-height:44px;margin:5px;padding:10px 14px';
+      b.addEventListener('click',()=>{menu.close();navigateToId(id)});menu.appendChild(b);
+    });
+    const close=d.createElement('button');close.type='button';close.textContent='Close room menu';close.addEventListener('click',()=>menu.close());menu.appendChild(close);d.body.appendChild(menu);
+    addGreatTarget('Open Great Room menu',1,1,10,6,()=>menu.showModal());
+    addGreatTarget('Open My Profile',1,8,12,5,()=>{if(typeof w.openAccountPanel==='function')w.openAccountPanel()});
+    addGreatTarget('Back from Great Room',1,95,10,5,()=>navigateToId('home'));
+    addGreatTarget('Open Anonymous Notes',13,95,17,5,()=>{navigateToId('meltdown');if(typeof w.openMeltdownTool==='function')w.openMeltdownTool('notes')});
+    addGreatTarget('Open Hope Box',31,95,15,5,()=>navigateToId('hope'));
+    addGreatTarget('Open Community Chat',46,95,19,5,()=>navigateToId('connect'));
+    addGreatTarget('Open Pet Companions',65,95,16,5,()=>navigateToId('companion'));
+    addGreatTarget('Return Home',86,95,12,5,()=>navigateToId('home'));
+    const nav=d.querySelector('#great [aria-label="Great Room navigation"]');if(nav)nav.style.display='none';
+  }
+
+  renderMemorialCards();
     memorialStatus.textContent='';
     navigateTo(memorial);
     if(Number.isInteger(slot))setTimeout(()=>openMemorialEditor(slot),40);
