@@ -140,6 +140,17 @@ frame.addEventListener('load',()=>{
       100%{left:var(--land-x);bottom:var(--land-y);transform:translate(-30%,70%) rotate(30deg) rotateY(65deg) scale(.48)}
     }
 
+
+    .mr-thinking-breath{width:120px;height:120px;margin:24px auto;border-radius:50%;background:radial-gradient(circle,#bce9ef,#397d93 64%,transparent 69%);box-shadow:0 0 24px #8cd4e755}
+    .mr-thinking-breath.running{animation:mrThinkingBreath 8s ease-in-out infinite}
+    @keyframes mrThinkingBreath{0%,100%{transform:scale(.78)}50%{transform:scale(1.08)}}
+    .mr-thinking-quiet{margin:24px auto;padding:25px;border:1px solid #b68e60;border-radius:14px;background:linear-gradient(120deg,#25425277,#5a3f2877);font:italic 20px Georgia}
+    #hourglassVisual.running{animation:mrSandGlow 2.8s ease-in-out infinite!important}
+    #hourglassVisual.running .hourglass-stream{opacity:1!important;left:61px!important;width:4px!important;background:repeating-linear-gradient(180deg,#d7a366 0 2px,#996231 2px 4px)!important;background-size:4px 8px!important;animation:mrSteadySand .25s linear infinite!important}
+    @keyframes mrSteadySand{to{background-position:0 8px}}
+    #hourglassVisual.running .hourglass-top-sand::before,#hourglassVisual.running .hourglass-bottom-sand::before,#hourglassVisual.running .hourglass-top-sand::after,#hourglassVisual.running .hourglass-bottom-sand::after{animation-delay:0s!important}
+    @media(prefers-reduced-motion:reduce){.mr-thinking-breath.running,#hourglassVisual.running .hourglass-stream{animation:none!important}}
+
     /* Founder correction: realistic brown granular sand with a warm illuminated glass. */
     .hourglass-visual{filter:drop-shadow(0 0 10px rgba(255,205,119,.72)) drop-shadow(0 9px 9px rgba(0,0,0,.5))!important}
     .hourglass-visual::before,.hourglass-visual::after{border-color:#c7955d!important;background:linear-gradient(90deg,rgba(255,255,255,.42),rgba(255,224,166,.09) 25% 72%,rgba(255,255,255,.32))!important;box-shadow:inset 0 0 18px rgba(255,224,159,.38),0 0 13px rgba(246,184,82,.48)!important}
@@ -735,6 +746,26 @@ frame.addEventListener('load',()=>{
     const nav=d.querySelector('#great [aria-label="Great Room navigation"]');if(nav)nav.style.display='none';
   }
 
+
+
+  // Each thinking path keeps its own task; only the hourglass tile shows an hourglass.
+  const originalThinkingTool=typeof w.openThinkingTool==='function'?w.openThinkingTool.bind(w):null;
+  if(originalThinkingTool){
+    w.openThinkingTool=function(tool){
+      originalThinkingTool(tool);
+      if(tool==='clear'){
+        const visual=d.getElementById('clearHeadVisual');
+        if(visual){visual.className='mr-thinking-breath';visual.replaceChildren();visual.setAttribute('aria-label','Slow breathing light')}
+      }
+      if(tool==='quiet'){
+        const visual=d.getElementById('quietVisual');
+        if(visual){visual.className='mr-thinking-quiet';visual.textContent='A quiet moment, just for you.';visual.setAttribute('aria-label','Quiet reflection')}
+      }
+      if(tool==='hourglass'){
+        const title=d.getElementById('thinkingToolTitle');if(title)title.textContent='Sand Hourglass';
+      }
+    };
+  }
 
   // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
   d.addEventListener('keydown',e=>{
