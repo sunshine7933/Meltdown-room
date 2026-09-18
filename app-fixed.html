@@ -125,6 +125,9 @@ frame.addEventListener('load',()=>{
     body.still-mode .mr-great-twinkle span,body.still-mode .mr-great-twinkle::after{animation:none!important;opacity:.42!important}
     @media(prefers-reduced-motion:reduce){.mr-great-twinkle span,.mr-great-twinkle::after{animation:none!important;opacity:.42!important}}
     /* QA mobile clearance: keep room controls above the fixed navigation and phone safe area. */
+
+    /* Sticky toolbars were covering game fields and startup forms on phones. */
+    .screen > .controls{position:relative!important;bottom:auto!important}
     /* Respect the device-level reduced-motion preference across every room. */
     @media(prefers-reduced-motion:reduce){
       *,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}
