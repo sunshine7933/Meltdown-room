@@ -768,7 +768,40 @@ frame.addEventListener('load',()=>{
   }
 
   // Escape closes the Memorial editor first; otherwise it uses app-aware Great Room navigation.
-  d.addEventListener('keydown',e=>{
+  
+      // Match the Resource Shed's pictured controls, not an evenly spaced toolbar.
+      const shedStage=d.querySelector('#resources .resource-stage');
+      if(shedStage){
+        const positions={
+          'Home':[3,90.5,12.5,7.5],'Explore':[16,90.5,12.5,7.5],
+          'Community':[29.5,90.5,12.5,7.5],'Updates and Resources':[43,90.5,12.5,7.5],
+          'My Home':[56.5,90.5,12.5,7.5],
+          'View All Resources':[55,45,12,4],
+          'Open Helpful Tools and Printables':[30,27,15,15]
+        };
+        shedStage.querySelectorAll('.resource-hotspot').forEach(function(button){
+          const box=positions[button.getAttribute('aria-label')];
+          button.style.minHeight='0';button.style.minWidth='0';button.style.padding='0';
+          if(box){button.style.left=box[0]+'%';button.style.top=box[1]+'%';button.style.width=box[2]+'%';button.style.height=box[3]+'%';}
+        });
+        function shedTile(label,box,action){
+          const button=d.createElement('button');button.type='button';button.className='resource-hotspot';
+          button.setAttribute('aria-label',label);
+          Object.assign(button.style,{left:box[0]+'%',top:box[1]+'%',width:box[2]+'%',height:box[3]+'%',minWidth:'0',minHeight:'0',padding:'0'});
+          button.addEventListener('click',action);shedStage.appendChild(button);
+        }
+        shedTile('Open Family Organizer Kit',[18,70,14,19],()=>w.openResourceCategory('Forms & Printables'));
+        shedTile('Open Building Resilient Kids guide',[32.5,70,14,19],()=>w.openResourceCategory('Parenting Support'));
+        shedTile('Find Help Near You',[47,70,14,19],()=>w.openResourceCategory('Community Support'));
+        shedTile('Open Family Kindness Challenge',[61.5,70,13,19],()=>w.openResourceCategory('Parenting Support'));
+        shedTile('Open Support Groups',[75,73,15,2.5],()=>w.openResourceCategory('Community Support'));
+        shedTile('Open Wellness and You',[75,75.5,15,2.5],()=>w.openResourceCategory('Health & Wellness'));
+        shedTile('Open Recommended Books',[75,78,15,2.5],()=>w.openResourceCategory('Learning & Development'));
+        shedTile('Open Apps and Technology',[75,80.5,15,2.5],()=>w.openResourceCategory('Education Center'));
+        shedTile('Open Government Aid Programs',[75,83,15,2.5],()=>w.openResourceCategory('Financial Guidance'));
+        shedTile('See All Resource Links',[75,85.5,15,3],()=>w.openResourceHub());
+      }
+d.addEventListener('keydown',e=>{
     if(e.key!=='Escape')return;
     if(memorialEditor.classList.contains('open')){closeMemorialEditor();return}
     goGreatRoom();
