@@ -93,25 +93,7 @@ frame.addEventListener('load',()=>{
     /* Dragging the flame should burn the paper, never select its text. */
     .burn-fireplace,.burn-paper{-webkit-user-select:none!important;user-select:none!important}
     #accountButton,#stillModeButton{min-height:44px!important}
-    /* The Thinking Room calls this a Water Hourglass: use quiet liquid levels instead of shrinking sand wedges. */
-    .hourglass-visual{filter:drop-shadow(0 9px 9px rgba(0,0,0,.42))!important}
-    .hourglass-visual::before,.hourglass-visual::after{border-color:#9f7448!important;background:linear-gradient(90deg,rgba(255,255,255,.34),rgba(194,229,234,.09) 28% 72%,rgba(255,255,255,.25))!important;box-shadow:inset 0 0 12px rgba(196,232,237,.24),inset 2px 0 2px rgba(255,255,255,.22)!important}
-    .hourglass-top-sand,.hourglass-bottom-sand{overflow:hidden;background:transparent!important;transform:none!important}
-    .hourglass-top-sand::before,.hourglass-bottom-sand::before{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(139,196,209,.88),rgba(66,132,151,.94));box-shadow:inset 0 3px 0 rgba(222,247,249,.38);will-change:transform}
-    .hourglass-top-sand::after,.hourglass-bottom-sand::after{content:"";position:absolute;left:8%;right:8%;height:3px;border-radius:50%;background:rgba(224,249,250,.45);filter:blur(.2px);will-change:transform}
-    .hourglass-top-sand::after{top:2px}.hourglass-bottom-sand::after{bottom:2px}
-    .hourglass-stream{left:62px!important;width:2px!important;border-radius:2px!important;background:linear-gradient(90deg,#8ccbd5,#4e9bad)!important;box-shadow:0 0 3px rgba(130,207,219,.45)!important}
-    .hourglass-visual.running{animation:hourglassTurn .8s ease, mrWaterGlow 5s .8s ease-in-out infinite!important}
-    .hourglass-visual.running .hourglass-top-sand,.hourglass-visual.running .hourglass-bottom-sand{animation:none!important}
-    .hourglass-visual.running .hourglass-top-sand::before{animation:mrWaterDrain var(--sand-time) .8s linear forwards}
-    .hourglass-visual.running .hourglass-top-sand::after{animation:mrWaterMeniscusDown var(--sand-time) .8s linear forwards}
-    .hourglass-visual.running .hourglass-bottom-sand::before{animation:mrWaterFill var(--sand-time) .8s linear forwards}
-    .hourglass-visual.running .hourglass-bottom-sand::after{animation:mrWaterMeniscusUp var(--sand-time) .8s linear forwards}
-    @keyframes mrWaterDrain{from{transform:translateY(0)}to{transform:translateY(98%)}}
-    @keyframes mrWaterFill{from{transform:translateY(92%)}to{transform:translateY(0)}}
-    @keyframes mrWaterMeniscusDown{from{transform:translateY(0)}to{transform:translateY(51px)}}
-    @keyframes mrWaterMeniscusUp{from{transform:translateY(51px)}to{transform:translateY(0)}}
-    @keyframes mrWaterGlow{50%{filter:drop-shadow(0 7px 10px rgba(73,145,163,.34))}}
+    /* The Thinking Room hourglass uses the Founder-selected luminous treatment below. */
     body.still-mode .hourglass-visual.running,body.still-mode .hourglass-visual.running *{animation-play-state:paused!important}
     /* Subtle hearth light over the existing Founder-Locked Great Room fireplace. */
     #great .scene-wrap{position:relative}
@@ -148,20 +130,20 @@ frame.addEventListener('load',()=>{
     .mr-thinking-breath.running{animation:mrThinkingBreath 8s ease-in-out infinite}
     @keyframes mrThinkingBreath{0%,100%{transform:scale(.78)}50%{transform:scale(1.08)}}
     .mr-thinking-quiet{margin:24px auto;padding:25px;border:1px solid #b68e60;border-radius:14px;background:linear-gradient(120deg,#25425277,#5a3f2877);font:italic 20px Georgia}
-    #hourglassVisual.running{animation:mrSandGlow 2.8s ease-in-out infinite!important}
-    #hourglassVisual.running .hourglass-stream{opacity:1!important;left:61px!important;width:4px!important;background:repeating-linear-gradient(180deg,#d7a366 0 2px,#996231 2px 4px)!important;background-size:4px 8px!important;animation:mrSteadySand .25s linear infinite!important}
-    @keyframes mrSteadySand{to{background-position:0 8px}}
-    #hourglassVisual.running .hourglass-top-sand::before,#hourglassVisual.running .hourglass-bottom-sand::before,#hourglassVisual.running .hourglass-top-sand::after,#hourglassVisual.running .hourglass-bottom-sand::after{animation-delay:0s!important}
-    @media(prefers-reduced-motion:reduce){.mr-thinking-breath.running,#hourglassVisual.running .hourglass-stream{animation:none!important}}
+    @media(prefers-reduced-motion:reduce){.mr-thinking-breath.running{animation:none!important}}
 
-    /* Founder correction: realistic brown granular sand with a warm illuminated glass. */
-    .hourglass-visual{filter:drop-shadow(0 0 10px rgba(255,205,119,.72)) drop-shadow(0 9px 9px rgba(0,0,0,.5))!important}
-    .hourglass-visual::before,.hourglass-visual::after{border-color:#c7955d!important;background:linear-gradient(90deg,rgba(255,255,255,.42),rgba(255,224,166,.09) 25% 72%,rgba(255,255,255,.32))!important;box-shadow:inset 0 0 18px rgba(255,224,159,.38),0 0 13px rgba(246,184,82,.48)!important}
-    .hourglass-top-sand::before,.hourglass-bottom-sand::before{background-color:#9a6334!important;background-image:radial-gradient(circle at 18% 24%,#e1b169 0 1px,transparent 1.4px),radial-gradient(circle at 72% 42%,#6f3f21 0 1px,transparent 1.5px),radial-gradient(circle at 42% 76%,#c88949 0 1.2px,transparent 1.7px),linear-gradient(180deg,#bd8045,#7b4829)!important;background-size:7px 7px,9px 9px,8px 8px,100% 100%!important;box-shadow:inset 0 3px 0 rgba(250,211,147,.42),inset 0 -3px 7px rgba(74,35,18,.35)!important}
-    .hourglass-top-sand::after,.hourglass-bottom-sand::after{background:rgba(242,196,122,.62)!important;box-shadow:0 0 5px rgba(255,205,119,.52)!important}
-    .hourglass-stream{background:linear-gradient(90deg,#6e3e22,#d79a52,#754326)!important;box-shadow:0 0 5px rgba(238,174,86,.74)!important}
-    .hourglass-visual.running{animation:hourglassTurn .8s ease,mrSandGlow 2.8s .8s ease-in-out infinite!important}
-    @keyframes mrSandGlow{50%{filter:drop-shadow(0 0 20px rgba(255,196,96,.92)) drop-shadow(0 8px 9px rgba(0,0,0,.45))}}
+    /* Founder-selected luminous hourglass: cyan glass, a magenta reflection, and bright gold sand. */
+    .hourglass-visual{filter:drop-shadow(0 0 16px rgba(0,224,255,.45)) drop-shadow(0 12px 12px rgba(0,0,0,.58))!important}
+    .hourglass-visual::before,.hourglass-visual::after{border-color:rgba(70,229,255,.58)!important;background:linear-gradient(115deg,rgba(87,238,255,.18),rgba(9,46,72,.06) 48%,rgba(255,51,185,.12))!important;box-shadow:inset 0 0 26px rgba(0,214,255,.18),0 0 19px rgba(0,225,255,.2),0 0 28px rgba(255,0,178,.11)!important}
+    .hourglass-top-sand,.hourglass-bottom-sand{background:linear-gradient(180deg,#fff18a,#ffd22f 42%,#d89400)!important;box-shadow:0 0 12px rgba(255,211,50,.72),inset 0 0 15px rgba(255,255,180,.32)!important}
+    .hourglass-top-sand::before,.hourglass-bottom-sand::before,.hourglass-top-sand::after,.hourglass-bottom-sand::after{display:none!important}
+    .hourglass-stream{background:linear-gradient(180deg,transparent,#fff18a 15%,#ffc800 50%,#fff18a 85%,transparent)!important;box-shadow:0 0 8px #ffd22f,0 0 16px rgba(255,170,0,.75)!important}
+    .hourglass-visual.running{animation:hourglassTurn .9s cubic-bezier(.4,0,.2,1),mrLuminousGlow 3.4s ease-in-out infinite!important}
+    .hourglass-visual.running .hourglass-top-sand{animation:hourglassDrain var(--sand-time) linear forwards!important}
+    .hourglass-visual.running .hourglass-bottom-sand{animation:hourglassFill var(--sand-time) linear forwards!important}
+    .hourglass-visual.running .hourglass-stream{animation:hourglassStream var(--sand-time) linear forwards,streamPulse .42s ease-in-out infinite alternate!important}
+    .hourglass-visual.complete .hourglass-top-sand{transform:scaleY(.03)!important}.hourglass-visual.complete .hourglass-bottom-sand{transform:scaleY(1)!important}
+    @keyframes mrLuminousGlow{50%{filter:drop-shadow(0 0 24px rgba(0,225,255,.72)) drop-shadow(0 0 30px rgba(255,0,180,.22)) drop-shadow(0 12px 12px rgba(0,0,0,.5))}}
     .mr-great-stage{position:relative;width:min(100%,calc((100vh - 118px) * 1.5));margin:auto;line-height:0}
     .mr-great-stage>.scene{width:100%!important;max-height:calc(100vh - 118px)!important;margin:auto}
     .mr-great-hotspot{position:absolute;z-index:5;bottom:5.8%;height:18.8%;border:0!important;background:transparent!important;opacity:0;min-height:44px!important;padding:0!important}
@@ -765,7 +747,7 @@ frame.addEventListener('load',()=>{
         if(visual){visual.className='mr-thinking-quiet';visual.textContent='A quiet moment, just for you.';visual.setAttribute('aria-label','Quiet reflection')}
       }
       if(tool==='hourglass'){
-        const title=d.getElementById('thinkingToolTitle');if(title)title.textContent='Sand Hourglass';
+        const title=d.getElementById('thinkingToolTitle');if(title)title.textContent='Luminous Hourglass';
       }
     };
   }

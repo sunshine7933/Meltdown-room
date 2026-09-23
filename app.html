@@ -312,22 +312,28 @@
     .thinking-status { min-height:24px; color:#f3d39a; }
     .thinking-note-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(130px,1fr)); gap:10px; max-width:720px; margin:14px auto; }
     .thinking-note-card { min-height:90px; padding:10px; color:#49331f; background:#ead8aa; border-radius:6px; box-shadow:0 5px 10px rgba(0,0,0,.35); }
-    .hourglass-visual { --sand-time:60s; position:relative; width:126px; height:174px; margin:18px auto; border-top:14px solid #5b351d; border-bottom:14px solid #5b351d; border-radius:10px; filter:drop-shadow(0 9px 9px rgba(0,0,0,.5)); }
-    .hourglass-visual::before,.hourglass-visual::after { content:""; position:absolute; left:19px; width:88px; height:72px; box-sizing:border-box; border:5px solid #b78955; background:linear-gradient(90deg,rgba(255,255,255,.28),rgba(180,220,224,.08) 28% 72%,rgba(255,255,255,.22)); box-shadow:inset 0 0 14px rgba(204,239,241,.25); }
-    .hourglass-visual::before { top:2px; clip-path:polygon(0 0,100% 0,62% 100%,38% 100%); border-radius:8px 8px 20px 20px; }
-    .hourglass-visual::after { bottom:2px; clip-path:polygon(38% 0,62% 0,100% 100%,0 100%); border-radius:20px 20px 8px 8px; }
-    .hourglass-top-sand,.hourglass-bottom-sand { position:absolute; left:28px; width:70px; height:56px; z-index:2; pointer-events:none; background:linear-gradient(#f6d27c,#c88732); }
-    .hourglass-top-sand { top:10px; clip-path:polygon(0 0,100% 0,61% 100%,39% 100%); transform-origin:50% 100%; }
-    .hourglass-bottom-sand { bottom:10px; clip-path:polygon(39% 0,61% 0,100% 100%,0 100%); transform:scaleY(.08); transform-origin:50% 100%; }
-    .hourglass-stream { position:absolute; z-index:3; top:66px; left:61px; width:4px; height:33px; border-radius:3px; opacity:0; background:#e3ae50; box-shadow:0 0 4px rgba(255,207,100,.7); }
-    .hourglass-visual.running { animation:hourglassTurn .8s ease, hourglassGlow 4s .8s ease-in-out infinite; }
-    .hourglass-visual.running .hourglass-top-sand { animation:hourglassDrain var(--sand-time) .8s linear forwards; }
-    .hourglass-visual.running .hourglass-bottom-sand { animation:hourglassFill var(--sand-time) .8s linear forwards; }
-    .hourglass-visual.running .hourglass-stream { animation:hourglassStream var(--sand-time) .8s linear forwards; }
+    .hourglass-visual { --sand-time:60s; position:relative; width:150px; height:230px; margin:22px auto; border-top:14px solid #173d4c; border-bottom:14px solid #173d4c; border-radius:9px; transform-style:preserve-3d; filter:drop-shadow(0 0 16px rgba(0,224,255,.45)) drop-shadow(0 12px 12px rgba(0,0,0,.58)); }
+    .hourglass-visual::before,.hourglass-visual::after { content:""; position:absolute; left:20px; width:110px; height:92px; box-sizing:border-box; border:3px solid rgba(70,229,255,.58); background:linear-gradient(115deg,rgba(87,238,255,.18),rgba(9,46,72,.06) 48%,rgba(255,51,185,.12)); box-shadow:inset 0 0 26px rgba(0,214,255,.18),0 0 19px rgba(0,225,255,.2),0 0 28px rgba(255,0,178,.11); }
+    .hourglass-visual::before { top:3px; clip-path:polygon(0 0,100% 0,62% 100%,38% 100%); border-radius:13px 13px 28px 28px; }
+    .hourglass-visual::after { bottom:3px; clip-path:polygon(38% 0,62% 0,100% 100%,0 100%); border-radius:28px 28px 13px 13px; }
+    .hourglass-top-sand,.hourglass-bottom-sand { position:absolute; left:31px; width:88px; height:70px; z-index:2; pointer-events:none; background:linear-gradient(180deg,#fff18a,#ffd22f 42%,#d89400); box-shadow:0 0 12px rgba(255,211,50,.72),inset 0 0 15px rgba(255,255,180,.32); }
+    .hourglass-top-sand { top:20px; clip-path:polygon(0 0,100% 0,61% 100%,39% 100%); transform-origin:50% 100%; }
+    .hourglass-bottom-sand { bottom:20px; clip-path:polygon(39% 0,61% 0,100% 100%,0 100%); transform:scaleY(.08); transform-origin:50% 100%; }
+    .hourglass-stream { position:absolute; z-index:3; top:92px; left:73px; width:4px; height:46px; border-radius:3px; opacity:0; background:linear-gradient(180deg,transparent,#fff18a 15%,#ffc800 50%,#fff18a 85%,transparent); box-shadow:0 0 8px #ffd22f,0 0 16px rgba(255,170,0,.75); }
+    .hourglass-stream::before,.hourglass-stream::after { content:""; position:absolute; width:3px; height:3px; border-radius:50%; background:#fff18a; box-shadow:0 0 7px #ffc800; opacity:0; }
+    .hourglass-stream::before { left:-7px; top:15px; }.hourglass-stream::after { right:-8px; top:27px; }
+    .hourglass-visual.running { animation:hourglassTurn .9s cubic-bezier(.4,0,.2,1), hourglassGlow 3.4s ease-in-out infinite; }
+    .hourglass-visual.running .hourglass-top-sand { animation:hourglassDrain var(--sand-time) linear forwards; }
+    .hourglass-visual.running .hourglass-bottom-sand { animation:hourglassFill var(--sand-time) linear forwards; }
+    .hourglass-visual.running .hourglass-stream { animation:hourglassStream var(--sand-time) linear forwards,streamPulse .42s ease-in-out infinite alternate; }
+    .hourglass-visual.running .hourglass-stream::before,.hourglass-visual.running .hourglass-stream::after { animation:sandSpark 1.05s linear infinite; }
+    .hourglass-visual.complete .hourglass-top-sand { transform:scaleY(.03); }.hourglass-visual.complete .hourglass-bottom-sand { transform:scaleY(1); }
     @keyframes hourglassDrain { from{transform:scaleY(1)} to{transform:scaleY(.03)} }
     @keyframes hourglassFill { from{transform:scaleY(.08)} to{transform:scaleY(1)} }
     @keyframes hourglassStream { 0%,98%{opacity:1} 100%{opacity:0} }
-    @keyframes hourglassGlow { 50% { filter:drop-shadow(0 0 15px rgba(226,179,89,.75)); } }
+    @keyframes hourglassGlow { 50% { filter:drop-shadow(0 0 24px rgba(0,225,255,.72)) drop-shadow(0 0 30px rgba(255,0,180,.22)) drop-shadow(0 12px 12px rgba(0,0,0,.5)); } }
+    @keyframes streamPulse { to { box-shadow:0 0 13px #fff18a,0 0 24px #ffc800; } }
+    @keyframes sandSpark { 0%{opacity:0;transform:translateY(-7px)}30%{opacity:.9}100%{opacity:0;transform:translateY(22px)} }
     .thinking-pin-picker { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin:10px 0; }
     .pin-choice { min-height:42px; padding:8px 13px; border-radius:12px; }
     .pin-choice.active { outline:3px solid #fff2c9; }
@@ -336,7 +342,7 @@
     .thinking-stage.thinking-rain .scene { filter:saturate(.75) brightness(.78) hue-rotate(12deg); }
     .thinking-stage.thinking-night .scene { filter:brightness(.55) saturate(.8) hue-rotate(15deg); }
     .thinking-stage.thinking-warm .scene { filter:sepia(.18) saturate(1.18) brightness(1.04); }
-    @keyframes hourglassTurn { to { transform:rotate(180deg); } }
+    @keyframes hourglassTurn { from { transform:rotateX(0); } to { transform:rotateX(360deg); } }
     @media(max-width:700px){.thinking-tool{inset:1.5% 2%;}.thinking-tool textarea{min-height:110px;}}
 
     .smash-stage { position: relative; width: min(100%, calc((100vh - 118px) * 2 / 3)); margin: auto; overflow: hidden; }
@@ -2031,7 +2037,7 @@
   <section class="screen" id="thinking">
     <div class="scene-wrap">
       <div class="thinking-stage" id="thinkingStage">
-        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with six thinking paths, Decision Board, Brainstorm Board, Water Hourglass, atmosphere controls, and navigation">
+        <img class="scene" src="thinking-room.jpg?v=repair2" alt="Thinking Room with six thinking paths, Decision Board, Brainstorm Board, Luminous Hourglass, atmosphere controls, and navigation">
         <button class="thinking-hotspot think-clear" type="button" onclick="openThinkingTool('clear')" aria-label="Clear My Head"></button>
         <button class="thinking-hotspot think-decide" type="button" onclick="openThinkingTool('decide')" aria-label="Help Me Decide"></button>
         <button class="thinking-hotspot think-write" type="button" onclick="openThinkingTool('write')" aria-label="Write It Out"></button>
@@ -2040,7 +2046,7 @@
         <button class="thinking-hotspot think-quiet" type="button" onclick="openThinkingTool('quiet')" aria-label="Just Think"></button>
         <button class="thinking-hotspot think-decision-board" type="button" onclick="openThinkingTool('decide')" aria-label="Open Decision Board"></button>
         <button class="thinking-hotspot think-brainstorm-board" type="button" onclick="openThinkingTool('brainstorm')" aria-label="Open Brainstorm Board"></button>
-        <button class="thinking-hotspot think-hourglass" type="button" onclick="openThinkingTool('hourglass')" aria-label="Start Water Hourglass"></button>
+        <button class="thinking-hotspot think-hourglass" type="button" onclick="openThinkingTool('hourglass')" aria-label="Start Luminous Hourglass"></button>
         <button class="thinking-hotspot think-ambience" type="button" onclick="openThinkingTool('ambience')" aria-label="Set Thinking Room atmosphere"></button>
         <button class="thinking-hotspot think-navigation" type="button" onclick="openThinkingTool('navigation')" aria-label="Open Thinking Room navigation"></button>
         <div class="thinking-tool" id="thinkingTool" role="dialog" aria-modal="true" aria-labelledby="thinkingToolTitle">
@@ -3058,7 +3064,7 @@
       }else if(tool==="quiet"){
         title="Just Think"; body='<p>No prompts. No pressure. Just you and your thoughts.</p><div class="hourglass-visual" id="quietVisual" aria-label="Working sand hourglass"><span class="hourglass-top-sand"></span><span class="hourglass-stream"></span><span class="hourglass-bottom-sand"></span></div><p id="quietWords">Choose a quiet pause.</p><div class="thinking-actions">'+thinkButton("1 MINUTE","startQuiet(60)","primary")+thinkButton("3 MINUTES","startQuiet(180)")+thinkButton("END QUIET TIME","finishQuiet()")+'</div>';
       }else if(tool==="hourglass"){
-        title="Water Hourglass"; body='<p>Use the hourglass for calming prompts and reflection.</p><div class="hourglass-visual" id="hourglassVisual" aria-label="Working sand hourglass"><span class="hourglass-top-sand"></span><span class="hourglass-stream"></span><span class="hourglass-bottom-sand"></span></div><p id="hourglassWords">Ready when you are.</p><div class="thinking-actions">'+thinkButton("START HOURGLASS","startHourglass()","primary")+thinkButton("STOP","stopHourglass()")+'</div>';
+        title="Luminous Hourglass"; body='<p>Use the hourglass for calming prompts and reflection.</p><div class="hourglass-visual" id="hourglassVisual" aria-label="Luminous gold-sand hourglass timer"><span class="hourglass-top-sand"></span><span class="hourglass-stream"></span><span class="hourglass-bottom-sand"></span></div><p id="hourglassWords">Ready when you are.</p><div class="thinking-actions">'+thinkButton("START HOURGLASS","startHourglass()","primary")+thinkButton("STOP","stopHourglass()")+'</div>';
       }else if(tool==="ambience"){
         title="Set Your Space"; body='<p>Choose an atmosphere from the pictured room controls.</p><div class="thinking-actions">'+thinkButton("SUNSHINE","setThinkingAmbience(\'warm\')","primary")+thinkButton("RAIN","setThinkingAmbience(\'rain\')")+thinkButton("NIGHT","setThinkingAmbience(\'night\')")+thinkButton("NATURAL","setThinkingAmbience(\'natural\')")+thinkButton("STILL MODE","toggleStillMode()")+'</div><p class="thinking-status" id="thinkingToolStatus"></p>';
       }else if(tool==="navigation"){
@@ -3087,8 +3093,8 @@
     function clearBrainstormIdeas(){if(!getBrainstormIdeas().length){thinkingStatus("The Brainstorm Board is already clear.");return;}if(!window.confirm("Clear every idea from the Brainstorm Board?"))return;localStorage.removeItem("thinkingBrainstormIdeas");renderBrainstormIdeas();thinkingStatus("Brainstorm Board cleared.");}
     function startQuiet(seconds){var v=document.getElementById("quietVisual"),w=document.getElementById("quietWords"),remaining=seconds;v.style.setProperty("--sand-time",seconds+"s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");w.textContent="Quiet time: "+remaining+" seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;w.textContent=remaining>0?"Quiet time: "+remaining+" seconds":"Quiet time complete. Take your next step gently.";if(remaining<=0){clearInterval(thinkingTimer);v.classList.remove("running");}},1000);}
     function finishQuiet(){clearInterval(thinkingTimer);var v=document.getElementById("quietVisual");if(v)v.classList.remove("running");var w=document.getElementById("quietWords");if(w)w.textContent="Quiet time ended. Keep what helped.";}
-    function startHourglass(){var v=document.getElementById("hourglassVisual"),w=document.getElementById("hourglassWords"),prompts=["What do I really want?","What can I control?","What can I let go of?","What is one small next step?"],remaining=60;v.style.setProperty("--sand-time","60s");v.classList.remove("running");void v.offsetWidth;v.classList.add("running");w.textContent=prompts[0]+" 60 seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;if(remaining<=0){clearInterval(thinkingTimer);v.classList.remove("running");w.textContent="Hourglass complete. Keep the thought that helped.";return;}var index=Math.min(prompts.length-1,Math.floor((60-remaining)/15));w.textContent=prompts[index]+" "+remaining+" seconds";},1000);}
-    function stopHourglass(){clearInterval(thinkingTimer);var v=document.getElementById("hourglassVisual");if(v)v.classList.remove("running");var w=document.getElementById("hourglassWords");if(w)w.textContent="Hourglass paused. Take your time.";}
+    function startHourglass(){var v=document.getElementById("hourglassVisual"),w=document.getElementById("hourglassWords"),prompts=["What do I really want?","What can I control?","What can I let go of?","What is one small next step?"],remaining=60;v.style.setProperty("--sand-time","60s");v.classList.remove("running","complete");void v.offsetWidth;v.classList.add("running");w.textContent=prompts[0]+" 60 seconds";clearInterval(thinkingTimer);thinkingTimer=setInterval(function(){remaining--;if(remaining<=0){clearInterval(thinkingTimer);v.classList.remove("running");v.classList.add("complete");w.textContent="Hourglass complete. Keep the thought that helped.";return;}var index=Math.min(prompts.length-1,Math.floor((60-remaining)/15));w.textContent=prompts[index]+" "+remaining+" seconds";},1000);}
+    function stopHourglass(){clearInterval(thinkingTimer);var v=document.getElementById("hourglassVisual");if(v)v.classList.remove("running","complete");var w=document.getElementById("hourglassWords");if(w)w.textContent="Hourglass paused. Take your time.";}
     function setThinkingAmbience(mode){thinkingStage.classList.remove("thinking-rain","thinking-night","thinking-warm");if(mode!=="natural")thinkingStage.classList.add("thinking-"+mode);localStorage.setItem("thinkingAmbience",mode);thinkingStatus("Atmosphere set to "+mode+".");}
     var savedThinkingAmbience=localStorage.getItem("thinkingAmbience")||"natural";if(savedThinkingAmbience!=="natural")thinkingStage.classList.add("thinking-"+savedThinkingAmbience);
 
