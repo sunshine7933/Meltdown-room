@@ -15,17 +15,17 @@ html,body{margin:0;width:100%;height:100%;background:#21150d;overflow:hidden}
 </head>
 <body>
 <div id="loading">Opening The Meltdown Room…</div>
-<iframe id="app" src="app.html" title="The Meltdown Room interactive experience"></iframe>
+<iframe id="app" src="app.html?v=20260926-roomfix" title="The Meltdown Room interactive experience"></iframe>
 <script>
 const frame=document.getElementById('app');
 const loading=document.getElementById('loading');
 // Carry direct destinations and explicit preview mode into the app.
-if(location.search||location.hash)frame.src='app.html'+location.search+location.hash;
+if(location.search||location.hash)frame.src='app.html?v=20260926-roomfix'+(location.search?'&'+location.search.slice(1):'')+location.hash;
 window.addEventListener('hashchange',()=>{
   const target=location.hash.slice(1);
   const inner=frame.contentWindow;
   if(inner&&typeof inner.showScreen==='function')inner.showScreen(target||'home');
-  else frame.src='app.html'+location.search+location.hash;
+  else frame.src='app.html?v=20260926-roomfix'+(location.search?'&'+location.search.slice(1):'')+location.hash;
 });
 const ROOM_IMAGE_FALLBACKS={
   'meltdown-room.png':'meltdown-room.jpg',
