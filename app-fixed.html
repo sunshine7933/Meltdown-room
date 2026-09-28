@@ -333,6 +333,22 @@ frame.addEventListener('load',()=>{
     const ss=screens();if(ss[0])navigateTo(ss[0]);else location.href='index.html';
   }
 
+  // Keep the room artwork and activities intact while giving every main room the
+  // same small, predictable way to move around.
+  ['calm','hope','celebration','reflection','learn','game','explore','resources','connect','plan','relationship','companion','rant','meltdown','outdoor'].forEach(id=>{
+    const screen=d.getElementById(id),controls=screen&&screen.querySelector(':scope > .controls');
+    if(!controls)return;
+    const navigation=[...controls.querySelectorAll('button')].filter(button=>(button.getAttribute('onclick')||'').includes("showScreen('"));
+    if(navigation.length<3)return;
+    const back=navigation[0],home=navigation.find(button=>(button.getAttribute('onclick')||'').includes("showScreen('home')"));
+    const more=navigation.find(button=>(button.getAttribute('onclick')||'').includes("showScreen('map')"));
+    if(back){back.textContent='BACK';back.setAttribute('aria-label','Go back');back.onclick=()=>{if(typeof w.goBackRoom==='function')w.goBackRoom();else goHome()};}
+    if(more){more.textContent='MORE ROOMS';more.setAttribute('aria-label','Choose another room');}
+    navigation.forEach(button=>{
+      if(button!==back&&button!==more&&button!==home)button.hidden=true;
+    });
+  });
+
   function escapeHTML(value){return String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
   function readMemorialStore(){
     let all={};
