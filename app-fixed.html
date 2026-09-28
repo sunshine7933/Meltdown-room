@@ -15,12 +15,12 @@ html,body{margin:0;width:100%;height:100%;background:#21150d;overflow:hidden}
 </head>
 <body>
 <div id="loading">Opening The Meltdown Room…</div>
-<iframe id="app" src="app.html?v=20260928-direct-entry" title="The Meltdown Room interactive experience"></iframe>
+<iframe id="app" src="app.html?v=20260928-pruned-rooms" title="The Meltdown Room interactive experience"></iframe>
 <script>
 const frame=document.getElementById('app');
 const loading=document.getElementById('loading');
 // Carry direct destinations and explicit preview mode into the app.
-if(location.search||location.hash)frame.src='app.html?v=20260928-direct-entry'+(location.search?'&'+location.search.slice(1):'')+location.hash;
+if(location.search||location.hash)frame.src='app.html?v=20260928-pruned-rooms'+(location.search?'&'+location.search.slice(1):'')+location.hash;
 window.addEventListener('hashchange',()=>{
   const target=location.hash.slice(1);
   const inner=frame.contentWindow;
@@ -167,9 +167,9 @@ frame.addEventListener('load',()=>{
 
   /* Match Home's nine pictured tiles exactly, including the dedicated Memorial Room and Explore/Map. */
   const homeTiles=[
-    ['Enter the property','entrance'],['Open the Great Room','great'],['Open the Rant Room','rant'],
-    ['Open Smash and Release','smash'],['Open the Thinking Room','thinking'],['Open Special Moments and Recipes','connect'],
-    ['Open the Celebration Room','celebration'],['Open Memorial Room','memorial'],['Open Explore and Property Map','map']
+    ['Enter the property','great'],['Open the Great Room','great'],null,
+    null,null,['Open Family Recipes and Ideas','connect'],
+    null,['Open Memorial Room','memorial'],['Open Explore and Property Map','map']
   ];
   const homeStage=d.querySelector('.home-stage');
   if(homeStage){
@@ -336,6 +336,23 @@ frame.addEventListener('load',()=>{
     const b=buttonByText(/^(home|property|entrance|welcome|main)$/i);if(b){b.click();return}
     const ss=screens();if(ss[0])navigateTo(ss[0]);else location.href='index.html';
   }
+
+  // These rooms looked finished but did not give people a clear, dependable result.
+  // Remove them from the experience until they can be rebuilt properly.
+  const retiredRooms=new Set(['celebration','thinking','rant','smash','axe','plate','crumple']);
+  const originalShowScreen=typeof w.showScreen==='function'?w.showScreen.bind(w):null;
+  if(originalShowScreen){
+    w.showScreen=function(id){return originalShowScreen(retiredRooms.has(id)?'great':id)};
+    if(retiredRooms.has(w.location.hash.slice(1)))originalShowScreen('great');
+  }
+  retiredRooms.forEach(id=>{const screen=d.getElementById(id);if(screen)screen.hidden=true;});
+  [...d.querySelectorAll('button')].forEach(button=>{
+    const action=button.getAttribute('onclick')||'',label=(button.getAttribute('aria-label')||button.textContent||'').toLowerCase();
+    if([...retiredRooms].some(id=>action.includes("showScreen('"+id+"')"))||/rant room|thinking room|smash and release|celebration room/.test(label))button.hidden=true;
+    if(/join the family conversation|community connection hub|open gathering room connection hub/.test(label))button.hidden=true;
+  });
+  // The seasonal picture cards are artwork only until real videos are supplied.
+  d.querySelectorAll('#connect .connect-season-1,#connect .connect-season-2,#connect .connect-season-3,#connect .connect-season-4').forEach(button=>button.hidden=true);
 
   // Keep the room artwork and activities intact while giving every main room the
   // same small, predictable way to move around.
