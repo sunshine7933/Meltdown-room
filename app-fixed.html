@@ -20,7 +20,7 @@ html,body{margin:0;width:100%;height:100%;background:#21150d;overflow:hidden}
 const frame=document.getElementById('app');
 const loading=document.getElementById('loading');
 // Carry direct destinations and explicit preview mode into the app.
-if(location.search||location.hash)frame.src='app.html?v=20260926-roomfix'+(location.search?'&'+location.search.slice(1):'')+location.hash;
+if(location.search||location.hash)frame.src='app.html?v=20260928-direct-entry'+(location.search?'&'+location.search.slice(1):'')+location.hash;
 window.addEventListener('hashchange',()=>{
   const target=location.hash.slice(1);
   const inner=frame.contentWindow;
@@ -149,7 +149,9 @@ frame.addEventListener('load',()=>{
     .mr-great-hotspot{position:absolute;z-index:5;bottom:5.8%;height:18.8%;border:0!important;background:transparent!important;opacity:0;min-height:44px!important;padding:0!important}
     .mr-great-hotspot:focus-visible{opacity:.2!important;background:#fff!important;outline:3px solid #ffe2a8!important}
     .mr-home-companion{display:block!important;width:min(92%,420px)!important;margin:14px auto 92px!important;padding:14px 22px!important;border:1px solid rgba(246,215,161,.82)!important;border-radius:999px!important;color:#fff4d8!important;background:linear-gradient(135deg,#9a562d,#5f3624)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.28),0 7px 22px rgba(0,0,0,.34)!important;font:900 clamp(15px,2.4vw,18px) system-ui!important;letter-spacing:.05em!important}
-    .mr-home-companion:hover,.mr-home-companion:focus-visible{filter:brightness(1.14);outline:3px solid rgba(255,226,168,.72)!important;outline-offset:3px}\n    .mr-account-policy-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(217,180,120,.35)}\n    .mr-account-policy-links a{flex:1 1 150px;min-height:44px;display:grid;place-items:center;padding:9px 12px;border:1px solid rgba(119,175,189,.58);border-radius:12px;color:#dff7ff!important;background:rgba(69,118,133,.18);font:800 13px system-ui;text-align:center;text-decoration:none}\n    .mr-game-puzzle-note{margin:12px 0 16px;padding:11px 14px;border:1px solid rgba(217,180,120,.48);border-radius:12px;color:#f6dfb7;background:rgba(80,48,27,.6);font:600 14px/1.45 system-ui}\n  `;
+    .mr-home-companion:hover,.mr-home-companion:focus-visible{filter:brightness(1.14);outline:3px solid rgba(255,226,168,.72)!important;outline-offset:3px}\n    .mr-account-policy-links{display:flex;flex-wrap:wrap;gap:8px;margin-top:14px;padding-top:13px;border-top:1px solid rgba(217,180,120,.35)}\n    .mr-account-policy-links a{flex:1 1 150px;min-height:44px;display:grid;place-items:center;padding:9px 12px;border:1px solid rgba(119,175,189,.58);border-radius:12px;color:#dff7ff!important;background:rgba(69,118,133,.18);font:800 13px system-ui;text-align:center;text-decoration:none}\n    .mr-game-puzzle-note{margin:12px 0 16px;padding:11px 14px;border:1px solid rgba(217,180,120,.48);border-radius:12px;color:#f6dfb7;background:rgba(80,48,27,.6);font:600 14px/1.45 system-ui}
+    .mr-more-options{width:100%;margin-top:10px;border:1px solid rgba(217,180,120,.52);border-radius:12px;background:rgba(30,20,13,.35);overflow:hidden}.mr-more-options>summary{min-height:44px;display:flex;align-items:center;justify-content:center;padding:10px 14px;cursor:pointer;color:#fff1d5;font:800 14px system-ui;list-style:none}.mr-more-options>summary::-webkit-details-marker{display:none}.mr-more-options>summary::after{content:'+';margin-left:9px;font-size:19px}.mr-more-options[open]>summary::after{content:'−'}.mr-more-options-body{display:grid;gap:10px;padding:0 10px 10px}.mr-more-options-body button{width:100%}
+  `;
   d.head.appendChild(style);
 
   const greatSceneWrap=d.querySelector('#great .scene-wrap');
@@ -348,6 +350,30 @@ frame.addEventListener('load',()=>{
       if(button!==back&&button!==more&&button!==home)button.hidden=true;
     });
   });
+
+  // The first action stays visible. Extra choices are available, without asking
+  // someone who is already overwhelmed to sort through a wall of buttons.
+  function placeExtraChoices(selector,keep,label){
+    const group=d.querySelector(selector);if(!group||group.dataset.simplifiedChoices)return;
+    const choices=[...group.children].filter(item=>item.tagName==='BUTTON');
+    if(choices.length<=keep)return;
+    const details=d.createElement('details'),summary=d.createElement('summary'),body=d.createElement('div');
+    details.className='mr-more-options';details.dataset.simplifiedChoices='true';summary.textContent=label||'More options';body.className='mr-more-options-body';
+    choices.slice(keep).forEach(choice=>body.appendChild(choice));details.append(summary,body);group.appendChild(details);group.dataset.simplifiedChoices='true';
+  }
+  placeExtraChoices('#calm .calm-tools',1,'More calming choices');
+  placeExtraChoices('#hope .hope-tools',1,'More ways to find hope');
+  placeExtraChoices('#celebration .celebration-tools',1,'More ways to celebrate');
+  placeExtraChoices('#meltdown .meltdown-tool-launchers',1,'More room tools');
+  placeExtraChoices('#outdoor .outdoor-buttons',1,'More outdoor choices');
+  const rantControls=d.querySelector('#rant .controls');
+  if(rantControls&&!rantControls.dataset.simplifiedRant){
+    const extras=[...rantControls.querySelectorAll('button')].filter(button=>['burnRantButton','shareRant','newRant'].some(name=>(button.getAttribute('onclick')||'').includes(name)));
+    if(extras.length){
+      const details=d.createElement('details'),summary=d.createElement('summary'),body=d.createElement('div');
+      details.className='mr-more-options';summary.textContent='More rant options';body.className='mr-more-options-body';extras.forEach(button=>body.appendChild(button));details.append(summary,body);rantControls.appendChild(details);rantControls.dataset.simplifiedRant='true';
+    }
+  }
 
   function escapeHTML(value){return String(value||'').replace(/[&<>"']/g,ch=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch]));}
   function readMemorialStore(){
