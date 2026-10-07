@@ -2367,6 +2367,8 @@
     document.addEventListener("visibilitychange",function(){if(!document.hidden)updateHomeClock()});
 
     function showScreen(id) {
+      var destination = document.getElementById(id);
+      if (!destination || !destination.classList.contains("screen")) return;
       if (id !== currentRoom) cleanUpRoomBeforeLeaving(currentRoom);
       document.querySelectorAll(".screen").forEach(function(screen) {
         screen.classList.remove("active");
