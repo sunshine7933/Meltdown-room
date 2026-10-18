@@ -1,0 +1,58 @@
+#hope.hope-modern{padding:0!important;background:#392e37;color:#fff4de;isolation:isolate;overflow:hidden;font-family:Inter,ui-sans-serif,system-ui,sans-serif}
+#hope.hope-modern.active{display:block!important;min-height:100svh;height:auto!important;max-height:none!important}
+#hope.hope-modern *{box-sizing:border-box}
+#hope .hm-scene{position:relative;isolation:isolate;min-height:100svh;background:#665366 url('hope-room-2026.webp') center/cover no-repeat;overflow:hidden}
+#hope .hm-scene:after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(90deg,#171d355f,transparent 60%),linear-gradient(0deg,#18223266,transparent 33%)}
+#hope .hm-content{position:relative;z-index:2;display:flex;flex-direction:column;min-height:100svh;padding:66px clamp(18px,4vw,52px) 21px}
+#hope button{font:inherit;color:inherit;cursor:pointer}
+#hope button:focus-visible,#hope summary:focus-visible,#hope textarea:focus-visible,#hope input:focus-visible{outline:3px solid #ffe1a2;outline-offset:4px}
+#hope .hm-header{display:flex;justify-content:space-between;align-items:center;gap:14px}
+#hope .hm-header>span{font:19px Georgia,serif;text-shadow:0 2px 8px #302016a6}
+#hope .hm-header button,#hope .hm-footer nav button{min-height:44px;padding:9px 15px;border:1px solid #fff0c67d;border-radius:99px;background:linear-gradient(135deg,#fff0cf30,#d9dce616);box-shadow:inset 0 1px #fff5;backdrop-filter:blur(9px);font-size:11px;text-shadow:0 1px 5px #24170d99}
+#hope .hm-layout{display:grid;grid-template-columns:300px 1fr;gap:30px;flex:1;padding-top:clamp(35px,6vh,65px);padding-bottom:35px}
+#hope .hm-left{align-self:center;max-width:300px}
+#hope .hm-eyebrow{font-size:9px;letter-spacing:3px;color:#ffebbb;text-shadow:0 2px 9px #402b1c;margin:0 0 18px}
+#hope h1{font:400 clamp(37px,4vw,51px)/1.08 Georgia,serif;letter-spacing:-1px;text-shadow:0 3px 15px #29212c77;margin:0 0 18px}
+#hope .hm-intro{font-size:12px;line-height:1.8;margin:0 0 26px;text-shadow:0 2px 7px #282037}
+#hope .hm-options{display:flex;flex-direction:column;gap:8px;max-width:282px}
+#hope .hm-action{display:flex;align-items:center;gap:12px;text-align:left;width:100%;min-height:64px;padding:8px 14px;border:1px solid #fff1ca9c;border-radius:22px;background:linear-gradient(135deg,#fff2d62b,#e3c69b0b 45%,#e5e7ef27);box-shadow:inset 0 2px 3px #fff6,inset 0 -2px 6px #95682311,0 8px 20px #261e321a;backdrop-filter:blur(8px);transition:background .15s}
+#hope .hm-action:hover{background-color:#ffe6b22b}
+#hope .hm-action svg{width:40px;height:40px;flex:0 0 40px;filter:drop-shadow(0 2px 2px #6f451b88) drop-shadow(0 0 6px #ffe1a344);overflow:visible}
+#hope .hm-action strong{display:block;font:400 17px Georgia,serif;text-shadow:0 2px 6px #38273788}
+#hope .hm-action small{display:block;font-size:10px;line-height:1.5;color:#fff2df;margin-top:4px;text-shadow:0 2px 5px #38273999}
+#hope .hm-more{max-width:282px;margin-top:12px}
+#hope .hm-more>summary{display:flex;justify-content:space-between;align-items:center;min-height:44px;cursor:pointer;list-style:none;padding:8px 12px;font-size:11px;text-shadow:0 2px 7px #302135}
+#hope .hm-more>summary span{font-size:21px;line-height:1}
+#hope .hm-more[open]>summary span{transform:rotate(45deg)}
+#hope .hm-more>div{display:flex;flex-direction:column;gap:7px;margin-top:6px}
+#hope .hm-more .hm-action{min-height:56px;padding:7px 12px}
+#hope .hm-more .hm-action svg{width:32px;height:32px;flex-basis:32px}
+#hope .hm-more .hm-action strong{font-size:15px}
+#hope summary::-webkit-details-marker{display:none}
+#hope .hm-footer{display:flex;justify-content:space-between;gap:20px;align-items:start;font-size:10px;color:#fff3dc;text-shadow:0 2px 7px #261b36}
+#hope #hopeStatus{position:static;margin:0;min-height:20px;padding:0;color:#fff3dc;font:11px/1.7 Inter,ui-sans-serif,system-ui,sans-serif;background:none;max-width:550px}
+#hope .hm-footer details{position:relative;text-align:right}
+#hope .hm-footer summary{list-style:none;min-height:44px;cursor:pointer}
+#hope .hm-footer nav{position:absolute;bottom:50px;right:0;width:190px;max-height:60vh;overflow:auto;display:flex;flex-direction:column;gap:7px;padding:13px;border:1px solid #f0d8a786;border-radius:25px;background:#263040f0;backdrop-filter:blur(12px)}
+#hope #hopeWorkspace{display:none}
+#hope #hopeWorkspace.open{display:block;position:fixed;z-index:100010;left:50%;top:50%;transform:translate(-50%,-50%);width:min(540px,calc(100vw - 32px));max-height:calc(100svh - 40px);overflow:auto;margin:0;padding:26px;border:1px solid #f3ddb9a1;border-radius:28px;background:linear-gradient(145deg,#333342f7,#20273af7);box-shadow:0 0 0 100vmax #1b1c35ad,0 25px 75px #0007;color:#fff1d9;line-height:1.7;text-align:left;backdrop-filter:blur(15px)}
+#hope #hopeWorkspace h3{font:27px/1.3 Georgia,serif;color:#ffe9c1;margin:0 0 18px}
+#hope #hopeWorkspace p{font-size:13px;line-height:1.75}
+#hope #hopeWorkspace .hope-note{font:20px/1.6 Georgia,serif;padding:19px;border:1px solid #ead7b15c;border-radius:20px;background:#f4e4c514;color:#fff0d4}
+#hope #hopeWorkspace textarea,#hope #hopeWorkspace input{box-sizing:border-box;width:100%;padding:14px;border:1px solid #eed9b171;border-radius:18px;background:#e6e9eb0b;color:#fff1dc;font:16px/1.65 Georgia,serif}
+#hope #hopeWorkspace textarea{min-height:165px}
+#hope #hopeWorkspace textarea::placeholder,#hope #hopeWorkspace input::placeholder{color:#e4e0d1a6}
+#hope #hopeWorkspace button{min-height:44px;padding:10px 15px;border:1px solid #efd8ac7a;border-radius:99px;background:linear-gradient(145deg,#e9cf9d33,#d5ddeb13);box-shadow:inset 0 1px #fff4;color:#fff0d6;font-size:11px}
+#hope #hopeWorkspace .tool-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+#hope #hopeWorkspace small{font-family:Inter,ui-sans-serif,system-ui,sans-serif;font-size:10px}
+body:has(#hope.hope-modern.active) .mr-global-nav{display:none!important}
+#hope [hidden]{display:none!important}
+#hope .hm-motion{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+#hope .hm-clouds,#hope .hm-water{position:absolute;inset:0;background:url('hope-room-2026.webp') center/cover no-repeat;pointer-events:none;will-change:transform}
+#hope .hm-clouds{mask-image:radial-gradient(ellipse 35% 24% at 40% 22%,#000 25%,#0009 60%,transparent 100%);animation:hmClouds 14s ease-in-out infinite alternate}
+#hope .hm-water{mask-image:radial-gradient(ellipse 37% 10% at 53% 82%,#000 20%,#000b 65%,transparent 100%);animation:hmWater 3.8s ease-in-out infinite alternate}
+@keyframes hmClouds{from{transform:translateX(-12px)}to{transform:translateX(25px)}}
+@keyframes hmWater{from{transform:translate(-5px,0) scaleY(1.005)}to{transform:translate(7px,3px) scaleY(1.018)}}
+#hope:not(.active) .hm-clouds,#hope:not(.active) .hm-water,#hope.hm-paused .hm-clouds,#hope.hm-paused .hm-water,body.still-mode #hope .hm-clouds,body.still-mode #hope .hm-water{animation-play-state:paused!important}
+@media(prefers-reduced-motion:reduce){#hope:not(.hm-motion-optin) .hm-clouds,#hope:not(.hm-motion-optin) .hm-water{animation:none!important}#hope .hm-action{transition:none}}
+@media(max-width:650px){#hope .hm-content{padding:66px 17px 17px}#hope .hm-header>span{font-size:14px;max-width:100px;text-align:center}#hope .hm-header button{font-size:10px;padding:9px 11px}#hope .hm-layout{grid-template-columns:1fr;padding-top:42px;padding-bottom:30px;min-height:580px}#hope .hm-left{align-self:start;max-width:275px}#hope h1{font-size:40px}#hope .hm-intro{font-size:11px;margin-bottom:22px}#hope .hm-options{max-width:260px}#hope .hm-action{min-height:59px;padding:7px 11px}#hope .hm-action svg{width:35px;height:35px;flex-basis:35px}#hope .hm-action strong{font-size:16px}#hope .hm-more{max-width:260px}#hope .hm-clear-view{display:none}#hope .hm-scene,#hope .hm-clouds,#hope .hm-water{background-position:68% center}#hope #hopeStatus{font-size:10px;max-width:230px}#hope .hm-footer{font-size:9px}#hope .hm-scene:after{background:linear-gradient(90deg,#17203566,transparent 95%),linear-gradient(0deg,#18223280,transparent 35%)}}

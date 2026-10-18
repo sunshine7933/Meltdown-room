@@ -1,0 +1,68 @@
+/* Cropped details move within the original picture; controls remain untouched. */
+.ls-scene-layer{position:absolute;inset:0;overflow:hidden;pointer-events:none;z-index:-1;contain:paint}
+.ls-image-layer{z-index:1}
+.ls-art{position:absolute;pointer-events:none}
+.ls-detail-clip{position:absolute;inset:0;overflow:hidden;mask-size:100% 100%;mask-repeat:no-repeat}
+#great:before{z-index:0}
+#great .gm-shell{position:relative;z-index:1}
+#great .ls-water{opacity:.5}
+.ls-wheel{position:absolute;overflow:hidden;border-radius:50%;background:#211d13}
+.ls-wheel svg{display:block!important;width:100%!important;height:100%!important;fill:none;animation:lsWheel 28s linear infinite}
+@keyframes lsWheel{to{transform:rotate(360deg)}}
+.ls-texture{position:absolute;inset:0;background-size:100% 100%;background-repeat:no-repeat;animation-play-state:paused!important}
+.ls-clouds{animation:lsClouds 18s ease-in-out infinite alternate}
+.ls-water{animation:lsWater 4.8s ease-in-out infinite alternate}
+.ls-cascade{animation:lsCascade 2.8s ease-in-out infinite alternate}
+.ls-fire{position:absolute;isolation:isolate;border-radius:50%;background:radial-gradient(ellipse,#ffb53a52,transparent 70%);mix-blend-mode:screen;animation:lsFireGlow 2.7s ease-in-out infinite alternate}
+.ls-flame{position:absolute;left:calc(12% + var(--i)*16%);bottom:10%;width:24%;height:74%;border-radius:60% 35% 50% 40%;transform-origin:50% 100%;background:radial-gradient(ellipse at 50% 85%,#fff8cbba,#ffc45088 35%,#f47b2945 65%,transparent 74%);animation:lsFlame calc(1.3s + var(--i)*.23s) ease-in-out infinite alternate;animation-delay:calc(var(--i)*-.37s)}
+.ls-rain{position:absolute;inset:0;overflow:hidden}
+.ls-raindrop{position:absolute;width:1px;height:3.2%;border-radius:90%;opacity:0;background:linear-gradient(transparent,#d4ecff80 70%,#ffffffd9);box-shadow:1px 0 2px #082d4370;animation:lsRain var(--duration) linear infinite;animation-delay:var(--delay)}
+.ls-lantern{position:absolute;inset:0;background:#ffd68270;mix-blend-mode:screen;animation:lsLantern 5s ease-in-out infinite alternate}
+.ls-touch-ripple{position:absolute;width:8%;height:3%;border:2px solid #fff5ca;box-shadow:0 0 10px #a9efff88,inset 0 0 10px #fff8;border-radius:50%;opacity:0;transform:translate(-50%,-50%)}
+.ls-touched .ls-touch-ripple{animation:lsTouch 2.3s ease-out both}
+.ls-touched .ls-fire{filter:brightness(1.5)}
+.ls-touched .ls-clouds{animation-duration:9s}
+.ls-touched .ls-lantern{filter:brightness(1.3)}
+.ls-ambient-object{position:relative;isolation:isolate}
+.ls-ambient-object:after{content:"";position:absolute;inset:0;pointer-events:none;border-radius:inherit;background:radial-gradient(ellipse at 15% 10%,#ffe2a924,transparent 55%);animation:lsLantern 7s ease-in-out infinite alternate}
+.ls-touched .ls-ambient-object:after{background:radial-gradient(ellipse at 40% 20%,#ffe2a94a,transparent 65%)}
+.ls-scene-layer *,.ls-ambient-object:after{animation-play-state:paused!important}
+.ls-running *,.ls-living-room:not(.ls-scene-paused) .ls-ambient-object:after{animation-play-state:running!important}
+.ls-scene-paused .cm-motion *,.ls-scene-paused .cm-motion:after,.ls-scene-paused .hm-motion *,.ls-scene-paused .cb-motion *,.ls-scene-paused .cb-motion:after,.ls-scene-paused .tm-cloud-drift,.ls-scene-paused .tm-water-ripples,.ls-scene-paused .rd-lake-motion *,#meltdown.ls-scene-paused:after{animation-play-state:paused!important}
+body.still-mode .ls-scene-layer *,body.still-mode .ls-ambient-object:after{animation-play-state:paused!important}
+.ls-scene-controls{position:fixed;right:134px;top:8px;z-index:45;color:#fff4da;font:11px/1.4 Inter,system-ui,sans-serif}
+.ls-scene-controls summary{cursor:pointer;list-style:none;min-height:44px;display:flex;align-items:center;justify-content:center;padding:8px 13px;border:1px solid #f7e0b984;border-radius:99px;background:linear-gradient(140deg,#183240d9,#31404bd9);box-shadow:inset 0 1px #fff4,0 4px 14px #091c3133}
+.ls-scene-controls summary::-webkit-details-marker{display:none}
+.ls-scene-menu{position:absolute;top:50px;right:0;width:180px;padding:9px;display:grid;gap:7px;border:1px solid #f7e0b984;border-radius:19px;background:#142d3bf5;box-shadow:0 12px 30px #06131c55}
+.ls-scene-controls:not([open]) .ls-scene-menu{display:none}
+.ls-scene-controls .ls-scene-menu button{position:static!important;min-height:44px!important;width:100%;padding:9px!important;color:#fff2d2!important;border:1px solid #f0d9a866!important;border-radius:13px!important;background:linear-gradient(135deg,#f6dfad27,#b4dae415)!important;font:11px/1.3 Inter,system-ui,sans-serif!important;box-shadow:inset 0 1px #fff3!important;animation:none!important;text-shadow:none!important;backdrop-filter:none!important}
+.ls-scene-controls button:before,.ls-scene-controls button:after{display:none!important}
+.ls-scene-controls :focus-visible{outline:3px solid #fff1bd;outline-offset:3px}
+.ls-message{font:11px/1.5 system-ui,sans-serif!important;margin:3px!important;color:#ffebc7!important}
+.ls-message:empty{display:none}
+@keyframes lsClouds{from{transform:translateX(-8px)}to{transform:translateX(14px)}}
+@keyframes lsWater{from{transform:translate(-3px,0) scaleY(1.003)}to{transform:translate(5px,2px) scaleY(1.012)}}
+@keyframes lsCascade{from{transform:translateY(-2px);opacity:.6}to{transform:translateY(4px);opacity:1}}
+@keyframes lsFireGlow{0%,100%{opacity:.55}30%{opacity:.85}70%{opacity:.65}}
+@keyframes lsFlame{0%{transform:scale(.8,.72) rotate(-7deg);opacity:.6}50%{transform:scale(1,1.05) rotate(4deg);opacity:.9}100%{transform:scale(.88,.85) rotate(-2deg);opacity:.7}}
+@keyframes lsRain{0%{transform:translate(0,-6px);opacity:0}12%{opacity:.65}80%{opacity:.5}100%{transform:translate(3px,100px);opacity:0}}
+@keyframes lsLantern{from{opacity:.3}to{opacity:.85}}
+@keyframes lsTouch{0%{opacity:0;transform:translate(-50%,-50%) scale(.2)}15%{opacity:.85}100%{opacity:0;transform:translate(-50%,-50%) scale(4.2)}}
+@media(max-width:650px){.ls-scene-controls{top:8px;right:134px;font-size:10px}.ls-scene-controls summary{padding:8px 11px;font-size:0}.ls-scene-controls summary:after{content:'Scene';font-size:10px}#resources .ls-scene-controls{right:10px}}
+@media(prefers-reduced-motion:reduce){
+ /* Restore names as well as timing after older room rules set animation:none. */
+ :is(#great,.ls-living-room) .ls-running .ls-clouds{animation:lsClouds 18s ease-in-out infinite alternate!important}
+ :is(#great,.ls-living-room) .ls-running .ls-water{animation:lsWater 4.8s ease-in-out infinite alternate!important}
+ :is(#great,.ls-living-room) .ls-running .ls-cascade{animation:lsCascade 2.8s ease-in-out infinite alternate!important}
+ :is(#great,.ls-living-room) .ls-running .ls-fire{animation:lsFireGlow 2.7s ease-in-out infinite alternate!important}
+ :is(#great,.ls-living-room) .ls-running .ls-flame{animation:lsFlame calc(1.3s + var(--i)*.23s) ease-in-out infinite alternate!important;animation-delay:calc(var(--i)*-.37s)!important}
+ :is(#great,.ls-living-room) .ls-running .ls-raindrop{animation:lsRain var(--duration) linear infinite!important;animation-delay:var(--delay)!important}
+ :is(#great,.ls-living-room) .ls-running .ls-lantern{animation:lsLantern 5s ease-in-out infinite alternate!important}
+ :is(#great,.ls-living-room) .ls-running .ls-wheel svg{animation:lsWheel 28s linear infinite!important}
+ :is(#great,.ls-living-room).ls-touched .ls-running .ls-touch-ripple{animation:lsTouch 2.3s ease-out both!important}
+ :is(#great,.ls-living-room):not(.ls-scene-paused) .ls-ambient-object:after{animation:lsLantern 7s ease-in-out infinite alternate!important}
+}
+
+.ls-breeze{animation:lsBreeze 7s ease-in-out infinite alternate;animation-play-state:paused}
+@keyframes lsBreeze{from{transform:translate(-2px,0)}to{transform:translate(3px,1px)}}
+@media(prefers-reduced-motion:reduce){:is(#great,.ls-living-room) .ls-running .ls-breeze{animation:lsBreeze 7s ease-in-out infinite alternate!important}}

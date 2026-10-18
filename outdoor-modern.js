@@ -1,0 +1,17 @@
+(()=>{'use strict';const room=document.getElementById('outdoor');if(!room?.classList.contains('outdoor-modern'))return;const $=id=>document.getElementById(id),panel=$('odMaps');let previous;
+room.querySelector('h1').textContent='Take the long way.';room.querySelector('.od-intro').textContent='Fresh air. Open water. No rush to be anywhere.';
+room.querySelectorAll('svg [stroke^="url(#"]').forEach(n=>n.setAttribute('stroke','url('+location.href.split('#')[0]+n.getAttribute('stroke').slice(4)));
+function links(){const town=$('odTown').value.trim();room.querySelectorAll('[data-od-query]').forEach(a=>{const query=a.dataset.odQuery+(town?' in '+town:' near me');a.href='https://www.google.com/maps/search/?api=1&query='+encodeURIComponent(query);});}
+function openMaps(){previous=document.activeElement;panel.hidden=false;room.querySelector('.ls-scene-controls')?.removeAttribute('open');panel.setAttribute('role','dialog');panel.setAttribute('aria-modal','true');panel.setAttribute('aria-label','Nearby places in Google Maps');room.querySelector('.od-main').inert=true;room.querySelector('.od-tools').inert=true;$('odTown').focus();links();}function closeMaps(){panel.hidden=true;room.querySelector('.od-main').inert=false;room.querySelector('.od-tools').inert=false;previous?.focus();}
+$('odNearby').onclick=openMaps;$('odMapsClose').onclick=closeMaps;$('odTown').addEventListener('input',links);panel.addEventListener('keydown',e=>{if(e.key==='Escape'){e.preventDefault();e.stopPropagation();closeMaps();}if(e.key==='Tab'){const controls=[...panel.querySelectorAll('button,input,a[href]')],first=controls[0],last=controls.at(-1);if(e.shiftKey&&document.activeElement===first){e.preventDefault();last.focus();}else if(!e.shiftKey&&document.activeElement===last){e.preventDefault();first.focus();}}});
+window.requestOutdoorLocation=function(){const setup=$('outdoorSetup');setup.hidden=true;setup.inert=false;openMaps();};$('odSetupClose').onclick=()=>{$('outdoorSetup').hidden=true;};
+const init=window.initOutdoorRoom;window.initOutdoorRoom=function(){init();$('outdoorSetup').hidden=true;if(!localStorage.getItem('meltdownOutdoorPlace'))outdoorSay('The lake is yours to enjoy. Choose a moment below.');};
+const motion=window.toggleOutdoorMotion;window.toggleOutdoorMotion=function(){motion();room.classList.toggle('od-paused',!!window.outdoorStill);};
+const time=window.setOutdoorTime;window.setOutdoorTime=function(value){time(value);if(value!=='auto')localStorage.setItem('meltdownOutdoorUseLocalTime','false');};
+const season=window.setOutdoorSeason;window.setOutdoorSeason=function(value){season(value);room.dataset.season=value;};
+const originalSetup=window.openOutdoorSetup;window.openOutdoorSetup=function(){originalSetup();$('outdoorSetup').setAttribute('role','region');$('outdoorSetup').setAttribute('aria-label','Outdoor startup preferences');$('odSetupClose').focus();};
+$('outdoorNotes').addEventListener('input',()=>saveOutdoorNotes());
+document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('outdoorSetup').hidden){e.stopImmediatePropagation();$('outdoorSetup').hidden=true;room.querySelector('[data-mr-click="h554"]').focus();}});
+new MutationObserver(()=>{if(!room.classList.contains('active')){panel.hidden=true;room.querySelector('.od-main').inert=false;room.querySelector('.od-tools').inert=false;}}).observe(room,{attributes:true,attributeFilter:['class']});
+links();if(room.classList.contains('active'))initOutdoorRoom();
+})();
