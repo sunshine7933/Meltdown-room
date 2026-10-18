@@ -27,4 +27,13 @@ Public / Approved with Devvit 0.14.8, confirmed in the owner’s App Versions sc
 
 Updates the existing sunshine7933/Meltdown-room website. Preserves the existing personal story, social links, resource shelf and account integration. Adds the modern homepage, complete modern room experience, return features and direct Reddit link. Deployed through the existing GitHub Pages configuration.
 
+### Lake-and-gold website refinement
+
+- Continuous lake scenery, translucent sections and restrained champagne-gold controls.
+- Two opening choices, simplified navigation and room previews before the longer founder story.
+- Six glass support cards with consistent icons, accessible topic panels and keyboard navigation.
+- Updated founder headings, with the story itself unchanged.
+- Consistent typography, comfortable phone spacing and motion pausing outside the hero.
+- Website-only changes; Reddit remains on approved app version 0.0.13.
+
 Local phone viewport checks do not replace testing in Reddit’s native mobile app. Live authenticated website backup has not been tested in this release.
