@@ -36,3 +36,6 @@ body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fon
 
 /* Keep the shorter founder story centered and comfortable to read. */
 .founder-story>.founder-copy:only-child{grid-column:1/-1;width:100%;max-width:760px;margin-inline:auto}
+
+/* Current app preview uses a portrait video and a compact, responsive player. */
+.welcome-video-dialog{width:min(430px,94vw);margin:auto;background:#10242c;border-color:#edcb8866}.welcome-video-header{gap:12px}.welcome-video-header h2{font-size:1.2rem;line-height:1.3}.welcome-video-dialog video{width:100%;height:auto;max-height:62svh;object-fit:contain;background:#09191f}.welcome-video-actions{padding:14px 16px 18px;gap:10px}.welcome-video-actions .btn{font-size:.85rem;min-height:44px;padding:10px 14px}
