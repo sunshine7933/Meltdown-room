@@ -33,3 +33,6 @@ body{font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;fon
 @media(max-width:360px){.nav-links{gap:6px 13px}.nav-links a{font-size:.78rem}.nav-links .cta{font-size:.76rem;padding:9px 10px}.hero .buttons{flex-direction:column;align-items:stretch}.scene-toggle{margin-left:12px;font-size:.76rem}.text-action{font-size:.76rem}}
 @media(prefers-reduced-motion:reduce){.btn,.mini-room,.room-card img{transition:none}}
 @media(max-width:800px){.hero-copy{width:100%;max-width:none;margin:0;padding:90px 22px 35px}.hero .eyebrow{font-size:.65rem}.hero h1{text-shadow:0 3px 24px #08131bc0}.hero p{max-width:34ch}}
+
+/* Keep the shorter founder story centered and comfortable to read. */
+.founder-story>.founder-copy:only-child{grid-column:1/-1;width:100%;max-width:760px;margin-inline:auto}
