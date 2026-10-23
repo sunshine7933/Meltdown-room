@@ -66,3 +66,6 @@ body.still-mode .ls-scene-layer *,body.still-mode .ls-ambient-object:after{anima
 .ls-breeze{animation:lsBreeze 7s ease-in-out infinite alternate;animation-play-state:paused}
 @keyframes lsBreeze{from{transform:translate(-2px,0)}to{transform:translate(3px,1px)}}
 @media(prefers-reduced-motion:reduce){:is(#great,.ls-living-room) .ls-running .ls-breeze{animation:lsBreeze 7s ease-in-out infinite alternate!important}}
+
+/* Keep all three global controls separate on narrow phones. */
+@media(max-width:360px){#accountButton,#stillModeButton{box-sizing:border-box;width:calc((100vw - 32px)/3);min-width:0;padding:6px;font-size:12px;line-height:1.2;white-space:normal}#accountButton{left:8px}#stillModeButton{right:8px}.ls-scene-controls{left:calc(16px + (100vw - 32px)/3);right:auto;width:calc((100vw - 32px)/3)}.ls-scene-controls summary{box-sizing:border-box;padding:6px;min-height:44px;white-space:normal}}
