@@ -20,8 +20,13 @@
 #outdoor .outdoor-setup{position:fixed;z-index:75;top:100px;left:50%;transform:translateX(-50%);width:min(730px,calc(100% - 30px));max-height:calc(100svh - 125px);overflow:auto;background:#163b49fa;border:1px solid #ffe7b39c;border-radius:26px;box-shadow:0 10px 70px #123a;padding:22px}#odSetupClose{float:right;min-height:44px;padding:8px 12px;background:#fff2;color:#fff5dd;border:1px solid #ffebbb7a;border-radius:14px}#outdoor .outdoor-setup h2{font:25px system-ui}#outdoor .outdoor-setup label{font-size:12px}
 #outdoor :focus-visible{outline:3px solid #fff1ad;outline-offset:3px}
 @media(max-width:650px){.od-shell{padding:78px 16px 145px}.od-header{font-size:0}.od-header button{font-size:11px!important;padding:9px 12px!important}.od-main{min-height:610px;padding-top:30px}.od-main h1{font-size:32px;max-width:240px}.od-intro{font-size:12px;max-width:210px}.od-open-water{height:280px}.od-rail{width:100%;gap:5px;padding:7px;border-radius:27px;justify-content:space-around}#outdoor .od-rail button{display:grid;justify-items:center;gap:4px;padding:8px 5px;min-width:0;flex:1;min-height:80px;border-radius:20px;font-size:10px;text-align:center}.od-rail svg{width:33px;height:33px}.od-status{font-size:11px}.od-tools>details{width:100%}.od-footer button{font-size:10px!important}.od-scene{background-position:59% center!important}.od-maps{right:12px;width:calc(100vw - 24px);top:110px;padding:18px}}
-@media(prefers-reduced-motion:reduce){#outdoor .od-rail button:after{animation:none!important}#outdoor:not(.ls-scene-paused) .weather-rain .outdoor-weather{animation:odRain 8s linear infinite!important}}
+@media(prefers-reduced-motion:reduce){#outdoor .od-rail button:after{animation:none!important}#outdoor .outdoor-weather{animation:none!important}}
 
 #outdoor.outdoor-modern{max-width:none!important;width:100%!important;margin:0!important}
 #outdoor .od-scene.season-fall:after{background:linear-gradient(180deg,#edb65a18,transparent 40%,#13405444)}
 #outdoor .od-scene.season-winter:after{background:linear-gradient(180deg,#c3e8ff22,transparent 40%,#13405444)}
+
+/* Sparse snowflakes distinguish snow from rain and avoid a dense moving dot grid. */
+#outdoor .weather-snow .outdoor-weather{opacity:.55;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='180' viewBox='0 0 160 180'%3E%3Cg fill='none' stroke='%23fff' stroke-width='1.2' stroke-linecap='round'%3E%3Cpath d='M28 22v10m-4-8 8 6m-8 0 8-6M112 87v8m-3-6 6 4m-6 0 6-4M65 143v10m-4-8 8 6m-8 0 8-6'/%3E%3C/g%3E%3C/svg%3E");background-size:160px 180px;animation:odSnow 18s linear infinite}
+@keyframes odSnow{to{background-position:40px 180px}}
+@media(prefers-reduced-motion:reduce){#outdoor .weather-snow .outdoor-weather{animation:none!important}}
