@@ -505,4 +505,4 @@ function enhanceRoom(){
     goGreatRoom();
   });
 }
-if(frame){frame.addEventListener('load',enhanceRoom);}else if(document.readyState==='complete'){enhanceRoom();}else{window.addEventListener('load',enhanceRoom,{once:true});}
+if(frame){frame.addEventListener('load',enhanceRoom);}else if(document.readyState!=='loading'){enhanceRoom();}else{document.addEventListener('DOMContentLoaded',enhanceRoom,{once:true});}
