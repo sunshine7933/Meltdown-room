@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
 <head>
-<!-- Advertising paused until privacy disclosures and consent requirements are reviewed. -->
+<!-- Advertising paused pending privacy review. -->
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <meta name="theme-color" content="#f6efe4">
@@ -199,4 +199,5 @@ function answerQuestion(value){const q=value.trim().toLowerCase();const match=as
 askForm.addEventListener('submit',event=>{event.preventDefault();answerQuestion(askInput.value)});
 document.querySelectorAll('.ask-suggestion').forEach(button=>button.addEventListener('click',()=>{askInput.value=button.dataset.question;answerQuestion(askInput.value)}));
 </script>
+<script src="public-analytics.js" defer></script>
 </body></html>
