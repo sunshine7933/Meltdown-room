@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+    <meta name="theme-color" content="#122923">
+    <meta name="description" content="The Meltdown Room — Grounding Square VR. A quiet, interactive three-dimensional reflection space.">
+    <title>Grounding Square VR | The Meltdown Room</title>
+    <style>
+      html,body,#scene-container{margin:0;width:100%;height:100%;overflow:hidden;background:#10251f}
+      body{font:16px/1.5 system-ui,sans-serif;color:#f7efdf}
+      #scene-container{position:absolute;inset:0}
+      #instructions{position:absolute;z-index:2;left:12px;top:12px;right:12px;width:min(380px,calc(100% - 24px));box-sizing:border-box;padding:14px 17px;border:1px solid #c5ac7499;border-radius:18px;background:#132b27e8;box-shadow:0 6px 30px #0005;pointer-events:none}
+      h1{font-family:Georgia,serif;margin:0 0 5px;font-size:1.3rem}
+      #message{margin:0;font-size:.89rem}
+      #error{color:#ffcbc2;font-weight:700;margin:.5rem 0 0}
+      #instructions small{display:block;opacity:.8;margin-top:7px}
+      @media(max-width:520px){#instructions{padding:10px 13px}h1{font-size:1rem}#instructions small{font-size:.74rem}}
+    </style>
+  </head>
+  <body>
+    <div id="scene-container" aria-label="Interactive 3D Grounding Square experience"></div>
+    <aside id="instructions" aria-live="polite">
+      <h1>The Meltdown Room · Grounding Square VR</h1>
+      <p id="message">Move your pointer to select the glowing controls. In VR, point and pinch with your hands. Start with Breathe, then collect the four symbols.</p>
+      <small>Seated-friendly · No login · No personal data collected · Not medical treatment</small>
+      <p id="error" hidden></p>
+    </aside>
+    <script type="module" src="/src/index.js"></script>
+  </body>
+</html>
