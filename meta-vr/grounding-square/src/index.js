@@ -6,11 +6,12 @@ const $ = id => document.getElementById(id);
 const state = createJourney();
 state.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const Action = createComponent('SanctuaryAction', { code: { type: Types.Int16, default: 0 } });
-let world, orb, orbHalo, water, breathCard, reflectCard, messageCard, replayCard, motionCard;
+let world, orb, orbHalo, water, breathCard, reflectCard, messageCard, replayCard, motionCard, visitCard, soundCard, completionGlow;
+const openingText = 'Take a short grounding break: breathe with the light, notice four simple cues, then carry a quiet moment back into your day.';
 let groundingCue = '';
 const groundingCues=['Notice one thing you can see.','Feel the support beneath you.','Listen for one sound nearby.','Let your shoulders soften.'];
 let elapsed = 0, lastLabel = '', audioContext, audioGain, soundOn = false;
-const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [];
+const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [], lightTrails = [];
 const palette = [0xd6e9e5, 0xf2d597, 0xeeb878, 0xc5b8e8];
 let randomSeed = 42;
 function rnd() { randomSeed = (randomSeed * 1664525 + 1013904223) >>> 0; return randomSeed / 4294967296; }
@@ -55,6 +56,7 @@ function garden() {
  // An arched timber gateway and a cascade at the far bank.
  for(const x of [-1.0,3.2]){mesh(new T.CylinderGeometry(.11,.15,3.8,10),wood,x,1.9,-8.7);mesh(new T.CylinderGeometry(.25,.28,.24,12),stone,x,.12,-8.7);}
  const arch=mesh(new T.TorusGeometry(2.1,.11,10,60,Math.PI),wood,1.1,3.75,-8.7);
+ completionGlow=halo(0xffdfa9,8,1.1,3.2,-8.8);completionGlow.material.opacity=0;
  for(let i=0;i<13;i++){const a=i*Math.PI/12;halo(0xffd8a4,.45,1.1+Math.cos(a)*2.1,3.75+Math.sin(a)*2.1,-8.65);}
  for(let i=0;i<16;i++){const o=mesh(new T.IcosahedronGeometry(.35+rnd()*.5,0),i%2?stone:stoneDark,.4+rnd()*1.5,.15+rnd()*.9,-8.35+rnd()*.25);o.scale.y=1.3;}
  for(let i=0;i<14;i++){const fall=mesh(new T.PlaneGeometry(.025+rnd()*.05,.7+rnd()*.7),new T.MeshBasicMaterial({color:0x9fc7c5,transparent:true,opacity:.32,side:T.DoubleSide}),.6+rnd()*.9,.65,-7.95+rnd()*.1);falls.push({mesh:fall,y:fall.position.y,phase:rnd()*6});}
@@ -76,6 +78,10 @@ function celestial(index) {
  const ring=mesh(new T.TorusGeometry(.38,.012,6,56),gold,p[0],p[1],p[2]-.12);
  const base=mesh(new T.CylinderGeometry(.36,.45,.16,32),stone,p[0],.12,p[2]);const stem=mesh(new T.CylinderGeometry(.09,.13,.62,12),stoneDark,p[0],.48,p[2]);
  const caption=label(SYMBOLS[index],.72,.16);add(caption,p[0],.72,p[2]+.09);
+ for(let j=0;j<10;j++){
+ const t=j/9,bead=halo(palette[index],.12,p[0]*(1-t)+1.1*t,p[1]+Math.sin(t*Math.PI)*1.2+t*1.5,p[2]*(1-t)-8.4*t);
+ bead.visible=false;lightTrails.push({mesh:bead,index,phase:t*Math.PI*2});
+}
  symbols.set(SYMBOLS[index],{group,light,hit,ring,caption,origin:p,index});
 }
 function buildActivities() {
@@ -89,26 +95,37 @@ function buildActivities() {
  replayCard=label('Start again',.9,.22,true);replayCard.position.set(-.8,.48,-1.5);target(replayCard,12);
  motionCard=label('Reduce motion',1.1,.22,true);motionCard.position.set(.8,.35,-1.35);target(motionCard,13);
  const exit=label('Exit VR',.8,.22,true);exit.position.set(2.2,.48,-1.5);target(exit,14);exit.visible=false;exit.userData.xrOnly=true;
+ visitCard=label('Visit The Meltdown Room',2,.3,true);visitCard.position.set(.8,1.05,-2.5);target(visitCard,15);visitCard.visible=false;
+ soundCard=label('Sound off',1,.22,true);soundCard.position.set(.8,.12,-1.35);target(soundCard,16);soundCard.visible=false;
 }
 function refresh() {
  const ready=canReflect(state);$('breathe').textContent=state.breathCompleted?'Breathing complete ✓':state.breathing?'Pause breathing':'Begin breathing · 16 sec';
  $('status').textContent=breathLabel(state);if(groundingCue)document.querySelector('.description').textContent=groundingCue;$('breath-progress').value=state.breathElapsed;$('count').textContent=state.collected.length+' of 4 lights gathered';$('reflect').disabled=!ready;$('reflection-label').textContent=ready?'Open your reflection':'Breathe & gather to unlock';
  $('motion').setAttribute('aria-pressed',String(state.reducedMotion));$('motion').textContent=state.reducedMotion?'Motion reduced':'Reduce motion';
  document.querySelectorAll('[data-symbol]').forEach(b=>{const done=state.collected.includes(b.dataset.symbol);b.setAttribute('aria-pressed',String(done));});
- if(!world)return;const immersive=world.renderer.xr.isPresenting;for(const target of interactiveMeshes)if(target.code>=11)target.object.visible=immersive;messageCard.visible=immersive||state.reflectionOpen;
+ if(!world)return;const immersive=world.renderer.xr.isPresenting;for(const target of interactiveMeshes)if(target.code>=11)target.object.visible=immersive&&(target.code!==15||state.reflectionOpen);messageCard.visible=immersive||state.reflectionOpen;
+ completionGlow.material.opacity=state.reflectionOpen?.75:ready?.3:0;
+ for(const trail of lightTrails)trail.mesh.visible=state.collected.includes(SYMBOLS[trail.index]);
+ soundCard.userData.draw(soundOn?'Sound on':'Sound off');
  for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.65:1);s.light.material.opacity=done?.22:.6;s.caption.userData.draw(done?name+' ✓':name);s.ring.material=done?new T.MeshBasicMaterial({color:palette[s.index]}):gold;}
  breathCard.userData.draw(state.breathCompleted?'A little more space. A little more you.':state.breathing?breathLabel(state):'Breathe with the light');
  reflectCard.userData.draw(ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
- if(state.reflectionOpen) messageCard.userData.draw(['11:11','You are allowed to begin again.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Point at a light and pinch to select.']);
+ if(state.reflectionOpen) messageCard.userData.draw(['YOUR GROUNDING SESSION IS COMPLETE','Take this quiet moment into your day.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
+}
+async function visitMeltdownRoom(){
+ if(world.renderer.xr.isPresenting)await world.renderer.xr.getSession()?.end();
+ window.location.assign('https://themeltdownroom.com/');
 }
 function tone(index=0) {if(!soundOn||!audioContext)return;const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=[261.63,329.63,392,523.25][index%4];g.gain.setValueAtTime(0,audioContext.currentTime);g.gain.linearRampToValueAtTime(.08,audioContext.currentTime+.03);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+1.5);o.connect(g).connect(audioGain);o.start();o.stop(audioContext.currentTime+1.6);}
 function execute(code) {
  if(code>=1&&code<=4){if(collect(state,SYMBOLS[code-1])){groundingCue=groundingCues[code-1];tone(code-1);}}
  else if(code===10){if(state.breathing)state.breathing=false;else beginBreathing(state);}
  else if(code===11){if(openReflection(state)){tone(3);if(!world.renderer.xr.isPresenting&&!$('reflection').open)$('reflection').showModal();}}
- else if(code===12){resetJourney(state);groundingCue='';document.querySelector('.description').textContent='A brief sensory reset between busy moments. Breathe, notice your surroundings, and begin again.';$('reflection').close();}
+ else if(code===12){resetJourney(state);groundingCue='';document.querySelector('.description').textContent=openingText;$('reflection').close();}
  else if(code===13)state.reducedMotion=!state.reducedMotion;
  else if(code===14)world.renderer.xr.getSession()?.end();
+ else if(code===15){visitMeltdownRoom().catch(()=>{$('support').textContent='Please exit VR, then use Visit The Meltdown Room.';});}
+ else if(code===16)sound();
  refresh();
 }
 class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) {
@@ -116,16 +133,27 @@ class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) 
  update(dt){const delta=Math.min(Math.max(dt,0),.1);elapsed+=delta;
  if(state.breathing){advanceBreathing(state,delta);const next=breathLabel(state);if(next!==lastLabel){lastLabel=next;refresh();}$('breath-progress').value=state.breathElapsed;}
  const phase=(state.breathElapsed%8)/8,scale=state.breathing&&!state.reducedMotion?1+.45*(1-Math.cos(phase*Math.PI*2)):1;orb.scale.setScalar(scale);orbHalo.scale.setScalar(2.5*scale);
- if(!state.reducedMotion){water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
+ if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
  }
 }
-async function sound(){try{if(!audioContext){audioContext=new AudioContext();audioGain=audioContext.createGain();audioGain.gain.value=.35;audioGain.connect(audioContext.destination);const buffer=audioContext.createBuffer(1,audioContext.sampleRate*3,audioContext.sampleRate);const data=buffer.getChannelData(0);let n=0;for(let i=0;i<data.length;i++){n=(n+Math.random()*.04-.02)/1.02;data[i]=n;}const stream=audioContext.createBufferSource();stream.buffer=buffer;stream.loop=true;const filter=audioContext.createBiquadFilter();filter.type='lowpass';filter.frequency.value=750;stream.connect(filter).connect(audioGain);stream.start();}soundOn=!soundOn;await audioContext.resume();audioGain.gain.setTargetAtTime(soundOn?.35:0,audioContext.currentTime,.2);$('sound').textContent=soundOn?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundOn));}catch{$('sound').textContent='Sound unavailable';}}
+function musicChord(){
+ if(!audioContext||!soundOn)return;
+ const now=audioContext.currentTime;
+ [130.81,196,261.63,329.63].forEach((frequency,i)=>{
+  const voice=audioContext.createOscillator(),gain=audioContext.createGain();
+  voice.type='sine';voice.frequency.value=frequency;
+  gain.gain.setValueAtTime(0,now);gain.gain.linearRampToValueAtTime(.035,now+1+i*.1);
+  gain.gain.exponentialRampToValueAtTime(.0001,now+7);
+  voice.connect(gain).connect(audioGain);voice.start(now);voice.stop(now+7.1);
+ });
+}
+async function sound(){try{if(!audioContext){audioContext=new AudioContext();audioGain=audioContext.createGain();audioGain.gain.value=.35;audioGain.connect(audioContext.destination);const buffer=audioContext.createBuffer(1,audioContext.sampleRate*3,audioContext.sampleRate);const data=buffer.getChannelData(0);let n=0;for(let i=0;i<data.length;i++){n=(n+Math.random()*.04-.02)/1.02;data[i]=n;}const stream=audioContext.createBufferSource();stream.buffer=buffer;stream.loop=true;const filter=audioContext.createBiquadFilter();filter.type='lowpass';filter.frequency.value=750;stream.connect(filter).connect(audioGain);stream.start();setInterval(musicChord,6000);}soundOn=!soundOn;if(soundOn)musicChord();await audioContext.resume();audioGain.gain.setTargetAtTime(soundOn?.35:0,audioContext.currentTime,.2);$('sound').textContent=soundOn?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundOn));refresh();}catch{$('sound').textContent='Sound unavailable';}}
 async function start(){
  world=await World.create($('scene-container'),{xr:{sessionMode:'immersive-vr',offer:'none',features:{handTracking:true}},input:{canvasPointerEvents:true},features:{enableLocomotion:false,enableGrabbing:false}});world.registerComponent(Action);world.camera.fov=65;world.camera.position.set(0,1.7,2);world.camera.updateProjectionMatrix();glowMap=glowTexture();garden();buildActivities();world.registerSystem(JourneySystem);
  // Desktop buttons and actual IWSDK ray/pinch targets share this one journey.
  $('breathe').onclick=()=>execute(10);$('reflect').onclick=()=>execute(11);$('restart').onclick=()=>execute(12);$('motion').onclick=()=>execute(13);$('sound').onclick=sound;
  document.querySelectorAll('[data-symbol]').forEach((b,i)=>{b.onclick=()=>execute(i+1);b.disabled=false;});$('breathe').disabled=false;$('restart').disabled=false;
- $('close').onclick=$('done').onclick=()=>$('reflection').close();
+ $('close').onclick=()=>$('reflection').close();$('done').onclick=()=>execute(12);$('visit').onclick=visitMeltdownRoom;
  $('launch').onclick=async()=>{try{if(!navigator.xr||!await navigator.xr.isSessionSupported('immersive-vr')){$('support').textContent='VR requires a WebXR headset browser. Everything here is playable with mouse, touch or keyboard.';return;}await world.launchXR();}catch(e){$('support').textContent='VR could not start: '+e.message;}};
  world.renderer.xr.addEventListener('sessionstart',()=>{document.body.classList.add('xr-active');$('reflection').close();refresh();});world.renderer.xr.addEventListener('sessionend',()=>{document.body.classList.remove('xr-active');for(const t of interactiveMeshes)if(t.code>=11)t.object.visible=false;refresh();});
  $('loading').hidden=true;refresh();
