@@ -7,6 +7,8 @@ const state = createJourney();
 state.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const Action = createComponent('SanctuaryAction', { code: { type: Types.Int16, default: 0 } });
 let world, orb, orbHalo, water, breathCard, reflectCard, messageCard, replayCard, motionCard;
+let groundingCue = '';
+const groundingCues=['Notice one thing you can see.','Feel the support beneath you.','Listen for one sound nearby.','Let your shoulders soften.'];
 let elapsed = 0, lastLabel = '', audioContext, audioGain, soundOn = false;
 const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [];
 const palette = [0xd6e9e5, 0xf2d597, 0xeeb878, 0xc5b8e8];
@@ -90,21 +92,21 @@ function buildActivities() {
 }
 function refresh() {
  const ready=canReflect(state);$('breathe').textContent=state.breathCompleted?'Breathing complete ✓':state.breathing?'Pause breathing':'Begin breathing · 16 sec';
- $('status').textContent=breathLabel(state);$('breath-progress').value=state.breathElapsed;$('count').textContent=state.collected.length+' of 4 lights gathered';$('reflect').disabled=!ready;$('reflection-label').textContent=ready?'Open your reflection':'Breathe & gather to unlock';
+ $('status').textContent=breathLabel(state);if(groundingCue)document.querySelector('.description').textContent=groundingCue;$('breath-progress').value=state.breathElapsed;$('count').textContent=state.collected.length+' of 4 lights gathered';$('reflect').disabled=!ready;$('reflection-label').textContent=ready?'Open your reflection':'Breathe & gather to unlock';
  $('motion').setAttribute('aria-pressed',String(state.reducedMotion));$('motion').textContent=state.reducedMotion?'Motion reduced':'Reduce motion';
  document.querySelectorAll('[data-symbol]').forEach(b=>{const done=state.collected.includes(b.dataset.symbol);b.setAttribute('aria-pressed',String(done));});
- if(!world)return;const immersive=world.renderer.xr.isPresenting;for(const card of [reflectCard,replayCard,motionCard])card.visible=immersive;messageCard.visible=immersive||state.reflectionOpen;
+ if(!world)return;const immersive=world.renderer.xr.isPresenting;for(const target of interactiveMeshes)if(target.code>=11)target.object.visible=immersive;messageCard.visible=immersive||state.reflectionOpen;
  for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.65:1);s.light.material.opacity=done?.22:.6;s.caption.userData.draw(done?name+' ✓':name);s.ring.material=done?new T.MeshBasicMaterial({color:palette[s.index]}):gold;}
  breathCard.userData.draw(state.breathCompleted?'A little more space. A little more you.':state.breathing?breathLabel(state):'Breathe with the light');
  reflectCard.userData.draw(ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
- if(state.reflectionOpen) messageCard.userData.draw(['11:11','You are allowed to begin again.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':'Your space. Your pace.']);
+ if(state.reflectionOpen) messageCard.userData.draw(['11:11','You are allowed to begin again.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Point at a light and pinch to select.']);
 }
 function tone(index=0) {if(!soundOn||!audioContext)return;const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=[261.63,329.63,392,523.25][index%4];g.gain.setValueAtTime(0,audioContext.currentTime);g.gain.linearRampToValueAtTime(.08,audioContext.currentTime+.03);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+1.5);o.connect(g).connect(audioGain);o.start();o.stop(audioContext.currentTime+1.6);}
 function execute(code) {
- if(code>=1&&code<=4){if(collect(state,SYMBOLS[code-1]))tone(code-1);}
+ if(code>=1&&code<=4){if(collect(state,SYMBOLS[code-1])){groundingCue=groundingCues[code-1];tone(code-1);}}
  else if(code===10){if(state.breathing)state.breathing=false;else beginBreathing(state);}
  else if(code===11){if(openReflection(state)){tone(3);if(!world.renderer.xr.isPresenting&&!$('reflection').open)$('reflection').showModal();}}
- else if(code===12){resetJourney(state);$('reflection').close();}
+ else if(code===12){resetJourney(state);groundingCue='';document.querySelector('.description').textContent='A brief sensory reset between busy moments. Breathe, notice your surroundings, and begin again.';$('reflection').close();}
  else if(code===13)state.reducedMotion=!state.reducedMotion;
  else if(code===14)world.renderer.xr.getSession()?.end();
  refresh();
@@ -125,7 +127,7 @@ async function start(){
  document.querySelectorAll('[data-symbol]').forEach((b,i)=>{b.onclick=()=>execute(i+1);b.disabled=false;});$('breathe').disabled=false;$('restart').disabled=false;
  $('close').onclick=$('done').onclick=()=>$('reflection').close();
  $('launch').onclick=async()=>{try{if(!navigator.xr||!await navigator.xr.isSessionSupported('immersive-vr')){$('support').textContent='VR requires a WebXR headset browser. Everything here is playable with mouse, touch or keyboard.';return;}await world.launchXR();}catch(e){$('support').textContent='VR could not start: '+e.message;}};
- world.renderer.xr.addEventListener('sessionstart',()=>{document.body.classList.add('xr-active');$('reflection').close();});world.renderer.xr.addEventListener('sessionend',()=>{document.body.classList.remove('xr-active');for(const t of interactiveMeshes)if(t.code>=11)t.object.visible=false;refresh();});
+ world.renderer.xr.addEventListener('sessionstart',()=>{document.body.classList.add('xr-active');$('reflection').close();refresh();});world.renderer.xr.addEventListener('sessionend',()=>{document.body.classList.remove('xr-active');for(const t of interactiveMeshes)if(t.code>=11)t.object.visible=false;refresh();});
  $('loading').hidden=true;refresh();
  // Small look-around range avoids forced movement and keeps targets in reach.
  const canvas=world.renderer.domElement;let pointer=null,yaw=0,pitch=0;canvas.addEventListener('pointerdown',e=>{pointer={x:e.clientX,y:e.clientY,yaw,pitch};});canvas.addEventListener('pointermove',e=>{if(!pointer||state.reducedMotion||world.renderer.xr.isPresenting)return;const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(Math.hypot(dx,dy)<7)return;yaw=T.MathUtils.clamp(pointer.yaw-dx*.0007,-.22,.22);pitch=T.MathUtils.clamp(pointer.pitch-dy*.0005,-.1,.1);world.camera.rotation.set(pitch,yaw,0,'YXZ');});window.addEventListener('pointerup',()=>pointer=null);
@@ -133,6 +135,7 @@ async function start(){
  window.grounding={snapshot:()=>({...state,collected:[...state.collected],xr:world.renderer.xr.isPresenting,drawCalls:world.renderer.info.render.calls}),targets:()=>interactiveMeshes.map(({object,code})=>{const p=object.getWorldPosition(new T.Vector3()).project(world.camera);return {code,x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2};})};
 }
 start().catch(e=>{console.error(e);$('loading').textContent='The 3D sanctuary could not load. Please reload in a WebGL-capable browser.';$('support').textContent=e.message;});
+
 
 
 
