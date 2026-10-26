@@ -1,0 +1,8 @@
+node_modules/
+dist/
+.vercel/
+.openai/
+*.log
+browser-check.mjs
+simulator-check.mjs
+capture-demo.mjs
