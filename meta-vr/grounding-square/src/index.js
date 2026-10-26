@@ -1,5 +1,6 @@
 import { World, RayInteractable, Pressed, createComponent, createSystem, Types } from '@iwsdk/core';
 import * as T from 'three';
+import { buildWoodland } from './woodland.js';
 import { SYMBOLS, createJourney, beginBreathing, advanceBreathing, collect, canReflect, openReflection, resetJourney, breathLabel } from './journey.mjs';
 
 const $ = id => document.getElementById(id);
@@ -37,35 +38,7 @@ function tree(x,z,h,index) {
 function glowTexture() {const c=document.createElement('canvas');c.width=c.height=128;const g=c.getContext('2d');const grad=g.createRadialGradient(64,64,0,64,64,64);grad.addColorStop(0,'rgba(255,245,203,.8)');grad.addColorStop(.15,'rgba(255,235,178,.35)');grad.addColorStop(1,'rgba(255,220,150,0)');g.fillStyle=grad;g.fillRect(0,0,128,128);return new T.CanvasTexture(c);}
 let glowMap;
 function halo(color,size,x,y,z) {const s=new T.Sprite(new T.SpriteMaterial({map:glowMap,color,transparent:true,depthWrite:false,blending:T.AdditiveBlending,opacity:.6}));s.scale.set(size,size,1);add(s,x,y,z);return s;}
-function garden() {
- world.scene.background=new T.Color(0x152e37);world.scene.fog=new T.FogExp2(0x19353c,.026);
- world.renderer.setPixelRatio(1);world.renderer.toneMapping=T.ACESFilmicToneMapping;world.renderer.toneMappingExposure=1.12;
- add(new T.HemisphereLight(0xb4d5e2,0x273b2a,2.3)); const moonlight=add(new T.DirectionalLight(0xc7dbf7,2.5),-5,10,-9);const warm=add(new T.PointLight(0xffce8c,30,17,2),2,3,-4);
- const ground=mesh(new T.CircleGeometry(65,96),mat(0x243f38));ground.rotation.x=-Math.PI/2;ground.position.y=-.12;
- // A real curved stream with animated procedural ripples, surrounded by stones.
- water=new T.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:'varying vec3 vP; void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:'varying vec3 vP;uniform float time;void main(){float r=length(vP.xy);float w=sin(r*19.-time*1.1+sin(vP.x*8.)*.3);float s=pow(max(0.,sin(vP.y*37.+sin(vP.x*14.)+time*.5)),18.);vec3 c=mix(vec3(.045,.19,.21),vec3(.26,.43,.43),w*.5+.5);c+=vec3(.37,.35,.24)*s*.36;gl_FragColor=vec4(c,1.);}'});
- const pool=mesh(new T.CircleGeometry(3.5,96),water,1,.015,-5.8);pool.rotation.x=-Math.PI/2;pool.scale.y=.82;
- const edge=mesh(new T.TorusGeometry(3.52,.13,8,96),stone,1,.005,-5.8);edge.rotation.x=Math.PI/2;edge.scale.y=.82;
- for(let i=0;i<75;i++){const a=rnd()*Math.PI*2,r=3.75+rnd()*2;const rock=mesh(new T.IcosahedronGeometry(.13+rnd()*.3,0),i%2?stone:stoneDark,1+Math.cos(a)*r,.04,-5.8+Math.sin(a)*r*.82);rock.scale.set(1.5,.7,1);rock.rotation.set(rnd(),rnd()*4,rnd());}
- // Foreground terrace with inset brass rings.
- const terrace=mesh(new T.CylinderGeometry(4.2,4.3,.18,96),mat(0x495752),0,-.1,.7);
- for(const radius of [3.8,4.1]){const ring=mesh(new T.TorusGeometry(radius,.012,6,96),gold,0,.001,.7);ring.rotation.x=Math.PI/2;}
- for(let i=0;i<14;i++){const p=mesh(new T.BoxGeometry(.8,.06,.52),mat(i%2?0x60706a:0x53635e),.85+Math.sin(i*.6)*.24,.025,-1.3-i*.48);p.rotation.y=Math.sin(i*.6)*.1;}
- // Warm lanterns keep the sculpted woodland welcoming.
- for(const [x,z] of [[-3.1,-2.5],[3.7,-2.8],[-3.2,1.8],[4.6,-6.7]]){mesh(new T.CylinderGeometry(.18,.23,.17,12),stone,x,.08,z);mesh(new T.BoxGeometry(.19,.34,.19),new T.MeshStandardMaterial({color:0xffdfa1,emissive:0xf6b768,emissiveIntensity:2}),x,.34,z);mesh(new T.ConeGeometry(.24,.18,4),wood,x,.59,z);halo(0xffce85,1.5,x,.35,z);}
- // An arched timber gateway and a cascade at the far bank.
- for(const x of [-1.0,3.2]){mesh(new T.CylinderGeometry(.11,.15,3.8,10),wood,x,1.9,-8.7);mesh(new T.CylinderGeometry(.25,.28,.24,12),stone,x,.12,-8.7);}
- const arch=mesh(new T.TorusGeometry(2.1,.11,10,60,Math.PI),wood,1.1,3.75,-8.7);
- completionGlow=halo(0xffdfa9,8,1.1,3.2,-8.8);completionGlow.material.opacity=0;
- for(let i=0;i<13;i++){const a=i*Math.PI/12;halo(0xffd8a4,.45,1.1+Math.cos(a)*2.1,3.75+Math.sin(a)*2.1,-8.65);}
- for(let i=0;i<16;i++){const o=mesh(new T.IcosahedronGeometry(.35+rnd()*.5,0),i%2?stone:stoneDark,.4+rnd()*1.5,.15+rnd()*.9,-8.35+rnd()*.25);o.scale.y=1.3;}
- for(let i=0;i<14;i++){const fall=mesh(new T.PlaneGeometry(.025+rnd()*.05,.7+rnd()*.7),new T.MeshBasicMaterial({color:0x9fc7c5,transparent:true,opacity:.32,side:T.DoubleSide}),.6+rnd()*.9,.65,-7.95+rnd()*.1);falls.push({mesh:fall,y:fall.position.y,phase:rnd()*6});}
- for(let i=0;i<22;i++){const a=rnd()*Math.PI*2,r=9+rnd()*17;tree(Math.cos(a)*r,Math.sin(a)*r-6,4+rnd()*5,i);}
- for(let i=0;i<70;i++){const x=(rnd()-.5)*24,z=rnd()*-20+4;if(Math.hypot(x-1,(z+5.8)/.82)<4||Math.hypot(x,z-.7)<4.4)continue;const plant=mesh(new T.ConeGeometry(.1+rnd()*.2,.3+rnd()*.55,5),leaf[i%4],x,.12,z);plant.rotation.z=(rnd()-.5)*.4;if(i%4===0){mesh(new T.SphereGeometry(.045,5,4),new T.MeshBasicMaterial({color:i%8?0xcab0dd:0xe8ca99}),x,.42,z);}}
- // Atmospheric moon and fireflies are geometry in the same scene, not a background image.
- mesh(new T.SphereGeometry(.7,32,24),new T.MeshBasicMaterial({color:0xe5dfc2}),6.8,8.5,-22);halo(0xbacbdc,6,6.8,8.5,-22.2);
- for(let i=0;i<24;i++){const x=(rnd()-.5)*17,y=.25+rnd()*4,z=-2-rnd()*14;const mote=halo(i%3?0xf8dba4:0xb8e0ce,.09+rnd()*.08,x,y,z);motes.push({mesh:mote,x,y,z,seed:rnd()*8});}
-}
+function garden(){const environment=buildWoodland(world,{add,mesh,halo,mat});water=environment.water;completionGlow=environment.completionGlow;motes.push(...environment.motes);falls.push(...environment.falls);}
 function celestial(index) {
  const group=new T.Group(), material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:1.5,metalness:.35,roughness:.24});
  if(index===0){const shape=new T.Shape();shape.moveTo(.12,.28);shape.bezierCurveTo(-.4,.25,-.4,-.25,.12,-.28);shape.bezierCurveTo(-.12,-.08,-.12,.08,.12,.28);group.add(new T.Mesh(new T.ExtrudeGeometry(shape,{depth:.08,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.018,bevelThickness:.02}),material));}
@@ -76,7 +49,7 @@ function celestial(index) {
  add(group,...p);const light=halo(palette[index],1.3,...p);
  const hit=new T.Mesh(new T.SphereGeometry(.43,16,12),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.copy(group.position);target(hit,index+1);
  const ring=mesh(new T.TorusGeometry(.38,.012,6,56),gold,p[0],p[1],p[2]-.12);
- const base=mesh(new T.CylinderGeometry(.36,.45,.16,32),stone,p[0],.12,p[2]);const stem=mesh(new T.CylinderGeometry(.09,.13,.62,12),stoneDark,p[0],.48,p[2]);
+ const base=mesh(new T.SphereGeometry(.38,16,10),mat(0x9ba99b),p[0],.13,p[2]);base.scale.set(1,.42,1);const stem=mesh(new T.CylinderGeometry(.045,.075,.62,12),gold,p[0],.48,p[2]);
  const caption=label(SYMBOLS[index],.72,.16);add(caption,p[0],.72,p[2]+.09);
  for(let j=0;j<10;j++){
  const t=j/9,bead=halo(palette[index],.12,p[0]*(1-t)+1.1*t,p[1]+Math.sin(t*Math.PI)*1.2+t*1.5,p[2]*(1-t)-8.4*t);
@@ -107,10 +80,10 @@ function refresh() {
  completionGlow.material.opacity=state.reflectionOpen?.75:ready?.3:0;
  for(const trail of lightTrails)trail.mesh.visible=state.collected.includes(SYMBOLS[trail.index]);
  soundCard.userData.draw(soundOn?'Sound on':'Sound off');
- for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.65:1);s.light.material.opacity=done?.22:.6;s.caption.userData.draw(done?name+' ✓':name);s.ring.material=done?new T.MeshBasicMaterial({color:palette[s.index]}):gold;}
+ for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.65:1);s.light.material.opacity=done?.22:.6;s.caption.userData.draw(done?name+' ✓':name);s.ring.userData.selectedMaterial??=new T.MeshBasicMaterial({color:palette[s.index]});s.ring.material=done?s.ring.userData.selectedMaterial:gold;}
  breathCard.userData.draw(state.breathCompleted?'A little more space. A little more you.':state.breathing?breathLabel(state):'Breathe with the light');
- reflectCard.userData.draw(ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
- if(state.reflectionOpen) messageCard.userData.draw(['YOUR GROUNDING SESSION IS COMPLETE','Take this quiet moment into your day.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
+ reflectCard.userData.draw(state.reflectionOpen?'11:11 · Your quiet moment':ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
+ if(state.reflectionOpen) messageCard.userData.draw(['A QUIET MOMENT, YOURS','You are allowed to begin again.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
 }
 async function visitMeltdownRoom(){
  if(world.renderer.xr.isPresenting)await world.renderer.xr.getSession()?.end();
