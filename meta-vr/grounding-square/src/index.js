@@ -1,6 +1,7 @@
 import { World, RayInteractable, Pressed, createComponent, createSystem, Types } from '@iwsdk/core';
 import * as T from 'three';
 import { buildWoodland } from './woodland.js';
+import { createHandResponse } from './hand-response.js';
 import { SYMBOLS, createJourney, beginBreathing, advanceBreathing, collect, canReflect, openReflection, resetJourney, breathLabel } from './journey.mjs';
 
 const $ = id => document.getElementById(id);
@@ -14,7 +15,7 @@ const groundingCues=['Notice one thing you can see.','Feel the support beneath y
 let elapsed = 0, lastLabel = '', audioContext, audioGain, soundOn = false;
 const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [], lightTrails = [];
 const palette = [0xcbdde5, 0xa396c4, 0xe0b77b, 0x83c9ca];
-const orbitals=[];const handGlows=[];
+const orbitals=[];const handGlows=[];let handResponse,handPulseUntil=0;
 let randomSeed = 42;
 function rnd() { randomSeed = (randomSeed * 1664525 + 1013904223) >>> 0; return randomSeed / 4294967296; }
 function mat(color, roughness = .9) { return new T.MeshStandardMaterial({ color, roughness }); }
@@ -95,6 +96,7 @@ async function visitMeltdownRoom(){
 }
 function tone(index=0) {if(!soundOn||!audioContext)return;const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=[261.63,329.63,392,523.25][index%4];g.gain.setValueAtTime(0,audioContext.currentTime);g.gain.linearRampToValueAtTime(.08,audioContext.currentTime+.03);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+1.5);o.connect(g).connect(audioGain);o.start();o.stop(audioContext.currentTime+1.6);}
 function execute(code) {
+ if(code>=1&&code<=16)handPulseUntil=elapsed+1.2;
  if(code>=1&&code<=4){if(collect(state,SYMBOLS[code-1])){groundingCue=groundingCues[code-1];tone(code-1);}}
  else if(code===10){if(state.breathing)state.breathing=false;else beginBreathing(state);}
  else if(code===11){if(openReflection(state)){tone(3);if(!world.renderer.xr.isPresenting&&!$('reflection').open)$('reflection').showModal();}}
@@ -113,6 +115,7 @@ class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) 
  if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const orbit of orbitals)orbit.mesh.rotation.z+=delta*orbit.speed;for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
  if(!world.renderer.xr.isPresenting){for(const [name,s] of symbols){const p=s.hit.position.clone().project(world.camera),b=document.querySelector('[data-symbol="'+name+'"]');b.style.left=((p.x+1)*innerWidth/2)+'px';b.style.top=((1-p.y)*innerHeight/2)+'px';}}
  for(const h of handGlows)h.light.intensity=state.collected.length?2.3:1.2;
+ handResponse?.update(Math.max(0,(handPulseUntil-elapsed)/1.2));
  }
 }
 function musicChord(){
@@ -128,22 +131,22 @@ function musicChord(){
 }
 async function sound(){try{if(!audioContext){audioContext=new AudioContext();audioGain=audioContext.createGain();audioGain.gain.value=.35;audioGain.connect(audioContext.destination);const buffer=audioContext.createBuffer(1,audioContext.sampleRate*3,audioContext.sampleRate);const data=buffer.getChannelData(0);let n=0;for(let i=0;i<data.length;i++){n=(n+Math.random()*.04-.02)/1.02;data[i]=n;}const stream=audioContext.createBufferSource();stream.buffer=buffer;stream.loop=true;const filter=audioContext.createBiquadFilter();filter.type='lowpass';filter.frequency.value=750;stream.connect(filter).connect(audioGain);stream.start();setInterval(musicChord,6000);}soundOn=!soundOn;if(soundOn)musicChord();await audioContext.resume();audioGain.gain.setTargetAtTime(soundOn?.35:0,audioContext.currentTime,.2);$('sound').textContent=soundOn?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundOn));refresh();}catch{$('sound').textContent='Sound unavailable';}}
 async function start(){
- world=await World.create($('scene-container'),{xr:{sessionMode:'immersive-vr',offer:'none',features:{handTracking:true}},input:{canvasPointerEvents:true},features:{enableLocomotion:false,enableGrabbing:false}});world.registerComponent(Action);world.camera.fov=58;world.camera.position.set(0,2.25,4.8);world.camera.rotation.x=-.035;world.camera.updateProjectionMatrix();glowMap=glowTexture();garden();buildActivities();
+ world=await World.create($('scene-container'),{xr:{sessionMode:'immersive-vr',offer:'none',features:{handTracking:true}},input:{canvasPointerEvents:true},features:{enableLocomotion:false,enableGrabbing:false}});world.registerComponent(Action);function fitView(){if(world.renderer.xr.isPresenting)return;const portrait=innerWidth<600;world.camera.fov=portrait?70:58;world.camera.aspect=innerWidth/innerHeight;world.camera.position.set(0,portrait?2.5:2.25,portrait?17:4.8);world.camera.rotation.set(-.035,0,0);world.camera.updateProjectionMatrix();}fitView();window.addEventListener('resize',fitView);glowMap=glowTexture();garden();buildActivities();
  // Batch small atmospheric sparks into one draw call; retain the large animated glows.
  const sparks=[];world.scene.traverse(o=>{if(o.isSprite&&o.scale.x<.3)sparks.push(o);});const positions=[],colors=[];for(const o of sparks){positions.push(o.position.x,o.position.y,o.position.z);colors.push(o.material.color.r,o.material.color.g,o.material.color.b);o.removeFromParent();}const sparkGeometry=new T.BufferGeometry();sparkGeometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));sparkGeometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));world.scene.add(new T.Points(sparkGeometry,new T.PointsMaterial({size:.075,map:glowMap,transparent:true,vertexColors:true,depthWrite:false,blending:T.AdditiveBlending,opacity:.48})));
- world.registerSystem(JourneySystem);
+ handResponse=createHandResponse(world,glowMap);world.registerSystem(JourneySystem);
  for(let i=0;i<2;i++){const hand=world.renderer.xr.getHand(i),light=new T.PointLight(0x55faff,1.2,2,2);hand.add(light);const glow=new T.Sprite(new T.SpriteMaterial({map:glowMap,color:0x55faff,transparent:true,opacity:.22,blending:T.AdditiveBlending,depthWrite:false}));glow.scale.set(.27,.27,.27);hand.add(glow);handGlows.push({light,glow});}
  // Desktop buttons and actual IWSDK ray/pinch targets share this one journey.
  $('breathe').onclick=()=>execute(10);$('reflect').onclick=()=>execute(11);$('restart').onclick=()=>execute(12);$('motion').onclick=()=>execute(13);$('sound').onclick=sound;
  document.querySelectorAll('[data-symbol]').forEach((b,i)=>{b.onclick=()=>execute(i+1);b.disabled=false;});$('breathe').disabled=false;$('restart').disabled=false;
  $('close').onclick=()=>$('reflection').close();$('done').onclick=()=>execute(12);$('visit').onclick=visitMeltdownRoom;
  $('launch').onclick=async()=>{try{if(!navigator.xr||!await navigator.xr.isSessionSupported('immersive-vr')){$('support').textContent='VR requires a WebXR headset browser. Everything here is playable with mouse, touch or keyboard.';return;}await world.launchXR();}catch(e){$('support').textContent='VR could not start: '+e.message;}};
- world.renderer.xr.addEventListener('sessionstart',()=>{document.body.classList.add('xr-active');$('reflection').close();refresh();});world.renderer.xr.addEventListener('sessionend',()=>{document.body.classList.remove('xr-active');for(const t of interactiveMeshes)if(t.code>=11)t.object.visible=false;refresh();});
+ world.renderer.xr.addEventListener('sessionstart',()=>{document.body.classList.add('xr-active');$('reflection').close();refresh();});world.renderer.xr.addEventListener('sessionend',()=>{document.body.classList.remove('xr-active');fitView();for(const t of interactiveMeshes)if(t.code>=11)t.object.visible=false;refresh();});
  $('loading').hidden=true;refresh();
  // Small look-around range avoids forced movement and keeps targets in reach.
  const canvas=world.renderer.domElement;let pointer=null,yaw=0,pitch=0;canvas.addEventListener('pointerdown',e=>{pointer={x:e.clientX,y:e.clientY,yaw,pitch};});canvas.addEventListener('pointermove',e=>{if(!pointer||state.reducedMotion||world.renderer.xr.isPresenting)return;const dx=e.clientX-pointer.x,dy=e.clientY-pointer.y;if(Math.hypot(dx,dy)<7)return;yaw=T.MathUtils.clamp(pointer.yaw-dx*.0007,-.22,.22);pitch=T.MathUtils.clamp(pointer.pitch-dy*.0005,-.1,.1);world.camera.rotation.set(pitch,yaw,0,'YXZ');});window.addEventListener('pointerup',()=>pointer=null);
  // Read-only diagnostics support reproducible browser tests without completing activities for them.
- window.grounding={snapshot:()=>({...state,collected:[...state.collected],xr:world.renderer.xr.isPresenting,drawCalls:world.renderer.info.render.calls}),targets:()=>interactiveMeshes.map(({object,code})=>{const p=object.getWorldPosition(new T.Vector3()).project(world.camera);return {code,x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2};})};
+ window.grounding={snapshot:()=>({...state,collected:[...state.collected],xr:world.renderer.xr.isPresenting,drawCalls:world.renderer.info.render.calls,visibleHandJoints:handResponse?.visibleJoints||0}),targets:()=>interactiveMeshes.map(({object,code})=>{const p=object.getWorldPosition(new T.Vector3()).project(world.camera);return {code,x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2};})};
 }
 start().catch(e=>{console.error(e);$('loading').textContent='The 3D sanctuary could not load. Please reload in a WebGL-capable browser.';$('support').textContent=e.message;});
 
