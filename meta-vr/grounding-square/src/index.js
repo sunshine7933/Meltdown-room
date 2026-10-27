@@ -41,7 +41,7 @@ let glowMap;
 function halo(color,size,x,y,z) {const s=new T.Sprite(new T.SpriteMaterial({map:glowMap,color,transparent:true,depthWrite:false,blending:T.AdditiveBlending,opacity:.6}));s.scale.set(size,size,1);add(s,x,y,z);return s;}
 function garden(){const environment=buildWoodland(world,{add,mesh,halo,mat});water=environment.water;completionGlow=environment.completionGlow;motes.push(...environment.motes);falls.push(...environment.falls);}
 function celestial(index) {
- const positions=[[-3.4,2.3,-5.7],[-.25,4.1,-7.8],[4.5,2.3,-7.2],[1.8,1.8,-3.7]],p=positions[index];
+ const positions=[[-3.4,2.3,-5.7],[-.25,3.3,-6.8],[5.1,2.7,-4.8],[1.8,1.8,-3.7]],p=positions[index];
  const group=new T.Group();add(group,...p);
  const material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:1.5,metalness:.25,roughness:.12,transparent:true,opacity:.65});
  const signalCore=new T.Mesh(new T.SphereGeometry(.27,40,28),material);group.add(signalCore);
@@ -146,6 +146,7 @@ async function start(){
  window.grounding={snapshot:()=>({...state,collected:[...state.collected],xr:world.renderer.xr.isPresenting,drawCalls:world.renderer.info.render.calls}),targets:()=>interactiveMeshes.map(({object,code})=>{const p=object.getWorldPosition(new T.Vector3()).project(world.camera);return {code,x:(p.x+1)*innerWidth/2,y:(1-p.y)*innerHeight/2};})};
 }
 start().catch(e=>{console.error(e);$('loading').textContent='The 3D sanctuary could not load. Please reload in a WebGL-capable browser.';$('support').textContent=e.message;});
+
 
 
 
