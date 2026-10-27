@@ -88,7 +88,7 @@ function refresh() {
  const ready=canReflect(state);$('breathe').textContent=state.breathCompleted?'Breathing complete ✓':state.breathing?'Pause breathing':'Begin breathing · 16 sec';
  $('status').textContent=breathLabel(state);if(groundingCue)document.querySelector('.description').textContent=groundingCue+' '+(orbReflections[SYMBOLS.indexOf(activeReflectionName)]?.affirmation||'');$('breath-progress').value=state.breathElapsed;$('count').textContent=state.collected.length+' of 4 lights gathered';$('reflect').disabled=!ready;$('reflection-label').textContent=ready?'Open your reflection':'Breathe & gather to unlock';
  $('motion').setAttribute('aria-pressed',String(state.reducedMotion));$('motion').textContent=state.reducedMotion?'Motion reduced':'Reduce motion';
- document.querySelectorAll('[data-symbol]').forEach(b=>{const done=state.collected.includes(b.dataset.symbol);b.setAttribute('aria-pressed',String(done));});
+ document.querySelectorAll('[data-symbol]').forEach(b=>{const done=state.collected.includes(b.dataset.symbol);b.setAttribute('aria-pressed',String(done));b.querySelector('small')?.toggleAttribute('hidden',b.dataset.symbol===activeReflectionName&&!state.reflectionOpen);});
  if(!world)return;const immersive=world.renderer.xr.isPresenting;for(const target of interactiveMeshes)if(target.code>=11)target.object.visible=immersive&&(target.code!==15||state.reflectionOpen);messageCard.visible=(immersive||state.reflectionOpen)&&!state.reflectionOpen;finalReflectionCard.visible=immersive&&state.reflectionOpen;
  completionGlow.material.opacity=state.reflectionOpen?.4:ready?.18:0;
  for(const trail of lightTrails)trail.mesh.visible=state.collected.includes(SYMBOLS[trail.index]);
