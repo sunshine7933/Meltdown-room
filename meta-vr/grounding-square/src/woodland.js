@@ -1,134 +1,33 @@
-// The sanctuary is real, lightweight scene geometry, including in immersive mode.
 import * as T from 'three';
 
-export function buildWoodland(world, {add, mesh, halo, mat}) {
-  let seed=771;
-  const random=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
-  const stone=mat(0x71817b), darkStone=mat(0x344c49), moss=mat(0x3f6146);
-  const bark=mat(0x5a4435), brass=new T.MeshStandardMaterial({color:0xc7a775,metalness:.65,roughness:.4});
-  function surfaceTexture(isBark){
-    const c=document.createElement('canvas');c.width=c.height=256;const g=c.getContext('2d');g.fillStyle=isBark?'#b8a18a':'#c2c8b7';g.fillRect(0,0,256,256);
-    for(let i=0;i<6500;i++){const n=80+random()*120;g.fillStyle=`rgba(${n},${n},${n},${isBark?.2:.3})`;g.fillRect(random()*256,random()*256,isBark?1:1+random()*4,isBark?8+random()*45:1+random()*3);}
-    const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return t;
-  }
-  bark.map=surfaceTexture(true);stone.map=darkStone.map=moss.map=surfaceTexture(false);
-  world.scene.fog=new T.FogExp2(0x647d7c,.025);
-  world.renderer.setPixelRatio(Math.min(devicePixelRatio,1.5));
-  world.renderer.toneMapping=T.ACESFilmicToneMapping;
-  world.renderer.toneMappingExposure=1.05;
-  // A continuous dusk sky, rather than a flat background or a photographic backdrop.
-  const sky=mesh(new T.SphereGeometry(120,32,20),new T.ShaderMaterial({side:T.BackSide,depthWrite:false,uniforms:{},vertexShader:'varying vec3 direction;void main(){direction=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`varying vec3 direction;
-    void main(){vec3 d=normalize(direction);float h=smoothstep(-.08,.75,d.y);
-    vec3 c=mix(vec3(.70,.65,.54),vec3(.075,.17,.24),h);
-    float sun=pow(max(0.,dot(d,normalize(vec3(-.5,.18,-1.)))),18.);
-    c+=vec3(.26,.14,.055)*sun;gl_FragColor=vec4(c,1.);}`}));
-  sky.frustumCulled=false;
-  add(new T.HemisphereLight(0xe5e3ce,0x294338,2));
-  add(new T.DirectionalLight(0xffdfac,3.1),-7,10,-5);
-  add(new T.DirectionalLight(0x9edbd9,1.3),5,5,-10);
-
-  // Ground variation is painted procedurally once; there are no external asset downloads.
-  const canvas=document.createElement('canvas');canvas.width=canvas.height=512;
-  const ctx=canvas.getContext('2d');ctx.fillStyle='#496047';ctx.fillRect(0,0,512,512);
-  for(let i=0;i<11000;i++){const v=35+random()*50;ctx.fillStyle=`rgba(${v},${v+18},${v-8},.22)`;ctx.fillRect(random()*512,random()*512,1+random()*5,1+random()*5);}
-  const groundMap=new T.CanvasTexture(canvas);groundMap.colorSpace=T.SRGBColorSpace;groundMap.wrapS=groundMap.wrapT=T.RepeatWrapping;groundMap.repeat.set(12,12);
-  const ground=mesh(new T.PlaneGeometry(160,160,24,24),new T.MeshStandardMaterial({map:groundMap,roughness:1}),0,-.13,-15);ground.rotation.x=-Math.PI/2;
-  const p=ground.geometry.attributes.position;
-  for(let i=0;i<p.count;i++){const x=p.getX(i),z=-p.getY(i)-15;const distance=Math.hypot(x,z+4);p.setZ(i,distance<10?0:Math.sin(x*.17)*Math.cos(z*.13)*1.3);}
-  ground.geometry.computeVertexNormals();
-
-  // Misty ridgelines frame the clearing and create depth behind the trees.
-  for(let layer=0;layer<3;layer++){
-    const g=new T.PlaneGeometry(110,18,40,1),positions=g.attributes.position;
-    for(let i=0;i<positions.count;i++){const x=positions.getX(i);if(positions.getY(i)>0)positions.setY(i,3+Math.sin(x*.12+layer)*2.8+Math.sin(x*.29)*1.5);else positions.setY(i,-4);}
-    mesh(g,new T.MeshBasicMaterial({color:[0x607b78,0x486862,0x365a51][layer],side:T.DoubleSide}),0,0,-64+layer*12);
-  }
-
-  // Instanced fern-shaped foliage replaces the oversized solid polygon crowns.
-  const leafCanvas=document.createElement('canvas');leafCanvas.width=leafCanvas.height=128;
-  const lc=leafCanvas.getContext('2d');
-  for(let i=0;i<15;i++){
-    const x=64+(random()-.5)*85,y=10+random()*104,w=8+random()*12;
-    lc.save();lc.translate(x,y);lc.rotate((random()-.5)*2);lc.fillStyle='#ffffff';lc.beginPath();lc.ellipse(0,0,w,w*.35,0,0,Math.PI*2);lc.fill();lc.restore();
-  }
-  const leafMap=new T.CanvasTexture(leafCanvas);
-  const foliageMaterial=new T.MeshStandardMaterial({map:leafMap,alphaTest:.45,color:0x5f8050,side:T.DoubleSide,roughness:1});
-  const leafTransforms=[],trunkTransforms=[],grassTransforms=[],treeBases=[];
-  const dummy=new T.Object3D();
-  function cylinderBetween(a,b,r1,r2){const delta=new T.Vector3().subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);dummy.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),delta.clone().normalize());dummy.scale.set(r1,delta.length(),r2);dummy.updateMatrix();trunkTransforms.push(dummy.matrix.clone());}
-  for(let i=0;i<32;i++){
-    const side=i%2?-1:1,x=side*(5.4+random()*16),z=-3-random()*33,h=6+random()*5;
-    treeBases.push([x,z]);
-    cylinderBetween(new T.Vector3(x,0,z),new T.Vector3(x+.25,h,z),.15,.15);
-    for(let b=0;b<5;b++){
-      const angle=b*2.4+i,end=new T.Vector3(x+Math.cos(angle)*1.7,h*.65+random()*1.4,z+Math.sin(angle)*1.7);
-      cylinderBetween(new T.Vector3(x,h*.52,z),end,.055,.055);
-      for(let j=0;j<12;j++){
-        dummy.position.copy(end).add(new T.Vector3((random()-.5)*3,(random()-.5)*1.8,(random()-.5)*3));
-        dummy.rotation.set(random()*Math.PI,random()*Math.PI,random()*Math.PI);dummy.scale.setScalar(1.1+random()*.9);dummy.updateMatrix();leafTransforms.push(dummy.matrix.clone());
-      }
-    }
-  }
-  const trunks=new T.InstancedMesh(new T.CylinderGeometry(.65,1,1,7),bark,trunkTransforms.length);trunkTransforms.forEach((m,i)=>trunks.setMatrixAt(i,m));add(trunks);
-  const crowns=new T.InstancedMesh(new T.PlaneGeometry(1,1),foliageMaterial,leafTransforms.length);leafTransforms.forEach((m,i)=>{crowns.setMatrixAt(i,m);crowns.setColorAt(i,new T.Color().setHSL(.22+random()*.08,.24,.35+random()*.2));});add(crowns);
-  const shadeCanvas=document.createElement('canvas');shadeCanvas.width=shadeCanvas.height=64;const sc=shadeCanvas.getContext('2d'),gradient=sc.createRadialGradient(32,32,0,32,32,32);gradient.addColorStop(0,'rgba(8,24,18,.55)');gradient.addColorStop(1,'rgba(8,24,18,0)');sc.fillStyle=gradient;sc.fillRect(0,0,64,64);
-  const shades=new T.InstancedMesh(new T.PlaneGeometry(1,1),new T.MeshBasicMaterial({map:new T.CanvasTexture(shadeCanvas),transparent:true,depthWrite:false}),treeBases.length);
-  treeBases.forEach(([x,z],i)=>{dummy.position.set(x,-.1,z);dummy.rotation.set(-Math.PI/2,0,0);dummy.scale.set(4,4,1);dummy.updateMatrix();shades.setMatrixAt(i,dummy.matrix);});add(shades);
-
-  // Dense meadow edges use one draw call, leaving the stone terrace and pool clear.
-  const blade=new T.PlaneGeometry(.12,.65,1,2),bp=blade.attributes.position;
-  for(let i=0;i<bp.count;i++)if(bp.getY(i)>.3)bp.setX(i,0);
-  for(let i=0;i<3200;i++){
-    const x=(random()-.5)*45,z=5-random()*43;
-    if(Math.hypot(x,z-.7)<4.5||Math.hypot((x-1)/1.15,(z+5.8)/.82)<4.3||Math.abs(x-1)<2.6&&z<-8&&z>-12)continue;
-    dummy.position.set(x,.16,z);dummy.rotation.set(0,random()*Math.PI,(random()-.5)*.4);dummy.scale.set(.7+random()*.6,.5+random()*.6,1);dummy.updateMatrix();grassTransforms.push(dummy.matrix.clone());
-  }
-  const grasses=new T.InstancedMesh(blade,new T.MeshStandardMaterial({color:0x748d54,side:T.DoubleSide,roughness:1}),grassTransforms.length);grassTransforms.forEach((m,i)=>{grasses.setMatrixAt(i,m);grasses.setColorAt(i,new T.Color().setHSL(.19+random()*.1,.32,.32+random()*.25));});add(grasses);
-
-  // A quiet turquoise pool with irregular, moving reflections instead of target-like rings.
-  const water=new T.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:'varying vec3 p;varying vec3 wp;void main(){p=position;wp=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(wp,1.);}',fragmentShader:`varying vec3 p;varying vec3 wp;uniform float time;
-    float hash(vec2 q){return fract(sin(dot(q,vec2(127.1,311.7)))*43758.5453);}
-    float noise(vec2 q){vec2 i=floor(q),f=fract(q);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1.,0.)),f.x),mix(hash(i+vec2(0.,1.)),hash(i+1.),f.x),f.y);}
-    void main(){vec2 uv=wp.xz;float n=noise(uv*1.8+vec2(time*.08,-time*.11));float fine=noise(uv*10.+n+time*.14);
-    vec3 c=mix(vec3(.025,.18,.19),vec3(.15,.43,.39),n);
-    float reflection=pow(max(0.,sin(uv.x*3.6+sin(uv.y*2.3+time*.22)+n*4.)),12.);
-    c+=vec3(.42,.37,.21)*reflection*.38;c+=vec3(.3,.53,.45)*pow(fine,8.)*.35;
-    float foam=1.-smoothstep(.15,.7,length(wp.xz-vec2(1.,-7.8)));c+=foam*vec3(.16,.24,.22);gl_FragColor=vec4(c,1.);}`});
-  const pool=mesh(new T.CircleGeometry(3.55,80),water,1,.02,-5.8);pool.rotation.x=-Math.PI/2;pool.scale.y=.82;
-  // Broad rounded banks and mossy cascade stones; no sharp pyramid ground scatter.
-  const rockGeometry=new T.IcosahedronGeometry(1,2);
-  for(let i=0;i<42;i++){
-    const a=i*Math.PI*2/42,r=3.65+random()*.25;
-    const rock=mesh(rockGeometry,i%3?stone:moss,1+Math.cos(a)*r,.04,-5.8+Math.sin(a)*r*.82);
-    rock.scale.set(.32+random()*.24,.13+random()*.2,.28+random()*.2);rock.rotation.set(random()*.5,random()*6,random()*.2);
-  }
-  for(let i=0;i<14;i++){
-    const x=-.6+random()*3.4,z=-8.9-random()*.5;
-    const rock=mesh(rockGeometry,i%3?darkStone:moss,x,.35+random()*1.4,z);rock.scale.set(.65+random()*.45,.5+random()*.7,.55);
-  }
-  const falls=[];
-  const cascadeMaterial=new T.ShaderMaterial({transparent:true,side:T.DoubleSide,depthWrite:false,uniforms:water.uniforms,vertexShader:'varying vec2 uvP;void main(){uvP=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`varying vec2 uvP;uniform float time;void main(){float streak=.5+.5*sin(uvP.x*83.+sin(uvP.y*14.-time*2.)*1.5);float foam=.5+.5*sin(uvP.y*47.-time*5.+uvP.x*8.);float edge=smoothstep(0.,.13,uvP.x)*smoothstep(0.,.13,1.-uvP.x);gl_FragColor=vec4(mix(vec3(.35,.65,.61),vec3(.85,.91,.82),streak*.6+foam*.2),edge*(.32+streak*.28));}`});
-  mesh(new T.PlaneGeometry(1.4,2.6,10,16),cascadeMaterial,1,1.4,-8.45);
-  mesh(new T.PlaneGeometry(.7,1.35,8,10),cascadeMaterial,1.5,.7,-7.95);
-  for(let i=0;i<7;i++){const mist=halo(0xd8e7d9,.8+random()*.7,.5+random()*1.2,.15+random()*.25,-7.9+random()*.3);mist.material.opacity=.1;}
-
-  // Limestone terrace, warm oak bridge, and brass-lined lanterns.
-  mesh(new T.CylinderGeometry(4.2,4.3,.2,80),mat(0x8d9784),0,-.12,.7);
-  for(const radius of [3.95,4.12]){const ring=mesh(new T.TorusGeometry(radius,.014,5,80),brass,0,-.012,.7);ring.rotation.x=Math.PI/2;}
-  for(let i=0;i<15;i++){const plank=mesh(new T.BoxGeometry(1.15,.11,.28),mat(i%2?0x77634b:0x8c7658),1,.06,-1.5-i*.39);plank.rotation.y=Math.sin(i*.45)*.035;}
-  for(const [x,z] of [[-3.3,-2],[4.5,-3],[-3,1.8],[4,-7.1]]){
-    mesh(new T.CylinderGeometry(.2,.25,.12,16),stone,x,.03,z);
-    mesh(new T.CylinderGeometry(.1,.12,.38,8),new T.MeshStandardMaterial({color:0xffd590,emissive:0xffbb59,emissiveIntensity:2.5}),x,.3,z);
-    for(let i=0;i<4;i++){const a=i*Math.PI/2;mesh(new T.CylinderGeometry(.012,.012,.4,4),brass,x+Math.cos(a)*.13,.31,z+Math.sin(a)*.13);}
-    mesh(new T.ConeGeometry(.23,.14,8),brass,x,.56,z);halo(0xffc981,1.8,x,.3,z);
-  }
-  // The open gateway is deliberately light and sculptural so the waterfall stays visible.
-  const arch=mesh(new T.TorusGeometry(2.05,.055,8,64,Math.PI),brass,1.1,3.2,-8.7);
-  for(const x of [-.95,3.15])mesh(new T.CylinderGeometry(.055,.055,3.2,8),brass,x,1.6,-8.7);
-  for(let i=0;i<11;i++){const a=i*Math.PI/10;halo(0xffd49a,.38,1.1+Math.cos(a)*2.05,3.2+Math.sin(a)*2.05,-8.65);}
-  const completionGlow=halo(0xffdba2,7,1.1,3.1,-8.9);completionGlow.material.opacity=0;
-  mesh(new T.SphereGeometry(.58,24,16),new T.MeshBasicMaterial({color:0xffe9be}),-5.3,7.5,-29);halo(0xffdca7,7,-5.3,7.5,-29.2);
-  const motes=[];
-  for(let i=0;i<24;i++){const x=(random()-.5)*16,y=.4+random()*4,z=-3-random()*15;const mote=halo(0xffe3a7,.07+random()*.07,x,y,z);motes.push({mesh:mote,x,y,z,seed:random()*8});}
-  return {water,falls,motes,completionGlow};
+// Real spatial geometry stays immersive in WebXR; no photographic backdrop.
+export function buildWoodland(world,{add,mesh,halo,mat}) {
+ let seed=771;const r=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296;};
+ world.scene.fog=new T.FogExp2(0x18283d,.021);world.renderer.setPixelRatio(Math.min(devicePixelRatio,1.7));world.renderer.toneMapping=T.ACESFilmicToneMapping;world.renderer.toneMappingExposure=1.1;
+ mesh(new T.SphereGeometry(110,40,24),new T.ShaderMaterial({side:T.BackSide,depthWrite:false,vertexShader:'varying vec3 p;void main(){p=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`varying vec3 p;void main(){vec3 d=normalize(p);float h=smoothstep(-.1,.7,d.y);vec3 c=mix(vec3(.29,.19,.29),vec3(.025,.055,.15),h);c+=vec3(.13,.035,.18)*pow(max(0.,dot(d,normalize(vec3(.1,.4,-1.)))),7.);gl_FragColor=vec4(c,1.);}`}));
+ add(new T.HemisphereLight(0xabc4e8,0x031410,1.55));add(new T.DirectionalLight(0xa3dcf7,1.6),-7,12,2);add(new T.DirectionalLight(0xffae65,1.8),8,5,-12);
+ const rockMat=mat(0x283c42),moss=mat(0x274438),bark=mat(0x292b26),gold=new T.MeshStandardMaterial({color:0xd49d59,metalness:.7,roughness:.28});
+ const c=document.createElement('canvas');c.width=c.height=256;const ctx=c.getContext('2d');ctx.fillStyle='#8a9692';ctx.fillRect(0,0,256,256);for(let i=0;i<14000;i++){let n=50+r()*150;ctx.fillStyle=`rgba(${n},${n},${n},.28)`;ctx.fillRect(r()*256,r()*256,1+r()*6,1+r()*9);}const tex=new T.CanvasTexture(c);tex.colorSpace=T.SRGBColorSpace;rockMat.map=moss.map=bark.map=tex;
+ const rockGeo=new T.IcosahedronGeometry(1,3);const rp=rockGeo.attributes.position;for(let i=0;i<rp.count;i++){const x=rp.getX(i),y=rp.getY(i),z=rp.getZ(i),n=1+.11*Math.sin(x*19+y*8)*Math.sin(y*16+z*13)+.05*Math.sin(z*32+x*20);rp.setXYZ(i,x*n,y*n,z*n);}rockGeo.computeVertexNormals();
+ function rock(x,y,z,sx,sy,sz){const o=mesh(rockGeo,r()>.28?rockMat:moss,x,y,z);o.scale.set(sx,sy,sz);o.rotation.set(r()*.5,r()*6,r()*.4);return o;}
+ mesh(new T.CylinderGeometry(32,34,1,72),mat(0x0b1b20),0,-1,-12);
+ for(let i=0;i<65;i++){const side=i%2?-1:1;rock(side*(side>0?9+r()*9:5+r()*9)-2,1+r()*4.5,-15-r()*8,1+r()*1.8,2+r()*3,1+r()*2);}
+ for(let i=0;i<35;i++){const a=r()*Math.PI*2;rock(Math.cos(a)*11,-.1+r()*.3,-6+Math.sin(a)*10,.6+r()*1.5,.3+r()*.65,.7+r()*1.5);}
+ const water=new T.ShaderMaterial({uniforms:{time:{value:0}},vertexShader:'varying vec3 wp;void main(){wp=(modelMatrix*vec4(position,1.)).xyz;gl_Position=projectionMatrix*viewMatrix*vec4(wp,1.);}',fragmentShader:`varying vec3 wp;uniform float time;float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float noise(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(hash(i),hash(i+vec2(1,0)),f.x),mix(hash(i+vec2(0,1)),hash(i+vec2(1)),f.x),f.y);}void main(){vec2 p=wp.xz;float n=noise(p*2.+vec2(time*.07,-time*.13));float rip=pow(noise(vec2(p.x*2.8,p.y*26.-time*.55)+n*1.7),4.);float cyan=exp(-pow((p.x+2.6+sin(p.y*2.)*.7)/2.9,2.));float violet=exp(-pow((p.x-.4+sin(p.y*1.2)*.5)/.9,2.));float amber=exp(-pow((p.x-5.+sin(p.y*2.)*.8)/1.3,2.));vec3 col=vec3(.012,.075,.11)+vec3(.03,.38,.4)*cyan*(.15+rip)+vec3(.3,.08,.52)*violet*rip+vec3(.5,.21,.05)*amber*rip;float ring=pow(.5+.5*sin(length(p-vec2(2.,-2.))*9.-time*1.5+n*1.4),20.)*exp(-length(p-vec2(2.,-2.))*.6);col+=vec3(.03,.18,.19)*ring*.4;gl_FragColor=vec4(col,1.);}`});
+ const pool=mesh(new T.CircleGeometry(14,100),water,0,.02,-6);pool.rotation.x=-Math.PI/2;
+ const cascade=new T.ShaderMaterial({transparent:true,side:T.DoubleSide,depthWrite:false,blending:T.AdditiveBlending,uniforms:water.uniforms,vertexShader:'varying vec2 v;void main(){v=uv;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.);}',fragmentShader:`varying vec2 v;uniform float time;float h(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}float n(vec2 p){vec2 i=floor(p),f=fract(p);f=f*f*(3.-2.*f);return mix(mix(h(i),h(i+vec2(1,0)),f.x),mix(h(i+vec2(0,1)),h(i+1.),f.x),f.y);}void main(){float broad=n(vec2(v.x*24.,v.y*9.+time*.9));float fine=n(vec2(v.x*160.,v.y*38.+time*3.));float churn=n(vec2(v.x*63.+broad*2.,v.y*18.+time*1.6));float e=smoothstep(.01,.09,v.x+churn*.05)*smoothstep(.01,.09,1.-v.x-churn*.05);vec3 c=mix(vec3(.015,.13,.19),vec3(.25,.9,.97),broad*.55+fine*.25+churn*.3);gl_FragColor=vec4(c,e*(.5+fine*.4));}`});
+ mesh(new T.PlaneGeometry(4.2,7.5,36,40),cascade,-3,4,-13);mesh(new T.PlaneGeometry(2.4,2.4,20,20),cascade,-2.5,1.25,-11.8);halo(0x0bffff,9,-3,3.8,-13.3).material.opacity=.22;add(new T.PointLight(0x27efef,34,17,2),-3,2,-10);
+ const falls=[],motes=[];for(let i=0;i<24;i++){const x=-6+r()*9,y=.2+r()*1.3,z=-10+r()*4;const mist=halo(0x7ddadf,2+r()*3,x,y,z);mist.material.opacity=.035+r()*.05;falls.push({mesh:mist,y,phase:r()*6});}
+ // Nested warm arches create an unmistakable entrance on the right bank.
+ const portal=new T.Group();add(portal,5,0,-11.5);const glowMat=new T.MeshBasicMaterial({color:0xffbd69,transparent:true,opacity:.85});
+ for(let i=0;i<5;i++){const z=-i*.63,w=1.65-i*.12,h=3.2;const curve=new T.CatmullRomCurve3([new T.Vector3(-w,0,z),new T.Vector3(-w,h*.62,z),new T.Vector3(-w*.7,h,z),new T.Vector3(0,h+1.1,z),new T.Vector3(w*.7,h,z),new T.Vector3(w,h*.62,z),new T.Vector3(w,0,z)]);portal.add(new T.Mesh(new T.TubeGeometry(curve,70,.035,6,false),glowMat));const frame=new T.Mesh(new T.TubeGeometry(curve,70,.15,8,false),rockMat);frame.position.z=-.09;portal.add(frame);}
+ mesh(new T.PlaneGeometry(2.1,4),new T.MeshBasicMaterial({color:0xffb462,transparent:true,opacity:.23,side:T.DoubleSide}),5,2,-14.5);halo(0xff9f43,6,5,2,-13.5).material.opacity=.32;add(new T.PointLight(0xff9b38,45,12,2),5,2.5,-10);for(let i=0;i<8;i++)mesh(new T.BoxGeometry(3.8-i*.14,.15,.55),rockMat,5,.05+i*.14,-8.3-i*.5);
+ const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#ffe3b1';g.font='500 43px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(3.8,.48),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false})),5,4.9,-11.25);const completionGlow=halo(0xffd39c,8,5,2,-12.5);completionGlow.material.opacity=0;
+ // Dense canopy uses instancing, rather than solid low-poly tree crowns.
+ const lc=document.createElement('canvas');lc.width=lc.height=128;const lg=lc.getContext('2d');lg.fillStyle='white';for(let i=0;i<22;i++){lg.save();lg.translate(15+r()*100,10+r()*110);lg.rotate(r()*6);lg.beginPath();lg.ellipse(0,0,9+r()*7,3,0,0,Math.PI*2);lg.fill();lg.restore();}const leafMat=new T.MeshStandardMaterial({map:new T.CanvasTexture(lc),alphaTest:.4,color:0x466341,side:T.DoubleSide,roughness:1});const transforms=[],branches=[],dummy=new T.Object3D();
+ function branch(a,b,rad){const d=new T.Vector3().subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);dummy.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.clone().normalize());dummy.scale.set(rad,d.length(),rad);dummy.updateMatrix();branches.push(dummy.matrix.clone());}
+ for(let i=0;i<50;i++){let x=(i%2?-1:1)*(7+r()*17),z=-2-r()*34,h=7+r()*9;branch(new T.Vector3(x,0,z),new T.Vector3(x*.9,h,z),.23+r()*.17);for(let j=0;j<6;j++){let end=new T.Vector3(x+Math.cos(j*2+i)*2.6,h*.7+r()*2,z+Math.sin(j*2+i)*2.5);branch(new T.Vector3(x*.94,h*.6,z),end,.055);for(let k=0;k<10;k++){dummy.position.copy(end).add(new T.Vector3((r()-.5)*4,(r()-.5)*2,(r()-.5)*4));dummy.rotation.set(r()*3,r()*6,r()*3);dummy.scale.setScalar(1+r());dummy.updateMatrix();transforms.push(dummy.matrix.clone());}}}
+ const trunks=new T.InstancedMesh(new T.CylinderGeometry(.6,1,1,7),bark,branches.length);branches.forEach((v,i)=>trunks.setMatrixAt(i,v));add(trunks);const leaves=new T.InstancedMesh(new T.PlaneGeometry(1.4,1.4),leafMat,transforms.length);transforms.forEach((v,i)=>leaves.setMatrixAt(i,v));add(leaves);
+ for(let i=0;i<140;i++){let x=(r()-.5)*21,y=.2+r()*7,z=-2-r()*20;const o=halo(i%3?0x75e9ed:0xffba6a,.035+r()*.08,x,y,z);motes.push({mesh:o,x,y,z,seed:r()*9});}for(let i=0;i<5;i++){const x=[-8,-6,6,8,10][i],z=-7-i;for(let j=0;j<13;j++)halo(0xffb95a,.07,x+Math.sin(j)*.13,1+j*.38,z);}
+ return {water,falls,motes,completionGlow};
 }

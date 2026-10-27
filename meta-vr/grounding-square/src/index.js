@@ -13,7 +13,8 @@ let groundingCue = '';
 const groundingCues=['Notice one thing you can see.','Feel the support beneath you.','Listen for one sound nearby.','Let your shoulders soften.'];
 let elapsed = 0, lastLabel = '', audioContext, audioGain, soundOn = false;
 const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [], lightTrails = [];
-const palette = [0xd6e9e5, 0xf2d597, 0xeeb878, 0xc5b8e8];
+const palette = [0xddeaff, 0xac68ff, 0xffb44f, 0x30f5f0];
+const orbitals=[];const handGlows=[];
 let randomSeed = 42;
 function rnd() { randomSeed = (randomSeed * 1664525 + 1013904223) >>> 0; return randomSeed / 4294967296; }
 function mat(color, roughness = .9) { return new T.MeshStandardMaterial({ color, roughness }); }
@@ -40,32 +41,33 @@ let glowMap;
 function halo(color,size,x,y,z) {const s=new T.Sprite(new T.SpriteMaterial({map:glowMap,color,transparent:true,depthWrite:false,blending:T.AdditiveBlending,opacity:.6}));s.scale.set(size,size,1);add(s,x,y,z);return s;}
 function garden(){const environment=buildWoodland(world,{add,mesh,halo,mat});water=environment.water;completionGlow=environment.completionGlow;motes.push(...environment.motes);falls.push(...environment.falls);}
 function celestial(index) {
- const group=new T.Group(), material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:1.5,metalness:.35,roughness:.24});
- if(index===0){const shape=new T.Shape();shape.moveTo(.12,.28);shape.bezierCurveTo(-.4,.25,-.4,-.25,.12,-.28);shape.bezierCurveTo(-.12,-.08,-.12,.08,.12,.28);group.add(new T.Mesh(new T.ExtrudeGeometry(shape,{depth:.08,bevelEnabled:true,bevelSegments:2,steps:1,bevelSize:.018,bevelThickness:.02}),material));}
- if(index===1){const shape=new T.Shape();for(let j=0;j<10;j++){const a=Math.PI/2+j*Math.PI/5,r=j%2?.13:.3;const x=Math.cos(a)*r,y=Math.sin(a)*r;if(j===0)shape.moveTo(x,y);else shape.lineTo(x,y);}shape.closePath();group.add(new T.Mesh(new T.ExtrudeGeometry(shape,{depth:.07,bevelEnabled:true,bevelSize:.018,bevelThickness:.02,bevelSegments:2}),material));}
- if(index===2){group.add(new T.Mesh(new T.SphereGeometry(.17,24,16),material));for(let j=0;j<12;j++){const a=j*Math.PI/6;const ray=new T.Mesh(new T.CylinderGeometry(.018,.018,.09,6),material);ray.position.set(Math.cos(a)*.26,Math.sin(a)*.26,0);ray.rotation.z=a-Math.PI/2;group.add(ray);}}
- if(index===3){group.add(new T.Mesh(new T.IcosahedronGeometry(.18,2),material));for(let j=0;j<3;j++){const tail=new T.Mesh(new T.ConeGeometry(.025,.45-j*.08,6),material);tail.rotation.z=-.8;tail.position.set(.17+j*.04,.17-j*.05,-.02);group.add(tail);}}
- const positions=[[-1.45,1.22,-3.25],[.02,1.14,-3.65],[1.52,1.14,-3.65],[2.98,1.22,-3.25]],p=positions[index];
- add(group,...p);const light=halo(palette[index],1.3,...p);
- const hit=new T.Mesh(new T.SphereGeometry(.43,16,12),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.copy(group.position);target(hit,index+1);
- const ring=mesh(new T.TorusGeometry(.38,.012,6,56),gold,p[0],p[1],p[2]-.12);
- const signalCore=mesh(new T.SphereGeometry(.18,24,16),material,p[0],p[1],p[2]);
- const pulse=mesh(new T.TorusGeometry(.27,.008,8,64),new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.8}),p[0],p[1],p[2]);
- pulse.rotation.x=Math.PI/2;
- const caption=label(SYMBOLS[index],.72,.16);add(caption,p[0],.72,p[2]+.09);
- for(let j=0;j<10;j++){
- const t=j/9,bead=halo(palette[index],.12,p[0]*(1-t)+1.1*t,p[1]+Math.sin(t*Math.PI)*1.2+t*1.5,p[2]*(1-t)-8.4*t);
- bead.visible=false;lightTrails.push({mesh:bead,index,phase:t*Math.PI*2});
-}
+ const positions=[[-3.4,2.3,-5.7],[-.25,4.1,-7.8],[4.5,2.3,-7.2],[1.8,1.8,-3.7]],p=positions[index];
+ const group=new T.Group();add(group,...p);
+ const material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:1.5,metalness:.25,roughness:.12,transparent:true,opacity:.65});
+ const signalCore=new T.Mesh(new T.SphereGeometry(.27,40,28),material);group.add(signalCore);
+ const shell=new T.Mesh(new T.SphereGeometry(.39,40,28),new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.14,wireframe:false,blending:T.AdditiveBlending,depthWrite:false}));group.add(shell);
+ const ringMaterial=new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.8,blending:T.AdditiveBlending,depthWrite:false});let ring,pulse;
+ for(let i=0;i<3;i++){const o=new T.Mesh(new T.TorusGeometry(.61+i*.09,.007,6,100),ringMaterial.clone());o.rotation.set(.35+i*.87,.4+i*.72,i*.4);o.scale.x=1.24;group.add(o);orbitals.push({mesh:o,index,speed:.08+i*.05});if(!i)ring=o;if(i===1)pulse=o;}
+ for(let j=0;j<36;j++){const a=j*2.3999,rr=.5+(j%7)*.055;const o=halo(palette[index],.025+(j%3)*.009,p[0]+Math.cos(a)*rr,p[1]+Math.sin(a)*rr*.7,p[2]+Math.sin(j)*.3);motes.push({mesh:o,x:o.position.x,y:o.position.y,z:o.position.z,seed:j});}
+ const light=halo(palette[index],2.4,...p);light.material.opacity=.65;add(new T.PointLight(palette[index],4,4,2),...p);
+ const hit=new T.Mesh(new T.SphereGeometry(.76,18,14),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.copy(group.position);target(hit,index+1);
+ const caption=label(SYMBOLS[index]+' · select',1.3,.18);add(caption,p[0],p[1]-.95,p[2]);
+ for(let j=0;j<12;j++){const t=j/11,bead=halo(palette[index],.09,p[0]*(1-t)+5*t,p[1]+Math.sin(t*Math.PI)*1.5,p[2]*(1-t)-11.5*t);bead.visible=false;lightTrails.push({mesh:bead,index,phase:t*Math.PI*2});}
  symbols.set(SYMBOLS[index],{group,light,hit,ring,caption,origin:p,index,signalCore,pulse});
+}
+function waveform(x,y,z,w=2.4,h=.9) {
+ const c=document.createElement('canvas');c.width=1024;c.height=384;const g=c.getContext('2d');g.fillStyle='#14384f88';g.beginPath();g.roundRect(6,6,1012,372,35);g.fill();g.strokeStyle='#82edff88';g.lineWidth=3;g.stroke();g.font='24px Arial';g.fillStyle='#c3eff8';g.fillText('B R E A T H E   /   R E C O N N E C T',40,60);
+ for(let j=0;j<12;j++){g.beginPath();g.strokeStyle='rgba(133,237,255,'+(.18+j*.035)+')';g.lineWidth=1.8;for(let i=0;i<940;i++){const xx=40+i,yy=240+Math.sin(i*.012+j*.12)*Math.exp(-Math.pow((i-470)/300,2))*(55-j*2)+j*3;if(!i)g.moveTo(xx,yy);else g.lineTo(xx,yy);}g.stroke();}
+ const t=new T.CanvasTexture(c);t.colorSpace=T.SRGBColorSpace;return mesh(new T.PlaneGeometry(w,h),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,side:T.DoubleSide}),x,y,z);
 }
 function buildActivities() {
  SYMBOLS.forEach((_,i)=>celestial(i));
- orb=mesh(new T.SphereGeometry(.24,48,32),new T.MeshStandardMaterial({color:0xe1d7a7,emissive:0xedd4a0,emissiveIntensity:2.3,metalness:.2,roughness:.15}),.8,2.1,-5);
- orbHalo=halo(0xffdba5,2.5,.8,2.1,-5);const orbHit=new T.Mesh(new T.SphereGeometry(.48,16,12),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));orbHit.position.copy(orb.position);target(orbHit,10);
- for(let i=0;i<2;i++){const ring=mesh(new T.TorusGeometry(.48+i*.12,.009,8,80),gold,.8,2.1,-5);ring.rotation.x=i*.6;ring.rotation.y=i*.5;}
- breathCard=label('Breathe with the light',2,.26);add(breathCard,.8,2.78,-5);
- messageCard=label(['GROUNDING SQUARE','Your space. Your pace.'],3,.55);add(messageCard,1.1,4.5,-8.3);
+ waveform(-3.1,.9,-3.5);waveform(4,.8,-5,1.5,1.6);
+ orb=mesh(new T.SphereGeometry(.24,48,32),new T.MeshStandardMaterial({color:0xe1d7a7,emissive:0xedd4a0,emissiveIntensity:2.3,metalness:.2,roughness:.15}),-1.1,1.45,-5.4);
+ orbHalo=halo(0xffdba5,2.5,-1.1,1.45,-5.4);const orbHit=new T.Mesh(new T.SphereGeometry(.48,16,12),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));orbHit.position.copy(orb.position);target(orbHit,10);
+ for(let i=0;i<2;i++){const ring=mesh(new T.TorusGeometry(.48+i*.12,.009,8,80),gold,-1.1,1.45,-5.4);ring.rotation.x=i*.6;ring.rotation.y=i*.5;}
+ breathCard=label('Breathe with the light',2,.26);add(breathCard,-1.1,2.1,-5.4);
+ messageCard=label(['GROUNDING SQUARE','Your space. Your pace.'],3,.55);add(messageCard,0,5.5,-10);
  reflectCard=label('11:11 · Awaiting your light',2.3,.38,true);reflectCard.position.set(.8,.64,-2.5);target(reflectCard,11);
  replayCard=label('Start again',.9,.22,true);replayCard.position.set(-.8,.48,-1.5);target(replayCard,12);
  motionCard=label('Reduce motion',1.1,.22,true);motionCard.position.set(.8,.35,-1.35);target(motionCard,13);
@@ -82,7 +84,7 @@ function refresh() {
  completionGlow.material.opacity=state.reflectionOpen?.75:ready?.3:0;
  for(const trail of lightTrails)trail.mesh.visible=state.collected.includes(SYMBOLS[trail.index]);
  soundCard.userData.draw(soundOn?'Sound on':'Sound off');
- for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.65:1);s.light.material.opacity=done?.22:.6;s.caption.userData.draw(done?name+' ✓':name);s.ring.userData.selectedMaterial??=new T.MeshBasicMaterial({color:palette[s.index]});s.ring.material=done?s.ring.userData.selectedMaterial:gold;}
+ for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.82:1);s.light.material.opacity=done?.32:.65;s.caption.userData.draw(done?name+' ✓':name+' · select');s.ring.userData.selectedMaterial??=new T.MeshBasicMaterial({color:palette[s.index]});s.ring.material=done?s.ring.userData.selectedMaterial:s.ring.material;}
  breathCard.userData.draw(state.breathCompleted?'A little more space. A little more you.':state.breathing?breathLabel(state):'Breathe with the light');
  reflectCard.userData.draw(state.reflectionOpen?'11:11 · Your quiet moment':ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
  if(state.reflectionOpen) { const chosen=state.collected.map(name=>groundingCues[SYMBOLS.indexOf(name)]).filter(Boolean); messageCard.userData.draw(['THE MELTDOWN ROOM', chosen[0]||'Your quiet moment is yours.']); } else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
@@ -108,7 +110,9 @@ class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) 
  update(dt){const delta=Math.min(Math.max(dt,0),.1);elapsed+=delta;
  if(state.breathing){advanceBreathing(state,delta);const next=breathLabel(state);if(next!==lastLabel){lastLabel=next;refresh();}$('breath-progress').value=state.breathElapsed;}
  const phase=(state.breathElapsed%8)/8,scale=state.breathing&&!state.reducedMotion?1+.45*(1-Math.cos(phase*Math.PI*2)):1;orb.scale.setScalar(scale);orbHalo.scale.setScalar(2.5*scale);
- if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
+ if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const orbit of orbitals)orbit.mesh.rotation.z+=delta*orbit.speed;for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
+ if(!world.renderer.xr.isPresenting){for(const [name,s] of symbols){const p=s.hit.position.clone().project(world.camera),b=document.querySelector('[data-symbol="'+name+'"]');b.style.left=((p.x+1)*innerWidth/2)+'px';b.style.top=((1-p.y)*innerHeight/2)+'px';}}
+ for(const h of handGlows)h.light.intensity=state.collected.length?2.3:1.2;
  }
 }
 function musicChord(){
@@ -124,7 +128,11 @@ function musicChord(){
 }
 async function sound(){try{if(!audioContext){audioContext=new AudioContext();audioGain=audioContext.createGain();audioGain.gain.value=.35;audioGain.connect(audioContext.destination);const buffer=audioContext.createBuffer(1,audioContext.sampleRate*3,audioContext.sampleRate);const data=buffer.getChannelData(0);let n=0;for(let i=0;i<data.length;i++){n=(n+Math.random()*.04-.02)/1.02;data[i]=n;}const stream=audioContext.createBufferSource();stream.buffer=buffer;stream.loop=true;const filter=audioContext.createBiquadFilter();filter.type='lowpass';filter.frequency.value=750;stream.connect(filter).connect(audioGain);stream.start();setInterval(musicChord,6000);}soundOn=!soundOn;if(soundOn)musicChord();await audioContext.resume();audioGain.gain.setTargetAtTime(soundOn?.35:0,audioContext.currentTime,.2);$('sound').textContent=soundOn?'Sound on':'Sound off';$('sound').setAttribute('aria-pressed',String(soundOn));refresh();}catch{$('sound').textContent='Sound unavailable';}}
 async function start(){
- world=await World.create($('scene-container'),{xr:{sessionMode:'immersive-vr',offer:'none',features:{handTracking:true}},input:{canvasPointerEvents:true},features:{enableLocomotion:false,enableGrabbing:false}});world.registerComponent(Action);world.camera.fov=65;world.camera.position.set(0,1.7,2);world.camera.updateProjectionMatrix();glowMap=glowTexture();garden();buildActivities();world.registerSystem(JourneySystem);
+ world=await World.create($('scene-container'),{xr:{sessionMode:'immersive-vr',offer:'none',features:{handTracking:true}},input:{canvasPointerEvents:true},features:{enableLocomotion:false,enableGrabbing:false}});world.registerComponent(Action);world.camera.fov=58;world.camera.position.set(0,2.25,4.8);world.camera.rotation.x=-.035;world.camera.updateProjectionMatrix();glowMap=glowTexture();garden();buildActivities();
+ // Batch small atmospheric sparks into one draw call; retain the large animated glows.
+ const sparks=[];world.scene.traverse(o=>{if(o.isSprite&&o.scale.x<.3)sparks.push(o);});const positions=[],colors=[];for(const o of sparks){positions.push(o.position.x,o.position.y,o.position.z);colors.push(o.material.color.r,o.material.color.g,o.material.color.b);o.removeFromParent();}const sparkGeometry=new T.BufferGeometry();sparkGeometry.setAttribute('position',new T.Float32BufferAttribute(positions,3));sparkGeometry.setAttribute('color',new T.Float32BufferAttribute(colors,3));world.scene.add(new T.Points(sparkGeometry,new T.PointsMaterial({size:.105,map:glowMap,transparent:true,vertexColors:true,depthWrite:false,blending:T.AdditiveBlending,opacity:.85})));
+ world.registerSystem(JourneySystem);
+ for(let i=0;i<2;i++){const hand=world.renderer.xr.getHand(i),light=new T.PointLight(0x55faff,1.2,2,2);hand.add(light);const glow=new T.Sprite(new T.SpriteMaterial({map:glowMap,color:0x55faff,transparent:true,opacity:.35,blending:T.AdditiveBlending,depthWrite:false}));glow.scale.set(.27,.27,.27);hand.add(glow);handGlows.push({light,glow});}
  // Desktop buttons and actual IWSDK ray/pinch targets share this one journey.
  $('breathe').onclick=()=>execute(10);$('reflect').onclick=()=>execute(11);$('restart').onclick=()=>execute(12);$('motion').onclick=()=>execute(13);$('sound').onclick=sound;
  document.querySelectorAll('[data-symbol]').forEach((b,i)=>{b.onclick=()=>execute(i+1);b.disabled=false;});$('breathe').disabled=false;$('restart').disabled=false;
