@@ -132,4 +132,3 @@ export function buildWoodland(world, {add, mesh, halo, mat}) {
   for(let i=0;i<24;i++){const x=(random()-.5)*16,y=.4+random()*4,z=-3-random()*15;const mote=halo(0xffe3a7,.07+random()*.07,x,y,z);motes.push({mesh:mote,x,y,z,seed:random()*8});}
   return {water,falls,motes,completionGlow};
 }
-

@@ -49,13 +49,15 @@ function celestial(index) {
  add(group,...p);const light=halo(palette[index],1.3,...p);
  const hit=new T.Mesh(new T.SphereGeometry(.43,16,12),new T.MeshBasicMaterial({transparent:true,opacity:0,depthWrite:false}));hit.position.copy(group.position);target(hit,index+1);
  const ring=mesh(new T.TorusGeometry(.38,.012,6,56),gold,p[0],p[1],p[2]-.12);
- const base=mesh(new T.SphereGeometry(.38,16,10),mat(0x9ba99b),p[0],.13,p[2]);base.scale.set(1,.42,1);const stem=mesh(new T.CylinderGeometry(.045,.075,.62,12),gold,p[0],.48,p[2]);
+ const signalCore=mesh(new T.SphereGeometry(.18,24,16),material,p[0],p[1],p[2]);
+ const pulse=mesh(new T.TorusGeometry(.27,.008,8,64),new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.8}),p[0],p[1],p[2]);
+ pulse.rotation.x=Math.PI/2;
  const caption=label(SYMBOLS[index],.72,.16);add(caption,p[0],.72,p[2]+.09);
  for(let j=0;j<10;j++){
  const t=j/9,bead=halo(palette[index],.12,p[0]*(1-t)+1.1*t,p[1]+Math.sin(t*Math.PI)*1.2+t*1.5,p[2]*(1-t)-8.4*t);
  bead.visible=false;lightTrails.push({mesh:bead,index,phase:t*Math.PI*2});
 }
- symbols.set(SYMBOLS[index],{group,light,hit,ring,caption,origin:p,index});
+ symbols.set(SYMBOLS[index],{group,light,hit,ring,caption,origin:p,index,signalCore,pulse});
 }
 function buildActivities() {
  SYMBOLS.forEach((_,i)=>celestial(i));
@@ -83,7 +85,7 @@ function refresh() {
  for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.65:1);s.light.material.opacity=done?.22:.6;s.caption.userData.draw(done?name+' ✓':name);s.ring.userData.selectedMaterial??=new T.MeshBasicMaterial({color:palette[s.index]});s.ring.material=done?s.ring.userData.selectedMaterial:gold;}
  breathCard.userData.draw(state.breathCompleted?'A little more space. A little more you.':state.breathing?breathLabel(state):'Breathe with the light');
  reflectCard.userData.draw(state.reflectionOpen?'11:11 · Your quiet moment':ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
- if(state.reflectionOpen) messageCard.userData.draw(['A QUIET MOMENT, YOURS','You are allowed to begin again.']);else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
+ if(state.reflectionOpen) { const chosen=state.collected.map(name=>groundingCues[SYMBOLS.indexOf(name)]).filter(Boolean); messageCard.userData.draw(['THE MELTDOWN ROOM', chosen[0]||'Your quiet moment is yours.']); } else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
 }
 async function visitMeltdownRoom(){
  if(world.renderer.xr.isPresenting)await world.renderer.xr.getSession()?.end();
@@ -106,7 +108,7 @@ class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) 
  update(dt){const delta=Math.min(Math.max(dt,0),.1);elapsed+=delta;
  if(state.breathing){advanceBreathing(state,delta);const next=breathLabel(state);if(next!==lastLabel){lastLabel=next;refresh();}$('breath-progress').value=state.breathElapsed;}
  const phase=(state.breathElapsed%8)/8,scale=state.breathing&&!state.reducedMotion?1+.45*(1-Math.cos(phase*Math.PI*2)):1;orb.scale.setScalar(scale);orbHalo.scale.setScalar(2.5*scale);
- if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
+ if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
  }
 }
 function musicChord(){
