@@ -1,5 +1,10 @@
 (()=>{
 const room=document.getElementById('great'),grid=room.querySelector('.gm-grid'),panel=room.querySelector('.gm-group-panel'),extra=room.querySelector('.gm-extra'),more=room.querySelector('.gm-all');
+const inspiration=document.createElement('a');
+inspiration.href='inspiration.html';
+inspiration.className='gm-inspiration';
+inspiration.textContent='Inspiration Corner';
+extra.appendChild(inspiration);
 let returnTo=null;
 const groups={
 release:{title:'Let it out',intro:'Choose the kind of space you need.',items:[['rant','Write it out','Put your feelings into words.'],['meltdown','It feels too much','A space for an overwhelming moment.'],['game','Take a play break','Try a quick game.']]},
@@ -18,3 +23,4 @@ more.addEventListener('click',()=>{reset();extra.hidden=!extra.hidden;more.setAt
 room.querySelectorAll('[data-modern-room]').forEach(button=>button.addEventListener('click',()=>go(button.dataset.modernRoom)));
 const page=new URL(window.location.href);page.hash='';room.querySelectorAll('use[href^="#"]').forEach(icon=>icon.setAttribute('href',page.href+icon.getAttribute('href')));
 })();
+
