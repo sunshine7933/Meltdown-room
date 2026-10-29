@@ -100,6 +100,14 @@ button,input,textarea,select{font:inherit}
 @keyframes homeCloudDrift{from{transform:translateX(-1.5%)}to{transform:translateX(1.5%)}}
 @keyframes homeWaterFlow{from{transform:translate(-.5%,0) scaleY(1)}to{transform:translate(.5%,.4%) scaleY(1.012)}}
 @media(prefers-reduced-motion:reduce){#home.hero .home-scene-motion::before,#home.hero .home-scene-motion::after{animation:none}}
+
+/* Fix: the hero image previously painted over the animated overlays. */
+#home.hero > img{z-index:0}
+#home.hero > .home-scene-motion{z-index:1}
+#home.hero::after{z-index:1;pointer-events:none}
+#home.hero > .hero-copy{z-index:3}
+#home.hero .home-scene-motion::before{opacity:.55;animation:homeCloudDrift 14s ease-in-out infinite alternate}
+#home.hero .home-scene-motion::after{opacity:.62;animation:homeWaterFlow 3.5s ease-in-out infinite alternate}
 </style>
 <style id="interactive-bookshelf-styles">
 .resource-library{position:relative;overflow:hidden;background:radial-gradient(circle at 18% 16%,rgba(255,194,104,.1),transparent 28%),linear-gradient(180deg,#172b43,#12233a)}
