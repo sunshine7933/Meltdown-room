@@ -113,28 +113,12 @@ button,input,textarea,select{font:inherit}
 </style>
 <link rel="stylesheet" href="website-modern.css">
 <link rel="stylesheet" href="website-lake-gold.css">
-<style>
-.home-more{background:#152e39;color:#f8f0e2;border-top:1px solid #d8bd8a55}
-.home-more>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;cursor:pointer;padding:28px max(4vw,20px);font:400 clamp(1.35rem,2.5vw,2rem) Georgia,serif;max-width:1200px;margin:auto}
-.home-more>summary::-webkit-details-marker{display:none}
-.home-more>summary span:last-child{font:700 .85rem Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e5c78c}
-.home-more>summary:focus-visible{outline:3px solid #e5c78c;outline-offset:-4px}
-.home-more[open]>summary{border-bottom:1px solid #d8bd8a55}
-.hero-details{display:flex;flex-wrap:wrap;gap:8px 20px}.hero-details .text-action{margin:0}
-.vr-preview-note{margin:0;padding:4px 20px 18px;color:#e8ddca;font-size:.9rem;line-height:1.5}
-#vr-preview-dialog{width:min(900px,94vw)}
-.hero::before{inset:58% -12% 0 8%;background:repeating-radial-gradient(ellipse at 58% 120%,transparent 0 24px,#ade8ed55 27px,transparent 31px 57px),repeating-linear-gradient(174deg,transparent 0 35px,#ffe2a340 38px,transparent 42px 76px);mask-image:linear-gradient(to bottom,transparent,#000 28%,#000 72%,transparent);mix-blend-mode:screen;opacity:.82;animation:heroWaterFlow 4.6s ease-in-out infinite alternate}
-@keyframes heroWaterFlow{from{transform:translate3d(-3%,0,0) scaleX(1.02);background-position:0 0,0 0}to{transform:translate3d(3%,5px,0) scaleX(1.07);background-position:52px -24px,75px 0}}
-.website-still .hero::before{animation:none;opacity:0}.hero-scene-paused .hero::before{animation-play-state:paused}
-@media(max-width:800px){.hero::before{inset:48% -15% 6% 0}#vr-preview-dialog{width:min(96vw,900px)}}
-@media(prefers-reduced-motion:reduce){body:not(.website-motion-optin) .hero::before{animation:none;opacity:0}}
-</style>
 <script src="website-modern.js" defer></script>
 </head>
 <body>
-<header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a class="cta" href="app-fixed.html">Enter the Rooms</a></nav></div></header>
+<header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a class="cta" href="app-fixed.html">Enter the Rooms</a></nav></div></header>
 <main>
-<section id="home" class="hero"><img src="website-assets/welcome-water.webp" alt="Golden arches and luminous water in The Meltdown Room" fetchpriority="high"><div class="wrap hero-copy"><div class="eyebrow">A little space for yourself</div><h1>The Meltdown Room</h1><p>Unwind, play, or find a quiet room. Stay for a moment; come back whenever you need.</p><div class="buttons"><a class="btn btn-primary" href="app-fixed.html">Enter the Rooms <span aria-hidden="true">↗</span></a><a class="btn btn-secondary" href="#rooms">Explore the Experience <span aria-hidden="true">↓</span></a></div><div class="hero-details"><button class="welcome-video-trigger text-action" type="button" data-open-welcome>Watch the app preview</button><button class="welcome-video-trigger text-action" type="button" data-open-vr>Watch the updated VR preview</button></div><button class="scene-toggle" type="button" aria-pressed="false">Pause water shimmer</button></div></section>
+<section id="home" class="hero"><img src="website-assets/welcome-water.webp" alt="Golden arches and luminous water in The Meltdown Room" fetchpriority="high"><div class="wrap hero-copy"><div class="eyebrow">A little space for yourself</div><h1>The Meltdown Room</h1><p>Unwind, play, or find a quiet room. Stay for a moment; come back whenever you need.</p><div class="buttons"><a class="btn btn-primary" href="app-fixed.html">Enter the Rooms <span aria-hidden="true">↗</span></a><a class="btn btn-secondary" href="#rooms">Explore the Experience <span aria-hidden="true">↓</span></a></div><div class="hero-details"><button class="welcome-video-trigger text-action" type="button" data-open-welcome>Watch the app preview</button></div><button class="scene-toggle" type="button" aria-pressed="false">Pause water shimmer</button></div></section>
 <section id="merch" class="section merch-coming"><div class="wrap"><div class="app-callout"><div><div class="eyebrow" style="color:var(--gold)">Sunshine’s Store · Printables &amp; 11SxS11</div><h2 style="margin-bottom:0">Sunshine’s Store</h2><p>Printables are available through our Payhip shop. The 11SxS11 clothing and drinkware collection is being prepared with Printful. The Meltdown Room website and app remain free.</p><p>Shirts, hoodies and tumblers are not on sale yet. Product links will appear here when ordering is ready.</p></div><a class="btn" href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Browse the printable shop</a></div><div class="merch-logo-card"><div><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer"><img src="website-assets/resource-planner-product.jpg" width="1254" height="1254" loading="lazy" decoding="async" alt="Illustrative mockup of the My Support and Resource Planner on a teal clipboard with gold stationery"></a><p style="font-size:.8rem;margin-top:10px">Illustrative mockup. Digital PDFs only; stationery is not included.</p></div><div><div class="eyebrow" style="color:var(--gold)">Printable organizer</div><h3>My Support &amp; Resource Planner</h3><p>Keep contacts, local service details, appointment notes and next steps in one place. Eight pages to print and write on, with US Letter and A4 versions.</p><p style="margin-top:14px">Blank organizing pages for your own information, rather than a service directory.</p><a class="btn" style="margin-top:18px" href="https://payhip.com/b/Qxoep" target="_blank" rel="noopener noreferrer">View the resource planner</a></div></div><div class="merch-logo-card"><img loading="lazy" decoding="async" src="11sxs11-phoenix-wordmark-v1.png" alt="Gold phoenix sun-and-moon 11SxS11 logo"><div><div class="eyebrow" style="color:var(--gold)">A Sunshine’s Store collection</div><h3>11SxS11</h3><p>Our phoenix artwork will feature on shirts, hoodies and drinkware, with “You matter” on the backs of shirts and hoodies. This collection is in preparation; ordering is not open yet.</p></div></div></div></section>
 <section id="rooms" class="section"><div class="wrap"><div class="eyebrow" style="color:var(--gold)">A glimpse inside</div><h2>A little taste of what’s inside.</h2><p class="lead">Tap a room for a quick look, or step into the full Meltdown Room experience below.</p><div class="mini-room-grid"><a class="mini-room" href="app-fixed.html#calm"><span class="mini-room-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M8 16h21a7 7 0 0 1 7 7v2a7 7 0 0 1-7 7H19l-7 6 2-6H8a7 7 0 0 1-7-7v-2a7 7 0 0 1 7-7Z"/><path d="M9 22h19M9 27h13M39 14l4-4m-1 10h5m-9-11 1-6"/></svg></span><strong>Calm Room</strong><small>Settle the moment</small></a><a class="mini-room" href="app-fixed.html#hope"><span class="mini-room-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><circle cx="24" cy="24" r="16"/><path d="m30 18-4 8-8 4 4-8 8-4Z"/><path d="M24 3v5m0 32v5M3 24h5m32 0h5"/></svg></span><strong>Hope Room</strong><small>Hold onto a light</small></a><a class="mini-room" href="app-fixed.html#thinking"><span class="mini-room-icon" aria-hidden="true">✦</span><strong>Thinking Room</strong><small>Make space for your ideas</small></a><a class="mini-room" href="app-fixed.html#game"><span class="mini-room-icon" aria-hidden="true"><svg viewBox="0 0 48 48"><path d="M24 8v8m0 16v8M8 24h8m16 0h8M13 13l6 6m10 10 6 6m0-22-6 6M19 29l-6 6"/><circle cx="24" cy="24" r="5"/><path d="M6 7l2 3 3 1-3 2-2 3-1-3-3-2 3-1 1-3Zm36 25 1 3 3 1-3 2-1 3-2-3-3-2 3-1 2-3Z"/></svg></span><strong>Family &amp; Fun</strong><small>Find a gentle activity</small></a></div><div class="full-app-portal"><div><div class="eyebrow">The Full Experience</div><h3>There’s more waiting inside.</h3><p>Explore all the rooms, activities, tools, and experiences in one place.</p></div><a class="btn btn-primary portal-btn" href="app-fixed.html">Enter The Full App →</a></div></div></section>
 
@@ -161,18 +145,6 @@ button,input,textarea,select{font:inherit}
     <a class="btn btn-primary" href="app-fixed.html">Enter The Meltdown Room</a>
     <button class="btn btn-secondary welcome-video-trigger" type="button" data-close-welcome>Skip / Close Video</button>
   </div>
-</dialog>
-<dialog class="welcome-video-dialog" id="vr-preview-dialog" aria-labelledby="vr-preview-title">
-  <div class="welcome-video-header">
-    <h2 id="vr-preview-title">Grounding Square · Updated VR Preview</h2>
-    <button class="welcome-video-close" type="button" data-close-vr aria-label="Close VR preview">Close</button>
-  </div>
-  <video id="vr-preview-video" controls playsinline preload="metadata">
-    <source src="grounding-square-updated-preview.webm" type="video/webm">
-    Your browser does not support this video. <a href="grounding-square-updated-preview.webm">Open the VR preview</a>.
-  </video>
-  <p class="vr-preview-note">One minute of real WebXR gameplay captured with hand input in a Quest 3 simulator. No physical headset footage is shown.</p>
-  <div class="welcome-video-actions"><a class="btn btn-primary" href="https://grounding-square-vr-competition.vercel.app/" target="_blank" rel="noopener noreferrer">Try Grounding Square ↗</a></div>
 </dialog>
 <footer class="footer"><div class="wrap footer-row"><nav class="footer-explore" aria-label="More to explore"><a href="privacy.html">Privacy policy</a><a href="#games">Arcade</a><a href="#outdoors">Outdoors</a><a href="#ask-the-room">Ask the Room</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a href="#donate">Support the project</a><a href="https://www.reddit.com/r/TheMeltdownRoom/comments/1wpjmcp/meltdownroom/">Play on Reddit</a></nav><div>© <span id="year"></span> The Meltdown Room</div><nav aria-label="Contact and social accounts" style="display:flex;gap:18px;flex-wrap:wrap;align-items:center"><a href="mailto:Oc2co33610@gmail.com">Email Sunshine</a><a href="https://x.com/Sumshine33610" target="_blank" rel="noopener noreferrer">X</a><a href="https://www.reddit.com/user/Sunshine_moonlight3/" target="_blank" rel="noopener noreferrer">Reddit</a><a href="https://www.tiktok.com/@sunshine_xx610" target="_blank" rel="noopener noreferrer">TikTok</a><a href="https://www.youtube.com/@amakis-OC33" target="_blank" rel="noopener noreferrer">YouTube</a></nav></div></footer>
 <script>
@@ -220,12 +192,6 @@ document.querySelectorAll('[data-open-welcome]').forEach(button=>button.addEvent
 document.querySelectorAll('[data-close-welcome]').forEach(button=>button.addEventListener('click',closeWelcomeVideo));
 welcomeDialog.addEventListener('cancel',event=>{event.preventDefault();closeWelcomeVideo()});
 welcomeDialog.addEventListener('click',event=>{if(event.target===welcomeDialog)closeWelcomeVideo()});
-const vrDialog=document.getElementById('vr-preview-dialog'),vrVideo=document.getElementById('vr-preview-video');
-function closeVrPreview(){vrVideo.pause();if(typeof vrDialog.close==='function')vrDialog.close();else vrDialog.removeAttribute('open')}
-document.querySelector('[data-open-vr]').addEventListener('click',()=>{if(typeof vrDialog.showModal==='function')vrDialog.showModal();else vrDialog.setAttribute('open','')});
-document.querySelector('[data-close-vr]').addEventListener('click',closeVrPreview);
-vrDialog.addEventListener('cancel',event=>{event.preventDefault();closeVrPreview()});
-vrDialog.addEventListener('click',event=>{if(event.target===vrDialog)closeVrPreview()});
 </script>
 <script>
 const askLibrary=[
@@ -244,17 +210,4 @@ askForm.addEventListener('submit',event=>{event.preventDefault();answerQuestion(
 document.querySelectorAll('.ask-suggestion').forEach(button=>button.addEventListener('click',()=>{askInput.value=button.dataset.question;answerQuestion(askInput.value)}));
 </script>
 <script src="public-analytics.js" defer></script>
-<script>
-(()=>{
-  const main=document.querySelector('main'),resources=document.getElementById('resources');
-  if(!main||!resources)return;
-  const more=document.createElement('details');more.className='home-more';more.id='more-to-explore';
-  const summary=document.createElement('summary');summary.innerHTML='<span>More to explore</span><span>Shop · Games · Outdoors · Story ↗</span>';
-  more.appendChild(summary);resources.after(more);
-  [...main.children].filter(section=>section.tagName==='SECTION'&&!['home','rooms','resources'].includes(section.id)).forEach(section=>more.appendChild(section));
-  function revealHash(){const target=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(target&&more.contains(target)){more.open=true;requestAnimationFrame(()=>target.scrollIntoView())}}
-  addEventListener('hashchange',revealHash);revealHash();
-})();
-</script>
 </body></html>
-

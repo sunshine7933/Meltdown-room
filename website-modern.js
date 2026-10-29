@@ -1,10 +1,10 @@
 (()=>{
  const button=document.querySelector('.scene-toggle');
  const preference=window.matchMedia('(prefers-reduced-motion: reduce)');
- let paused=preference.matches,optedIn=false;
- function render(){document.body.classList.toggle('website-still',paused||document.hidden);document.body.classList.toggle('website-motion-optin',optedIn);if(button){button.setAttribute('aria-pressed',String(paused));button.textContent=paused?'Play water motion':'Pause water motion';}}
- button?.addEventListener('click',()=>{paused=!paused;optedIn=!paused;render();});
- preference.addEventListener('change',event=>{paused=event.matches;optedIn=false;render();});
+ let paused=preference.matches;
+ function render(){document.body.classList.toggle('website-still',paused||document.hidden);if(button){button.setAttribute('aria-pressed',String(paused));button.textContent=paused?'Play water shimmer':'Pause water shimmer';}}
+ button?.addEventListener('click',()=>{paused=!paused;render();});
+ preference.addEventListener('change',event=>{paused=event.matches;render();});
  document.addEventListener('visibilitychange',render);
  render();
  if('IntersectionObserver' in window){const hero=document.querySelector('.hero');if(hero){const observer=new IntersectionObserver(entries=>document.body.classList.toggle('hero-scene-paused',!entries[0].isIntersecting));observer.observe(hero);}}
@@ -28,4 +28,3 @@
  const arrows={primary:'M5 12h14m-5-5 5 5-5 5',secondary:'M12 4v16m-6-6 6 6 6-6'};
  for(const [name,path]of Object.entries(arrows)){document.querySelector('.hero .btn-'+name+' span')?.replaceChildren(makeIcon(path));}
 })();
-
