@@ -113,10 +113,18 @@ button,input,textarea,select{font:inherit}
 </style>
 <link rel="stylesheet" href="website-modern.css">
 <link rel="stylesheet" href="website-lake-gold.css">
+<style>
+.home-more{background:#152e39;color:#f8f0e2;border-top:1px solid #d8bd8a55}
+.home-more>summary{display:flex;align-items:center;justify-content:space-between;gap:20px;list-style:none;cursor:pointer;padding:28px max(4vw,20px);font:400 clamp(1.35rem,2.5vw,2rem) Georgia,serif;max-width:1200px;margin:auto}
+.home-more>summary::-webkit-details-marker{display:none}
+.home-more>summary span:last-child{font:700 .85rem Arial,sans-serif;letter-spacing:.08em;text-transform:uppercase;color:#e5c78c}
+.home-more>summary:focus-visible{outline:3px solid #e5c78c;outline-offset:-4px}
+.home-more[open]>summary{border-bottom:1px solid #d8bd8a55}
+</style>
 <script src="website-modern.js" defer></script>
 </head>
 <body>
-<header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a class="cta" href="app-fixed.html">Enter the Rooms</a></nav></div></header>
+<header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a class="cta" href="app-fixed.html">Enter the Rooms</a></nav></div></header>
 <main>
 <section id="home" class="hero"><img src="website-assets/welcome-water.webp" alt="Golden arches and luminous water in The Meltdown Room" fetchpriority="high"><div class="wrap hero-copy"><div class="eyebrow">A little space for yourself</div><h1>The Meltdown Room</h1><p>Unwind, play, or find a quiet room. Stay for a moment; come back whenever you need.</p><div class="buttons"><a class="btn btn-primary" href="app-fixed.html">Enter the Rooms <span aria-hidden="true">↗</span></a><a class="btn btn-secondary" href="#rooms">Explore the Experience <span aria-hidden="true">↓</span></a></div><div class="hero-details"><button class="welcome-video-trigger text-action" type="button" data-open-welcome>Watch the app preview</button></div><button class="scene-toggle" type="button" aria-pressed="false">Pause water shimmer</button></div></section>
 <section id="merch" class="section merch-coming"><div class="wrap"><div class="app-callout"><div><div class="eyebrow" style="color:var(--gold)">Sunshine’s Store · Printables &amp; 11SxS11</div><h2 style="margin-bottom:0">Sunshine’s Store</h2><p>Printables are available through our Payhip shop. The 11SxS11 clothing and drinkware collection is being prepared with Printful. The Meltdown Room website and app remain free.</p><p>Shirts, hoodies and tumblers are not on sale yet. Product links will appear here when ordering is ready.</p></div><a class="btn" href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Browse the printable shop</a></div><div class="merch-logo-card"><div><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer"><img src="website-assets/resource-planner-product.jpg" width="1254" height="1254" loading="lazy" decoding="async" alt="Illustrative mockup of the My Support and Resource Planner on a teal clipboard with gold stationery"></a><p style="font-size:.8rem;margin-top:10px">Illustrative mockup. Digital PDFs only; stationery is not included.</p></div><div><div class="eyebrow" style="color:var(--gold)">Printable organizer</div><h3>My Support &amp; Resource Planner</h3><p>Keep contacts, local service details, appointment notes and next steps in one place. Eight pages to print and write on, with US Letter and A4 versions.</p><p style="margin-top:14px">Blank organizing pages for your own information, rather than a service directory.</p><a class="btn" style="margin-top:18px" href="https://payhip.com/b/Qxoep" target="_blank" rel="noopener noreferrer">View the resource planner</a></div></div><div class="merch-logo-card"><img loading="lazy" decoding="async" src="11sxs11-phoenix-wordmark-v1.png" alt="Gold phoenix sun-and-moon 11SxS11 logo"><div><div class="eyebrow" style="color:var(--gold)">A Sunshine’s Store collection</div><h3>11SxS11</h3><p>Our phoenix artwork will feature on shirts, hoodies and drinkware, with “You matter” on the backs of shirts and hoodies. This collection is in preparation; ordering is not open yet.</p></div></div></div></section>
@@ -210,4 +218,17 @@ askForm.addEventListener('submit',event=>{event.preventDefault();answerQuestion(
 document.querySelectorAll('.ask-suggestion').forEach(button=>button.addEventListener('click',()=>{askInput.value=button.dataset.question;answerQuestion(askInput.value)}));
 </script>
 <script src="public-analytics.js" defer></script>
+<script>
+(()=>{
+  const main=document.querySelector('main'),resources=document.getElementById('resources');
+  if(!main||!resources)return;
+  const more=document.createElement('details');more.className='home-more';more.id='more-to-explore';
+  const summary=document.createElement('summary');summary.innerHTML='<span>More to explore</span><span>Shop · Games · Outdoors · Story ↗</span>';
+  more.appendChild(summary);resources.after(more);
+  [...main.children].filter(section=>section.tagName==='SECTION'&&!['home','rooms','resources'].includes(section.id)).forEach(section=>more.appendChild(section));
+  function revealHash(){const target=location.hash&&document.getElementById(decodeURIComponent(location.hash.slice(1)));if(target&&more.contains(target)){more.open=true;requestAnimationFrame(()=>target.scrollIntoView())}}
+  addEventListener('hashchange',revealHash);revealHash();
+})();
+</script>
 </body></html>
+
