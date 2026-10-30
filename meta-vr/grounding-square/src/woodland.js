@@ -24,13 +24,17 @@ export function buildWoodland(world,{add,mesh,halo,mat}) {
  mesh(new T.PlaneGeometry(2.1,4),new T.MeshBasicMaterial({color:0xffb462,transparent:true,opacity:.23,side:T.DoubleSide}),5,2,-14.5);halo(0xff9f43,6,5,2,-13.5).material.opacity=.32;add(new T.PointLight(0xffbc68,55,16,2),5,2.5,-10);for(let i=0;i<8;i++)mesh(new T.BoxGeometry(3.8-i*.14,.15,.55),rockMat,5,.05+i*.14,-8.3-i*.5);
  const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#fff1d5';g.font='500 70px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(5.6,.9),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,depthTest:false})),5,5.2,-11.15);const completionGlow=halo(0xffd39c,5,5,2,-12.5);completionGlow.material.opacity=0;
 
- // Layered rock ledges and secondary waterfall ribbons give the cascade depth.
+ // Asymmetric falls: no horizontal floating rock bars across the water.
+ // Offset rock shelves are anchored into the cliff on either bank.
  for(let tier=0;tier<3;tier++){
-   const y=6.9-tier*2.35,z=-12.5+tier*.75,x=-3+(tier%2)*.4;
-   for(let j=0;j<7;j++)rock(x-2.5+j*.77,y-.35,z,.62,.4,.7);
-   cascadeRibbon(4.4-tier*.35,2.55,x,y-1.55,z+.18);
-   halo(0x67eaff,4.5,x,y-2.55,z+.3).material.opacity=.055;
+   const y=6.7-tier*2.35,z=-12.8+tier*.65;
+   const left=-5.45-tier*.14,right=-.75+tier*.17;
+   rock(left,y-.55,z,1.4,.65,1.05);
+   rock(right,y-.72,z-.2,1.12,.62,.92);
+   cascadeRibbon(3.85-tier*.28,2.35,-3.05+tier*.15,y-1.35,z+.38);
  }
+ // Natural-looking mist and reflected blue highlights near the base.
+ for(let i=0;i<12;i++){const x=-5.2+r()*4.4,z=-10.8+r()*1.4;const spray=halo(0x89e9ff,.3+r()*.48,x,.15+r()*.45,z);spray.material.opacity=.04+r()*.035;}
  // Mossy terraces frame the water without covering the interactive gems.
  for(let j=0;j<22;j++){const x=(j%2?-1:1)*(3.7+r()*2.2),y=.15+r()*1.1,z=-4-r()*11;rock(x,y,z,.65+r()*.55,.4+r()*.45,.7+r()*.5);}
   // Moonlit atmosphere, lanterns and wildflowers.
