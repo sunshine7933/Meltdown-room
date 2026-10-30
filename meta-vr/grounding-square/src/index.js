@@ -9,18 +9,37 @@ const state = createJourney();
 state.reducedMotion = matchMedia('(prefers-reduced-motion: reduce)').matches;
 const Action = createComponent('SanctuaryAction', { code: { type: Types.Int16, default: 0 } });
 let world, orb, orbHalo, water, breathCard, reflectCard, messageCard, replayCard, motionCard, visitCard, soundCard, completionGlow;
-const openingText = 'Take a short grounding break: breathe with the light, notice four simple cues, then carry a quiet moment back into your day.';
+const openingText = 'Take a short grounding break: breathe with the light, discover six elemental gems, then carry a quiet moment back into your day.';
 let groundingCue = '', activeReflectionName='';let finalReflectionCard;
 const orbReflections=[
- {title:'Notice what is here',affirmation:'You can be here, just as you are.'},
- {title:'Feel your support',affirmation:'You do not have to hold it all alone.'},
- {title:'Listen to one sound',affirmation:'Let one sound bring you back to now.'},
- {title:'Let something soften',affirmation:'Set down one thing, just for this moment.'}
+ {title:'Earth · Grounding',affirmation:'I am grounded, secure, and strong.'},
+ {title:'Water · Flow',affirmation:'I release what I cannot control.'},
+ {title:'Air · Clarity',affirmation:'I give myself permission to breathe freely.'},
+ {title:'Fire · Courage',affirmation:'I have the courage to begin again.'},
+ {title:'Spirit · Wisdom',affirmation:'I trust the wisdom growing within me.'},
+ {title:'Aether · Renewal',affirmation:'I am connected to endless possibilities.'}
 ];
-const groundingCues=['Notice one thing you can see.','Feel the support beneath you.','Listen for one sound nearby.','Let your shoulders soften.'];
+const alternateAffirmations=[
+ ['I belong in this moment.','I can grow at my own pace.','I am supported by the ground beneath me.'],
+ ['I can soften without giving up.','My feelings can move through me.','I welcome the calm between waves.'],
+ ['One gentle breath is enough to begin.','I make room for a clearer thought.','I can choose a quieter path.'],
+ ['My courage can be gentle.','I am allowed to start fresh.','My light does not need to be loud.'],
+ ['I listen kindly to my inner voice.','I carry wisdom from what I have learned.','I can trust my next small step.'],
+ ['I welcome possibility without pressure.','I am part of something beautiful.','Every ending can hold a beginning.']
+];
+const reflectionMessages=[
+ 'You have made room for yourself. Carry this calm into whatever comes next.',
+ 'You can be rooted and still grow. Your next step can be small and meaningful.',
+ 'Even when life moves around you, you can return to the steady place within.',
+ 'Your light is not measured by how much you do. You are enough in this moment.',
+ 'Let what is heavy rest for now. You are allowed a gentle new beginning.',
+ 'Take the peace you found here with you. You can always return to your breath.'
+];
+let reflectionSequence = 0;
+const groundingCues=['Feel the earth beneath you.','Notice the flow of water.','Take one gentle breath.','Find your quiet courage.','Listen to your intuition.','Welcome a new possibility.'];
 let elapsed = 0, lastLabel = '', audioContext, audioGain, soundOn = false;
 const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [], lightTrails = [];
-const palette = [0xcbdde5, 0xa396c4, 0xe0b77b, 0x83c9ca];
+const palette = [0xffb94d, 0x28bdff, 0xd8f5ff, 0xff5389, 0xa56cff, 0x65ff9d];
 const orbitals=[];const handGlows=[];let handResponse,handPulseUntil=0;
 let randomSeed = 42;
 function rnd() { randomSeed = (randomSeed * 1664525 + 1013904223) >>> 0; return randomSeed / 4294967296; }
@@ -48,11 +67,11 @@ let glowMap;
 function halo(color,size,x,y,z) {const s=new T.Sprite(new T.SpriteMaterial({map:glowMap,color,transparent:true,depthWrite:false,blending:T.AdditiveBlending,opacity:.6}));s.scale.set(size,size,1);add(s,x,y,z);return s;}
 function garden(){const environment=buildWoodland(world,{add,mesh,halo,mat});water=environment.water;completionGlow=environment.completionGlow;motes.push(...environment.motes);falls.push(...environment.falls);}
 function celestial(index) {
- const positions=[[-3.4,2.3,-5.7],[-.25,3.3,-6.8],[5.1,2.7,-4.8],[1.8,1.8,-3.7]],p=positions[index];
+ const positions=[[-5.3,3.4,-9],[-3.4,2.1,-5.8],[4.7,3.7,-7.6],[2.2,2.5,-5.2],[-5.8,1.7,-3.6],[4.8,1.8,-3.5]],p=positions[index];
  const group=new T.Group();add(group,...p);
  const material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:.9,metalness:.25,roughness:.12,transparent:true,opacity:.65});
- const signalCore=new T.Mesh(new T.SphereGeometry(.27,40,28),material);group.add(signalCore);
- const shell=new T.Mesh(new T.SphereGeometry(.39,40,28),new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.07,wireframe:false,blending:T.AdditiveBlending,depthWrite:false}));group.add(shell);
+ const crystal=new T.OctahedronGeometry(.43,1);const signalCore=new T.Mesh(crystal,material);signalCore.scale.set(.75,1.55,.75);group.add(signalCore);const facet=new T.Mesh(new T.OctahedronGeometry(.27,0),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.32,blending:T.AdditiveBlending,depthWrite:false}));facet.scale.set(.65,1.65,.65);group.add(facet);
+ const shell=new T.Mesh(new T.OctahedronGeometry(.52,0),new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.07,wireframe:false,blending:T.AdditiveBlending,depthWrite:false}));group.add(shell);
  const ringMaterial=new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.45,blending:T.AdditiveBlending,depthWrite:false});let ring,pulse;
  for(let i=0;i<2;i++){const o=new T.Mesh(new T.TorusGeometry(.61+i*.09,.007,6,100),ringMaterial.clone());o.rotation.set(.35+i*.87,.4+i*.72,i*.4);o.scale.x=1.24;group.add(o);orbitals.push({mesh:o,index,speed:.08+i*.05});if(!i)ring=o;if(i===1)pulse=o;}
  for(let j=0;j<14;j++){const a=j*2.3999,rr=.5+(j%7)*.055;const o=halo(palette[index],.025+(j%3)*.009,p[0]+Math.cos(a)*rr,p[1]+Math.sin(a)*rr*.7,p[2]+Math.sin(j)*.3);motes.push({mesh:o,x:o.position.x,y:o.position.y,z:o.position.z,seed:j});}
@@ -86,7 +105,7 @@ function buildActivities() {
 }
 function refresh() {
  const ready=canReflect(state);$('breathe').textContent=state.breathCompleted?'Breathing complete ✓':state.breathing?'Pause breathing':'Begin breathing · 16 sec';
- $('status').textContent=breathLabel(state);if(groundingCue)document.querySelector('.description').textContent=groundingCue+' '+(orbReflections[SYMBOLS.indexOf(activeReflectionName)]?.affirmation||'');$('breath-progress').value=state.breathElapsed;$('count').textContent=state.collected.length+' of 4 lights gathered';$('reflect').disabled=!ready;$('reflection-label').textContent=ready?'Open your reflection':'Breathe & gather to unlock';
+ $('status').textContent=breathLabel(state);if(groundingCue)document.querySelector('.description').textContent=groundingCue+' '+(orbReflections[SYMBOLS.indexOf(activeReflectionName)]?.affirmation||'');$('breath-progress').value=state.breathElapsed;$('count').textContent=state.collected.length+' of 6 gems gathered';$('reflect').disabled=!ready;$('reflection-label').textContent=ready?'Open your reflection':'Breathe & gather to unlock';
  $('motion').setAttribute('aria-pressed',String(state.reducedMotion));$('motion').textContent=state.reducedMotion?'Motion reduced':'Reduce motion';
  document.querySelectorAll('[data-symbol]').forEach(b=>{const done=state.collected.includes(b.dataset.symbol);b.setAttribute('aria-pressed',String(done));b.querySelector('small')?.toggleAttribute('hidden',b.dataset.symbol===activeReflectionName&&!state.reflectionOpen);});
  if(!world)return;const immersive=world.renderer.xr.isPresenting;for(const target of interactiveMeshes)if(target.code>=11)target.object.visible=immersive&&(target.code!==15||state.reflectionOpen);messageCard.visible=(immersive||state.reflectionOpen)&&!state.reflectionOpen;finalReflectionCard.visible=immersive&&state.reflectionOpen;
@@ -95,8 +114,8 @@ function refresh() {
  soundCard.userData.draw(soundOn?'Sound on':'Sound off');
  for(const [name,s] of symbols){const done=state.collected.includes(name);s.group.scale.setScalar(done?.82:1);s.light.material.opacity=done?.2:.35;s.caption.userData.draw(done?name+' ✓':name+' · select');s.affirmationCard.visible=activeReflectionName===name&&!state.reflectionOpen;s.caption.visible=!s.affirmationCard.visible;s.ring.userData.selectedMaterial??=new T.MeshBasicMaterial({color:palette[s.index]});s.ring.material=done?s.ring.userData.selectedMaterial:s.ring.material;}
  breathCard.userData.draw(state.breathCompleted?'A little more space. A little more you.':state.breathing?breathLabel(state):'Breathe with the light');
- reflectCard.userData.draw(state.reflectionOpen?'11:11 · Your quiet moment':ready?'11:11 · Open your reflection':'11:11 · Breathe & gather four lights');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
- if(state.reflectionOpen) { const chosen=state.collected.map(name=>orbReflections[SYMBOLS.indexOf(name)].affirmation);finalReflectionCard.userData.draw(['THE MELTDOWN ROOM',...chosen]);$('personal-reflection').textContent=chosen.join('\n');$('personal-reflection').style.whiteSpace='pre-line'; } else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, notice four cues, then reflect.']);
+ reflectCard.userData.draw(state.reflectionOpen?'11:11 · Your quiet moment':ready?'11:11 · Open your reflection':'11:11 · Breathe & gather six gems');motionCard.userData.draw(state.reducedMotion?'Motion reduced':'Reduce motion');
+ if(state.reflectionOpen) { const cycle=reflectionSequence;const chosen=state.collected.map((name,i)=>alternateAffirmations[i][(cycle+i)%alternateAffirmations[i].length]);const ending=reflectionMessages[cycle%reflectionMessages.length];finalReflectionCard.userData.draw(['11:11 · YOUR REFLECTION',ending,...chosen.slice(0,3)]);$('personal-reflection').textContent=ending+'\n\n'+chosen.join('\n');$('personal-reflection').style.whiteSpace='pre-line'; } else messageCard.userData.draw(['GROUNDING SQUARE',ready?'Your reflection is ready.':groundingCue||'Breathe, discover six gems, then reflect.']);
 }
 async function visitMeltdownRoom(){
  if(world.renderer.xr.isPresenting)await world.renderer.xr.getSession()?.end();
@@ -105,9 +124,9 @@ async function visitMeltdownRoom(){
 function tone(index=0) {if(!soundOn||!audioContext)return;const o=audioContext.createOscillator(),g=audioContext.createGain();o.type='sine';o.frequency.value=[261.63,329.63,392,523.25][index%4];g.gain.setValueAtTime(0,audioContext.currentTime);g.gain.linearRampToValueAtTime(.08,audioContext.currentTime+.03);g.gain.exponentialRampToValueAtTime(.001,audioContext.currentTime+1.5);o.connect(g).connect(audioGain);o.start();o.stop(audioContext.currentTime+1.6);}
 function execute(code) {
  if(code>=1&&code<=16)handPulseUntil=elapsed+1.2;
- if(code>=1&&code<=4){activeReflectionName=SYMBOLS[code-1];groundingCue=groundingCues[code-1];if(collect(state,activeReflectionName))tone(code-1);}
+ if(code>=1&&code<=6){activeReflectionName=SYMBOLS[code-1];groundingCue=groundingCues[code-1];if(collect(state,activeReflectionName))tone(code-1);}
  else if(code===10){if(state.breathing)state.breathing=false;else beginBreathing(state);}
- else if(code===11){if(openReflection(state)){tone(3);if(!world.renderer.xr.isPresenting&&!$('reflection').open)$('reflection').showModal();}}
+ else if(code===11){if(openReflection(state)){reflectionSequence++;tone(3);if(!world.renderer.xr.isPresenting&&!$('reflection').open)$('reflection').showModal();}}
  else if(code===12){resetJourney(state);groundingCue='';activeReflectionName='';document.querySelector('.description').textContent=openingText;$('reflection').close();}
  else if(code===13)state.reducedMotion=!state.reducedMotion;
  else if(code===14)world.renderer.xr.getSession()?.end();
@@ -120,8 +139,8 @@ class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) 
  update(dt){const delta=Math.min(Math.max(dt,0),.1);elapsed+=delta;
  if(state.breathing){advanceBreathing(state,delta);const next=breathLabel(state);if(next!==lastLabel){lastLabel=next;refresh();}$('breath-progress').value=state.breathElapsed;}
  const phase=(state.breathElapsed%8)/8,scale=state.breathing&&!state.reducedMotion?1+.45*(1-Math.cos(phase*Math.PI*2)):1;orb.scale.setScalar(scale);orbHalo.scale.setScalar(2.5*scale);
- if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const orbit of orbitals)orbit.mesh.rotation.z+=delta*orbit.speed;for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y=Math.sin(elapsed*.3+s.index)*.15;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
- if(!world.renderer.xr.isPresenting){for(const [name,s] of symbols){const p=s.hit.position.clone().project(world.camera),b=document.querySelector('[data-symbol="'+name+'"]');b.style.left=((p.x+1)*innerWidth/2)+'px';b.style.top=((1-p.y)*innerHeight/2)+'px';}}
+ if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const orbit of orbitals)orbit.mesh.rotation.z+=delta*orbit.speed;for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y+=delta*(.16+s.index*.045);const drift=elapsed*.26+s.index*1.7;s.group.position.x=s.origin[0]+Math.sin(drift)*.36;s.group.position.z=s.origin[2]+Math.cos(drift*.75)*.28;s.hit.position.copy(s.group.position);s.caption.position.x=s.group.position.x;s.caption.position.y=s.group.position.y-.95;s.affirmationCard.position.x=s.group.position.x;s.affirmationCard.position.y=s.group.position.y-.95;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
+ if(!world.renderer.xr.isPresenting){for(const [name,s] of symbols){const p=s.hit.position.clone().project(world.camera),b=document.querySelector('[data-symbol="'+name+'"]');if(!b)continue;b.style.left=((p.x+1)*innerWidth/2)+'px';b.style.top=((1-p.y)*innerHeight/2)+'px';}}
  for(const h of handGlows)h.light.intensity=state.collected.length?2.3:1.2;
  handResponse?.update(Math.max(0,(handPulseUntil-elapsed)/1.2));
  }
