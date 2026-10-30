@@ -22,13 +22,22 @@ export function buildWoodland(world,{add,mesh,halo,mat}) {
  const portal=new T.Group();add(portal,5,0,-11.5);const glowMat=new T.MeshBasicMaterial({color:0xffbd69,transparent:true,opacity:.85});
  for(let i=0;i<5;i++){const z=-i*.63,w=1.65-i*.12,h=3.2;const curve=new T.CatmullRomCurve3([new T.Vector3(-w,0,z),new T.Vector3(-w,h*.62,z),new T.Vector3(-w*.7,h,z),new T.Vector3(0,h+1.1,z),new T.Vector3(w*.7,h,z),new T.Vector3(w,h*.62,z),new T.Vector3(w,0,z)]);portal.add(new T.Mesh(new T.TubeGeometry(curve,70,.035,6,false),glowMat));const frame=new T.Mesh(new T.TubeGeometry(curve,70,.15,8,false),rockMat);frame.position.z=-.09;portal.add(frame);}
  mesh(new T.PlaneGeometry(2.1,4),new T.MeshBasicMaterial({color:0xffb462,transparent:true,opacity:.23,side:T.DoubleSide}),5,2,-14.5);halo(0xff9f43,6,5,2,-13.5).material.opacity=.32;add(new T.PointLight(0xffbc68,55,16,2),5,2.5,-10);for(let i=0;i<8;i++)mesh(new T.BoxGeometry(3.8-i*.14,.15,.55),rockMat,5,.05+i*.14,-8.3-i*.5);
- const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#fff1d5';g.font='500 70px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(5.6,.9),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,depthTest:false})),5,5.2,-11.15);const completionGlow=halo(0xffd39c,8,5,2,-12.5);completionGlow.material.opacity=0;
+ const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#fff1d5';g.font='500 70px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(5.6,.9),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,depthTest:false})),5,5.2,-11.15);const completionGlow=halo(0xffd39c,5,5,2,-12.5);completionGlow.material.opacity=0;
 
- // Moonlit atmosphere, lanterns and wildflowers.
+ // Layered rock ledges and secondary waterfall ribbons give the cascade depth.
+ for(let tier=0;tier<3;tier++){
+   const y=6.9-tier*2.35,z=-12.5+tier*.75,x=-3+(tier%2)*.4;
+   for(let j=0;j<7;j++)rock(x-2.5+j*.77,y-.35,z,.62,.4,.7);
+   cascadeRibbon(4.4-tier*.35,2.55,x,y-1.55,z+.18);
+   halo(0x67eaff,4.5,x,y-2.55,z+.3).material.opacity=.055;
+ }
+ // Mossy terraces frame the water without covering the interactive gems.
+ for(let j=0;j<22;j++){const x=(j%2?-1:1)*(3.7+r()*2.2),y=.15+r()*1.1,z=-4-r()*11;rock(x,y,z,.65+r()*.55,.4+r()*.45,.7+r()*.5);}
+  // Moonlit atmosphere, lanterns and wildflowers.
  const starsGeo=new T.BufferGeometry(),starPositions=[];for(let i=0;i<380;i++){const a=r()*Math.PI*2,h=18+r()*55,rad=45+r()*40;starPositions.push(Math.cos(a)*rad,h,Math.sin(a)*rad-18);}
  starsGeo.setAttribute('position',new T.Float32BufferAttribute(starPositions,3));add(new T.Points(starsGeo,new T.PointsMaterial({color:0xd9f4ff,size:.25,transparent:true,opacity:.92,depthWrite:false})));
  mesh(new T.SphereGeometry(3.4,28,20),new T.MeshBasicMaterial({color:0xfff4d8}),-23,34,-52);
- halo(0xffe9bf,15,-23,34,-52).material.opacity=.26;
+ // Keep the moon crisp; a giant transparent halo overwhelms mobile compositing.
  const lanternMat=new T.MeshStandardMaterial({color:0xffd394,emissive:0xffb45b,emissiveIntensity:2.3});
  for(const [x,z] of [[-6,-5],[-7,-10],[7,-7],[8,-13],[1,-4]]){mesh(new T.CylinderGeometry(.055,.065,1.35,8),bark,x,.65,z);mesh(new T.BoxGeometry(.35,.5,.35),lanternMat,x,1.4,z);halo(0xffc46d,2.6,x,1.4,z).material.opacity=.25;}
  const flowerMat=[new T.MeshBasicMaterial({color:0xffb3d8}),new T.MeshBasicMaterial({color:0xb7d4ff}),new T.MeshBasicMaterial({color:0xfbe2a0})],flowerGeo=new T.IcosahedronGeometry(.085,0);
