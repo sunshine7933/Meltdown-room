@@ -38,6 +38,7 @@ const reflectionMessages=[
 let reflectionSequence = 0;
 const groundingCues=['Feel the earth beneath you.','Notice the flow of water.','Take one gentle breath.','Find your quiet courage.','Listen to your intuition.','Welcome a new possibility.'];
 let elapsed = 0, lastLabel = '', audioContext, audioGain, soundOn = false;
+let lastGemSwap=0;
 const symbols = new Map(), motes = [], falls = [], interactiveMeshes = [], lightTrails = [];
 const palette = [0xffb94d, 0x28bdff, 0xd8f5ff, 0xff5389, 0xa56cff, 0x65ff9d];
 const orbitals=[];const handGlows=[];let handResponse,handPulseUntil=0;
@@ -139,6 +140,7 @@ class JourneySystem extends createSystem({pressed:{required:[Action,Pressed]}}) 
  update(dt){const delta=Math.min(Math.max(dt,0),.1);elapsed+=delta;
  if(state.breathing){advanceBreathing(state,delta);const next=breathLabel(state);if(next!==lastLabel){lastLabel=next;refresh();}$('breath-progress').value=state.breathElapsed;}
  const phase=(state.breathElapsed%8)/8,scale=state.breathing&&!state.reducedMotion?1+.45*(1-Math.cos(phase*Math.PI*2)):1;orb.scale.setScalar(scale);orbHalo.scale.setScalar(2.5*scale);
+ if(!state.reducedMotion && elapsed-lastGemSwap>24 && !state.reflectionOpen){lastGemSwap=elapsed;const free=[...symbols.values()].filter(s=>!state.collected.includes(SYMBOLS[s.index]));if(free.length>1){const a=free[Math.floor(rnd()*free.length)],b=free.find(s=>s!==a);const tmp=[...a.origin];a.origin=[...b.origin];b.origin=tmp;}}
  if(!state.reducedMotion){for(const trail of lightTrails)trail.mesh.material.opacity=.5+Math.sin(elapsed*.8+trail.phase)*.2;water.uniforms.time.value=elapsed;for(const m of motes){m.mesh.position.y=m.y+Math.sin(elapsed*.35+m.seed)*.18;m.mesh.material.opacity=.4+Math.sin(elapsed*.6+m.seed)*.2;}for(const orbit of orbitals)orbit.mesh.rotation.z+=delta*orbit.speed;for(const s of symbols.values()){s.group.position.y=s.origin[1]+Math.sin(elapsed*.65+s.index)*.055;s.group.rotation.y+=delta*(.16+s.index*.045);const drift=elapsed*.26+s.index*1.7;s.group.position.x=s.origin[0]+Math.sin(drift)*.36;s.group.position.z=s.origin[2]+Math.cos(drift*.75)*.28;s.hit.position.copy(s.group.position);s.caption.position.x=s.group.position.x;s.caption.position.y=s.group.position.y-.95;s.affirmationCard.position.x=s.group.position.x;s.affirmationCard.position.y=s.group.position.y-.95;s.signalCore.scale.setScalar(1+Math.sin(elapsed*2.2+s.index)*.12);s.pulse.scale.setScalar(1+Math.sin(elapsed*1.6+s.index)*.22);}for(const f of falls)f.mesh.position.y=f.y+Math.sin(elapsed*2+f.phase)*.06;}
  if(!world.renderer.xr.isPresenting){for(const [name,s] of symbols){const p=s.hit.position.clone().project(world.camera),b=document.querySelector('[data-symbol="'+name+'"]');if(!b)continue;b.style.left=((p.x+1)*innerWidth/2)+'px';b.style.top=((1-p.y)*innerHeight/2)+'px';}}
  for(const h of handGlows)h.light.intensity=state.collected.length?2.3:1.2;
