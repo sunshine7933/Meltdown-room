@@ -60,7 +60,15 @@ export function buildWoodland(world,{add,mesh,halo,mat}) {
  for(const [x,z] of [[-6,-5],[-7,-10],[7,-7],[8,-13],[1,-4]]){mesh(new T.CylinderGeometry(.055,.065,1.35,8),bark,x,.65,z);mesh(new T.BoxGeometry(.35,.5,.35),lanternMat,x,1.4,z);halo(0xffc46d,2.6,x,1.4,z).material.opacity=.25;}
  const flowerMat=[new T.MeshBasicMaterial({color:0xffb3d8}),new T.MeshBasicMaterial({color:0xb7d4ff}),new T.MeshBasicMaterial({color:0xfbe2a0})],flowerGeo=new T.IcosahedronGeometry(.085,0);
  for(let i=0;i<120;i++){const x=(r()>.5?1:-1)*(5+r()*9),z=-1-r()*19;mesh(flowerGeo,flowerMat[i%3],x,.2+r()*.5,z);}
-  // Dense canopy uses instancing, rather than solid low-poly tree crowns.
+ // Flowering vines and fern clusters soften the waterfall banks and portal.
+ const fernMat=new T.MeshStandardMaterial({color:0x2f9b74,side:T.DoubleSide,roughness:.8});
+ const fernGeo=new T.ConeGeometry(.25,1.1,5,1,true);
+ for(let i=0;i<75;i++){const side=i%2?-1:1,x=side*(3.8+r()*5.5),z=-2-r()*16,y=.18+r()*.32;
+   const frond=mesh(fernGeo,fernMat,x,y+.48,z);frond.rotation.z=(r()-.5)*.8;frond.scale.set(.7+r()*.9,.6+r()*.6,.6+r()*.9);
+ }
+ const vineMat=new T.MeshStandardMaterial({color:0x3c9164,roughness:1});
+ for(const x of [3.5,6.5]){for(let j=0;j<12;j++){const y=.35+j*.32,ang=j*1.3;const leaf=mesh(new T.IcosahedronGeometry(.18,0),j%3===0?flowerMat[0]:vineMat,x+Math.sin(ang)*.32,y,-11.05+Math.cos(ang)*.22);leaf.scale.set(.75,1.5,.45);}}
+   // Dense canopy uses instancing, rather than solid low-poly tree crowns.
  const lc=document.createElement('canvas');lc.width=lc.height=128;const lg=lc.getContext('2d');lg.fillStyle='white';for(let i=0;i<22;i++){lg.save();lg.translate(15+r()*100,10+r()*110);lg.rotate(r()*6);lg.beginPath();lg.ellipse(0,0,9+r()*7,3,0,0,Math.PI*2);lg.fill();lg.restore();}const leafMat=new T.MeshStandardMaterial({map:new T.CanvasTexture(lc),alphaTest:.4,color:0x5d8b64,side:T.DoubleSide,roughness:1});const transforms=[],branches=[],dummy=new T.Object3D();
  function branch(a,b,rad){const d=new T.Vector3().subVectors(b,a);dummy.position.copy(a).add(b).multiplyScalar(.5);dummy.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.clone().normalize());dummy.scale.set(rad,d.length(),rad);dummy.updateMatrix();branches.push(dummy.matrix.clone());}
  for(let i=0;i<50;i++){let x=(i%2?-1:1)*(7+r()*17),z=-2-r()*34,h=7+r()*9;branch(new T.Vector3(x,0,z),new T.Vector3(x*.9,h,z),.23+r()*.17);for(let j=0;j<6;j++){let end=new T.Vector3(x+Math.cos(j*2+i)*2.6,h*.7+r()*2,z+Math.sin(j*2+i)*2.5);branch(new T.Vector3(x*.94,h*.6,z),end,.055);for(let k=0;k<10;k++){dummy.position.copy(end).add(new T.Vector3((r()-.5)*4,(r()-.5)*2,(r()-.5)*4));dummy.rotation.set(r()*3,r()*6,r()*3);dummy.scale.setScalar(1+r());dummy.updateMatrix();transforms.push(dummy.matrix.clone());}}}
