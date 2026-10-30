@@ -70,8 +70,17 @@ function garden(){const environment=buildWoodland(world,{add,mesh,halo,mat});wat
 function celestial(index) {
  const positions=[[-5.3,3.4,-9],[-3.4,2.1,-5.8],[4.7,3.7,-7.6],[2.2,2.5,-5.2],[-5.8,1.7,-3.6],[4.8,1.8,-3.5]],p=positions[index];
  const group=new T.Group();add(group,...p);
- const material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:.9,metalness:.25,roughness:.12,transparent:true,opacity:.65});
- const crystal=new T.OctahedronGeometry(.43,1);const signalCore=new T.Mesh(crystal,material);signalCore.scale.set(.75,1.55,.75);group.add(signalCore);const facet=new T.Mesh(new T.OctahedronGeometry(.27,0),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.32,blending:T.AdditiveBlending,depthWrite:false}));facet.scale.set(.65,1.65,.65);group.add(facet);
+ const material=new T.MeshStandardMaterial({color:palette[index],emissive:palette[index],emissiveIntensity:.9,metalness:.25,roughness:.12,transparent:true,opacity:.82});
+ // Tall, multi-faceted gemstone: translucent body, sharp specular edges and internal light.
+ const crystal=new T.CylinderGeometry(.27,.35,.85,8,1);const body=new T.Mesh(crystal,material);body.scale.set(1,1.05,1);group.add(body);
+ const upper=new T.Mesh(new T.ConeGeometry(.35,.53,8),material);upper.position.y=.7;group.add(upper);
+ const lower=new T.Mesh(new T.ConeGeometry(.35,.47,8),material);lower.rotation.z=Math.PI;lower.position.y=-.63;group.add(lower);
+ const facet=new T.Mesh(new T.OctahedronGeometry(.24,0),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.43,blending:T.AdditiveBlending,depthWrite:false}));facet.scale.set(.62,1.65,.62);group.add(facet);
+ const signalCore=body;
+ const edgeMat=new T.LineBasicMaterial({color:0xf4fbff,transparent:true,opacity:.52});
+ for(const piece of [body,upper,lower]){const edges=new T.LineSegments(new T.EdgesGeometry(piece.geometry,19),edgeMat);piece.add(edges);}
+ for(let j=0;j<5;j++){const a=j*2.4;const glint=new T.Mesh(new T.OctahedronGeometry(.028,0),new T.MeshBasicMaterial({color:0xffffff,transparent:true,opacity:.9,depthWrite:false}));glint.position.set(Math.cos(a)*(.4+j*.035),Math.sin(a*1.3)*.75,Math.sin(a)*.2);group.add(glint);}
+ 
  const shell=new T.Mesh(new T.OctahedronGeometry(.52,0),new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.07,wireframe:false,blending:T.AdditiveBlending,depthWrite:false}));group.add(shell);
  const ringMaterial=new T.MeshBasicMaterial({color:palette[index],transparent:true,opacity:.45,blending:T.AdditiveBlending,depthWrite:false});let ring,pulse;
  for(let i=0;i<2;i++){const o=new T.Mesh(new T.TorusGeometry(.61+i*.09,.007,6,100),ringMaterial.clone());o.rotation.set(.35+i*.87,.4+i*.72,i*.4);o.scale.x=1.24;group.add(o);orbitals.push({mesh:o,index,speed:.08+i*.05});if(!i)ring=o;if(i===1)pulse=o;}
