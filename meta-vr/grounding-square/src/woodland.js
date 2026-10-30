@@ -22,7 +22,21 @@ export function buildWoodland(world,{add,mesh,halo,mat}) {
  const portal=new T.Group();add(portal,5,0,-11.5);const glowMat=new T.MeshBasicMaterial({color:0xffbd69,transparent:true,opacity:.85});
  for(let i=0;i<5;i++){const z=-i*.63,w=1.65-i*.12,h=3.2;const curve=new T.CatmullRomCurve3([new T.Vector3(-w,0,z),new T.Vector3(-w,h*.62,z),new T.Vector3(-w*.7,h,z),new T.Vector3(0,h+1.1,z),new T.Vector3(w*.7,h,z),new T.Vector3(w,h*.62,z),new T.Vector3(w,0,z)]);portal.add(new T.Mesh(new T.TubeGeometry(curve,70,.035,6,false),glowMat));const frame=new T.Mesh(new T.TubeGeometry(curve,70,.15,8,false),rockMat);frame.position.z=-.09;portal.add(frame);}
  mesh(new T.PlaneGeometry(2.1,4),new T.MeshBasicMaterial({color:0xffb462,transparent:true,opacity:.23,side:T.DoubleSide}),5,2,-14.5);halo(0xff9f43,6,5,2,-13.5).material.opacity=.32;add(new T.PointLight(0xffbc68,55,16,2),5,2.5,-10);for(let i=0;i<8;i++)mesh(new T.BoxGeometry(3.8-i*.14,.15,.55),rockMat,5,.05+i*.14,-8.3-i*.5);
- const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#fff1d5';g.font='500 70px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(5.6,.9),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,depthTest:false})),5,5.2,-11.15);const completionGlow=halo(0xffd39c,5,5,2,-12.5);completionGlow.material.opacity=0;
+ // Architectural stonework: paired columns, keystone, and warm recessed doorway.
+ const portalStone=new T.MeshStandardMaterial({color:0x73877c,roughness:.85,metalness:.03});
+ const insetStone=new T.MeshStandardMaterial({color:0x283e39,roughness:.92});
+ for(const x of [3.35,6.65]){
+   mesh(new T.CylinderGeometry(.42,.52,3.4,10),portalStone,x,1.7,-11.3);
+   mesh(new T.CylinderGeometry(.58,.56,.3,10),portalStone,x,3.5,-11.3);
+   mesh(new T.CylinderGeometry(.62,.57,.25,10),portalStone,x,.2,-11.3);
+   for(let y=.65;y<3.4;y+=.65)mesh(new T.BoxGeometry(.85,.07,.76),rockMat,x,y,-11.3);
+ }
+ const doorway=mesh(new T.PlaneGeometry(2.65,3.45),insetStone,5,2.02,-11.85);
+ const doorGlow=mesh(new T.PlaneGeometry(2.35,3.12),new T.MeshBasicMaterial({color:0xeeb877,transparent:true,opacity:.24,side:T.DoubleSide}),5,2.06,-11.78);
+ for(let i=0;i<11;i++){const a=Math.PI*(i/10),x=5+1.62*Math.cos(a),y=3.48+1.55*Math.sin(a);const stoneBlock=mesh(new T.BoxGeometry(.5,.45,.8),portalStone,x,y,-11.3);stoneBlock.rotation.z=a-Math.PI/2;}
+ const keystone=mesh(new T.BoxGeometry(.72,.68,.96),portalStone,5,5.13,-11.3);
+ for(const x of [2.95,7.05]){mesh(new T.CylinderGeometry(.09,.11,1.5,8),gold,x,1.15,-10.8);mesh(new T.SphereGeometry(.18,12,8),lanternMat,x,1.96,-10.8);}
+  const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#fff1d5';g.font='500 70px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(5.6,.9),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,depthTest:false})),5,5.2,-11.15);const completionGlow=halo(0xffd39c,5,5,2,-12.5);completionGlow.material.opacity=0;
 
  // Asymmetric falls: no horizontal floating rock bars across the water.
  // Offset rock shelves are anchored into the cliff on either bank.
