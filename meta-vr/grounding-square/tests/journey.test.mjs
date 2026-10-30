@@ -3,7 +3,7 @@ import test from 'node:test';
 import { createJourney, beginBreathing, advanceBreathing, collect, canReflect,
   openReflection, resetJourney, breathLabel, SYMBOLS } from '../src/journey.mjs';
 
-test('reflection requires a complete breathing activity and four unique symbols', () => {
+test('reflection requires a complete breathing activity and six unique symbols', () => {
   const state = createJourney();
   assert.equal(openReflection(state), false);
   assert.equal(beginBreathing(state), true);
@@ -17,10 +17,10 @@ test('reflection requires a complete breathing activity and four unique symbols'
 });
 test('duplicates and invented symbols cannot advance progress', () => {
   const state = createJourney();
-  assert.equal(collect(state, 'Moon'), true);
-  assert.equal(collect(state, 'Moon'), false);
+  assert.equal(collect(state, 'Earth'), true);
+  assert.equal(collect(state, 'Earth'), false);
   assert.equal(collect(state, 'Puzzle piece'), false);
-  assert.deepEqual(state.collected, ['Moon']);
+  assert.deepEqual(state.collected, ['Earth']);
 });
 test('breathing cannot skip steps and reset restores journey', () => {
   const state = createJourney();
@@ -29,7 +29,7 @@ test('breathing cannot skip steps and reset restores journey', () => {
   assert.equal(advanceBreathing(state, -5), false);
   assert.equal(state.breathElapsed, 0);
   state.reducedMotion = true;
-  collect(state, 'Star');
+  collect(state, 'Water');
   resetJourney(state);
   assert.equal(canReflect(state), false);
   assert.deepEqual(state.collected, []);
