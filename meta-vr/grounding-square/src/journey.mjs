@@ -1,10 +1,10 @@
 // Pure experience state: shared between XR interactions and unit tests.
-export const SYMBOLS = Object.freeze(['Moon', 'Star', 'Sun', 'Comet']);
+export const SYMBOLS = Object.freeze(['Earth', 'Water', 'Air', 'Fire', 'Spirit', 'Aether']);
 export const BREATH_SECONDS = 16; // Two gentle 4-in / 4-out breathing cycles.
 
 export function createJourney() {
   return { breathElapsed: 0, breathing: false, breathCompleted: false,
-    collected: [], reflectionOpen: false, reducedMotion: false };
+    collected: [], reflectionOpen: false, reflectionIndex: 0, reducedMotion: false };
 }
 export function beginBreathing(journey) {
   if (journey.breathCompleted) return false;
@@ -32,6 +32,7 @@ export function canReflect(journey) {
 export function openReflection(journey) {
   if (!canReflect(journey)) return false;
   journey.reflectionOpen = true;
+  journey.reflectionIndex = (journey.reflectionIndex || 0) + 1;
   return true;
 }
 export function resetJourney(journey) {
