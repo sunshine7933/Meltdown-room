@@ -35,7 +35,7 @@ export function buildWoodland(world,{add,mesh,halo,mat}) {
  const doorGlow=mesh(new T.PlaneGeometry(2.35,3.12),new T.MeshBasicMaterial({color:0xeeb877,transparent:true,opacity:.24,side:T.DoubleSide}),5,2.06,-11.78);
  for(let i=0;i<11;i++){const a=Math.PI*(i/10),x=5+1.62*Math.cos(a),y=3.48+1.55*Math.sin(a);const stoneBlock=mesh(new T.BoxGeometry(.5,.45,.8),portalStone,x,y,-11.3);stoneBlock.rotation.z=a-Math.PI/2;}
  const keystone=mesh(new T.BoxGeometry(.72,.68,.96),portalStone,5,5.13,-11.3);
- for(const x of [2.95,7.05]){mesh(new T.CylinderGeometry(.09,.11,1.5,8),gold,x,1.15,-10.8);mesh(new T.SphereGeometry(.18,12,8),lanternMat,x,1.96,-10.8);}
+ for(const x of [2.95,7.05]){mesh(new T.CylinderGeometry(.09,.11,1.5,8),gold,x,1.15,-10.8);mesh(new T.SphereGeometry(.18,12,8),new T.MeshBasicMaterial({color:0xffd18b}),x,1.96,-10.8);}
   const tc=document.createElement('canvas');tc.width=1024;tc.height=128;const g=tc.getContext('2d');g.textAlign='center';g.fillStyle='#fff1d5';g.font='500 70px Georgia';g.fillText('THE MELTDOWN ROOM',512,75);const t=new T.CanvasTexture(tc);add(new T.Mesh(new T.PlaneGeometry(5.6,.9),new T.MeshBasicMaterial({map:t,transparent:true,depthWrite:false,depthTest:false})),5,5.2,-11.15);const completionGlow=halo(0xffd39c,5,5,2,-12.5);completionGlow.material.opacity=0;
 
  // Asymmetric falls: no horizontal floating rock bars across the water.
