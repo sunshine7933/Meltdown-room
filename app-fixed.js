@@ -65,7 +65,7 @@ function enhanceRoom(){
     /* Dragging the flame should burn the paper, never select its text. */
     .burn-fireplace,.burn-paper{-webkit-user-select:none!important;user-select:none!important}
     #accountButton,#stillModeButton{min-height:44px!important}
-    /* The Thinking Room calls this a Water Hourglass: use quiet liquid levels instead of shrinking sand wedges. */
+    /* The Grounding Square calls this a Water Hourglass: use quiet liquid levels instead of shrinking sand wedges. */
     .hourglass-visual{filter:drop-shadow(0 9px 9px rgba(0,0,0,.42))!important}
     .hourglass-visual::before,.hourglass-visual::after{border-color:#9f7448!important;background:linear-gradient(90deg,rgba(255,255,255,.34),rgba(194,229,234,.09) 28% 72%,rgba(255,255,255,.25))!important;box-shadow:inset 0 0 12px rgba(196,232,237,.24),inset 2px 0 2px rgba(255,255,255,.22)!important}
     .hourglass-top-sand,.hourglass-bottom-sand{overflow:hidden;background:transparent!important;transform:none!important}
@@ -143,7 +143,7 @@ function enhanceRoom(){
   if(thinkingRoom&&thinkingRoom.querySelector('.scene-wrap')&&!thinkingRoom.querySelector('.mr-thinking-actions')){
     const actions=d.createElement('nav');
     actions.className='mr-thinking-actions';
-    actions.setAttribute('aria-label','Thinking Room activities');
+    actions.setAttribute('aria-label','Grounding Square activities');
     thinkingRoom.querySelectorAll('.thinking-hotspot').forEach(hotspot=>{
       const button=d.createElement('button');
       button.type='button';
@@ -168,7 +168,7 @@ function enhanceRoom(){
   }
 
   /* Match Home's nine pictured tiles exactly, including the dedicated Memorial Room and Explore/Map. */
-  const homeTiles=[['Enter the property','entrance'],['Open the Great Room','great'],['Open the Rant Room','rant'],['Open the Meltdown Room','meltdown'],['Open the Thinking Room','thinking'],['Open the Calm Room','calm'],['Open the Hope Room','hope'],['Open the Celebration Room','celebration'],['Open Property Map','map']];
+  const homeTiles=[['Enter the property','entrance'],['Open the Great Room','great'],['Open the Rant Room','rant'],['Open the Meltdown Room','meltdown'],['Open the Grounding Square','thinking'],['Open the Calm Room','calm'],['Open the Hope Room','hope'],['Open the Celebration Room','celebration'],['Open Property Map','map']];
   const homeStage=d.querySelector('.home-stage');
   if(homeStage){
     const old=[...homeStage.querySelectorAll('.home-hotspot')];
@@ -277,7 +277,7 @@ function enhanceRoom(){
     if(img){
       const stage=d.createElement('div');stage.className='mr-great-stage';
       greatSceneWrap.insertBefore(stage,img);stage.appendChild(img);
-      const routes=[['Rant Room','rant'],['Meltdown Room','meltdown'],['Thinking Room','thinking'],['Calm Room','calm'],['Hope Room','hope'],['Celebration Room','celebration'],['Family & Fun','game'],['Property Map','map']];
+      const routes=[['Rant Room','rant'],['Meltdown Room','meltdown'],['Grounding Square','thinking'],['Calm Room','calm'],['Hope Room','hope'],['Celebration Room','celebration'],['Family & Fun','game'],['Property Map','map']];
       routes.forEach((route,index)=>{
         const button=d.createElement('button');button.type='button';button.className='mr-great-hotspot';
         button.style.left=(index*100/routes.length)+'%';button.style.width=(100/routes.length)+'%';
