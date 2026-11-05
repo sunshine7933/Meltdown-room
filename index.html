@@ -168,7 +168,32 @@ button,input,textarea,select{font:inherit}
  .arrival-choice{padding:13px 14px!important;font-size:1rem!important}
 }
 @media(max-width:390px){.arrival-choice{min-height:68px!important;padding:11px!important}.arrival-options{gap:9px!important}}
-</style></head>
+</style><style id="glass-flow-v2">
+@keyframes mrGlassFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes mrGlassSheen{0%,55%{transform:translateX(-160%) skewX(-18deg)}85%,100%{transform:translateX(240%) skewX(-18deg)}}
+.arrival-picker,.arrival-choice,.hero .btn,.app-callout .btn,.shelf-actions a{
+ -webkit-backdrop-filter:blur(24px) saturate(1.55)!important;backdrop-filter:blur(24px) saturate(1.55)!important;
+}
+.arrival-choice,.hero .btn,.app-callout .btn,.shelf-actions a{
+ isolation:isolate;background-size:220% 220%!important;
+ background-image:linear-gradient(120deg,rgba(255,255,255,.34),rgba(82,193,207,.22),rgba(13,52,69,.42),rgba(255,197,102,.30),rgba(255,255,255,.22))!important;
+ animation:mrGlassFlow 7s ease-in-out infinite!important;
+ transition:transform .18s ease,border-color .18s ease,box-shadow .18s ease,filter .18s ease!important;
+}
+.arrival-choice::after,.hero .btn::after,.app-callout .btn::after,.shelf-actions a::after{
+ content:"";position:absolute;z-index:0;inset:-35% auto -35% -45%;width:34%;pointer-events:none;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.62),transparent);
+ transform:translateX(-160%) skewX(-18deg);animation:mrGlassSheen 4.8s ease-in-out infinite;
+}
+.arrival-choice>* ,.hero .btn>*{position:relative;z-index:2}
+.arrival-choice:active,.arrival-choice.is-chosen,.hero .btn:active,.app-callout .btn:active{
+ transform:scale(.965)!important;filter:brightness(1.22)!important;border-color:#fff1c9!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.82),0 0 0 3px rgba(255,210,126,.20),0 0 32px rgba(114,224,234,.30)!important;
+}
+.arrival-choice.is-chosen::after{animation-duration:.75s}
+@media(prefers-reduced-motion:reduce){.arrival-choice,.hero .btn,.app-callout .btn,.shelf-actions a,.arrival-choice::after,.hero .btn::after,.app-callout .btn::after,.shelf-actions a::after{animation:none!important}}
+</style>
+</head>
 <body>
 <header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a class="cta" href="app-fixed.html">Enter The Meltdown Room →</a></nav></div></header>
 <main>
@@ -270,4 +295,20 @@ document.querySelectorAll('.arrival-choice').forEach(button=>button.addEventList
  window.setTimeout(()=>{if(target.startsWith('#')){document.querySelector(target)?.scrollIntoView({behavior:matchMedia('(prefers-reduced-motion: reduce)').matches?'auto':'smooth',block:'start'})}else{window.location.href=target}},850);
 }));
 </script><script src="public-analytics.js" defer></script>
+<script id="glass-flow-interactions-v2">
+(()=>{
+ const choices=[...document.querySelectorAll('.arrival-choice')];
+ choices.forEach(btn=>btn.addEventListener('click',e=>{
+   e.preventDefault(); choices.forEach(x=>x.classList.toggle('is-chosen',x===btn));
+   const response=document.getElementById('arrival-response');
+   if(response){response.hidden=false;response.textContent=btn.dataset.response||'Okay. We’ll meet you right where you are.';}
+   if(!matchMedia('(prefers-reduced-motion: reduce)').matches){
+     const r=btn.getBoundingClientRect();const ripple=document.createElement('span');
+     ripple.style.cssText='position:absolute;z-index:1;width:18px;height:18px;border-radius:50%;left:'+(r.width/2-9)+'px;top:'+(r.height/2-9)+'px;background:rgba(255,255,255,.55);pointer-events:none;transform:scale(0);transition:transform .55s ease,opacity .55s ease';
+     btn.append(ripple);requestAnimationFrame(()=>{ripple.style.transform='scale(14)';ripple.style.opacity='0'});setTimeout(()=>ripple.remove(),600);
+   }
+   const href=btn.getAttribute('href');setTimeout(()=>{if(href)location.href=href},700);
+ }));
+})();
+</script>
 </body></html>
