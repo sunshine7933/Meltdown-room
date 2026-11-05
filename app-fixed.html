@@ -1110,7 +1110,30 @@
 button:disabled{opacity:.48!important;filter:saturate(.55)!important;box-shadow:none!important}
 @media(hover:none){#retreat button:hover,#home button:hover,#entrance button:hover,#map button:hover,#great button:hover,#calm button:hover,#hope button:hover,#celebration button:hover,#learn button:hover,#game button:hover,#explore button:hover,#resources button:hover,#companion button:hover,#rant button:hover,#meltdown button:hover,#thinking button:hover,#axe button:hover,#plate button:hover,#crumple button:hover,#outdoor button:hover{filter:none}}
 @media(prefers-reduced-motion:reduce){#retreat button,#home button,#entrance button,#map button,#great button,#calm button,#hope button,#celebration button,#learn button,#game button,#explore button,#resources button,#companion button,#rant button,#meltdown button,#thinking button,#axe button,#plate button,#crumple button,#outdoor button{transition:none!important}}
-</style></head>
+</style><style id="room-glass-flow-v2">
+@keyframes roomGlassFlow{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+@keyframes roomGlassSheen{0%,58%{transform:translateX(-190%) skewX(-18deg)}88%,100%{transform:translateX(300%) skewX(-18deg)}}
+.screen button:not(.home-hotspot),.screen a[class*="btn"],.screen .od-rail button{
+ position:relative;isolation:isolate;overflow:hidden;background-size:230% 230%!important;
+ background-image:linear-gradient(120deg,rgba(255,255,255,.30),rgba(80,190,205,.20),rgba(12,48,66,.44),rgba(242,190,101,.28),rgba(255,255,255,.20))!important;
+ border:1px solid rgba(255,232,184,.72)!important;color:#fff8e9!important;
+ -webkit-backdrop-filter:blur(22px) saturate(1.5)!important;backdrop-filter:blur(22px) saturate(1.5)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.65),inset 0 -1px 0 rgba(255,205,115,.12),0 8px 22px rgba(0,10,20,.28),0 0 16px rgba(100,216,226,.10)!important;
+ animation:roomGlassFlow 7s ease-in-out infinite!important;transition:transform .18s ease,filter .18s ease,box-shadow .18s ease!important;
+}
+.screen button:not(.home-hotspot)::after,.screen a[class*="btn"]::after,.screen .od-rail button::after{
+ content:"";position:absolute;z-index:0;inset:-35% auto -35% -45%;width:32%;pointer-events:none;
+ background:linear-gradient(90deg,transparent,rgba(255,255,255,.58),transparent);
+ transform:translateX(-190%) skewX(-18deg);animation:roomGlassSheen 5s ease-in-out infinite;
+}
+.screen button:not(.home-hotspot)>*,.screen a[class*="btn"]>*{position:relative;z-index:2}
+.screen button:not(.home-hotspot):active,.screen button.mr-glass-hit,.screen a[class*="btn"]:active{
+ transform:scale(.96)!important;filter:brightness(1.25)!important;border-color:#fff4d6!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.85),0 0 0 3px rgba(255,215,140,.20),0 0 34px rgba(98,222,232,.30)!important;
+}
+@media(prefers-reduced-motion:reduce){.screen button:not(.home-hotspot),.screen a[class*="btn"],.screen .od-rail button,.screen button:not(.home-hotspot)::after,.screen a[class*="btn"]::after,.screen .od-rail button::after{animation:none!important}}
+</style>
+</head>
 
 <body>
 
@@ -1647,6 +1670,12 @@ button:disabled{opacity:.48!important;filter:saturate(.55)!important;box-shadow:
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.111.0/dist/umd/supabase.min.js" defer></script>
 <script src="website-account.js" defer></script>
 <script src="return-experience.js" defer></script>
+<script id="room-glass-touch-v2">
+document.addEventListener('pointerdown',e=>{
+ const b=e.target.closest('.screen button:not(.home-hotspot),.screen a[class*="btn"]');if(!b)return;
+ b.classList.add('mr-glass-hit');setTimeout(()=>b.classList.remove('mr-glass-hit'),420);
+},{passive:true});
+</script>
 </body>
 </html>
 
