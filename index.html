@@ -141,6 +141,33 @@ button,input,textarea,select{font:inherit}
 @media(max-width:800px){.hero{min-height:auto!important}.hero-copy{padding-bottom:18px!important}.arrival-picker{margin-top:15px;padding:12px}.arrival-choice{min-height:48px;padding:9px 10px;font-size:.9rem}.arrival-picker h2{font-size:1rem}.hero p{line-height:1.35}.hero .buttons{margin-top:12px}}
 @media(max-width:390px){.arrival-options{gap:7px}.arrival-choice{font-size:.82rem;gap:6px}.arrival-choice span{font-size:1.05rem}.arrival-picker{margin-top:10px}}
 @media(prefers-reduced-motion:reduce){.arrival-choice,.arrival-response{transition:none}}
+</style><style id="homepage-real-glass-buttons">
+/* Make the homepage controls read as actual frosted glass, especially on iPhone. */
+.hero .btn,.arrival-choice,.site-header .cta,.app-callout .btn,.shelf-actions a{
+ position:relative;overflow:hidden;
+ border:1px solid rgba(255,238,202,.72)!important;
+ background:linear-gradient(135deg,rgba(255,255,255,.20) 0%,rgba(103,178,184,.18) 34%,rgba(17,57,67,.30) 68%,rgba(244,194,112,.18) 100%)!important;
+ -webkit-backdrop-filter:blur(18px) saturate(1.35)!important;backdrop-filter:blur(18px) saturate(1.35)!important;
+ box-shadow:inset 0 1px 0 rgba(255,255,255,.58),inset 0 -1px 0 rgba(255,209,130,.12),0 9px 25px rgba(0,14,22,.25),0 0 18px rgba(244,203,132,.10)!important;
+ color:#fff9ec!important;text-shadow:0 1px 3px rgba(0,0,0,.55)!important;
+}
+.hero .btn::before,.arrival-choice::before,.site-header .cta::before,.app-callout .btn::before,.shelf-actions a::before{
+ content:"";position:absolute;inset:1px 8% auto;height:42%;border-radius:999px;
+ background:linear-gradient(180deg,rgba(255,255,255,.28),rgba(255,255,255,0));pointer-events:none;
+}
+.arrival-choice{min-height:72px!important;border-radius:22px!important}
+.arrival-choice strong{position:relative;z-index:1}
+.arrival-choice span{position:relative;z-index:1;filter:drop-shadow(0 2px 4px rgba(0,0,0,.25))}
+.arrival-picker{background:linear-gradient(135deg,rgba(7,45,55,.34),rgba(255,214,148,.09))!important;border-color:rgba(255,234,190,.55)!important;-webkit-backdrop-filter:blur(18px) saturate(1.2)!important;backdrop-filter:blur(18px) saturate(1.2)!important}
+.arrival-picker h2{color:#fff4d8!important;text-shadow:0 2px 8px rgba(0,0,0,.55)}
+.arrival-choice:active,.arrival-choice.is-chosen{transform:scale(.975);border-color:rgba(255,243,211,.95)!important;box-shadow:inset 0 1px rgba(255,255,255,.65),0 0 0 2px rgba(255,215,145,.20),0 0 26px rgba(255,205,120,.24)!important}
+@media(max-width:800px){
+ .site-header .cta{display:none!important} /* one entry CTA in the mobile hero, not two */
+ .hero .btn.btn-primary{background:linear-gradient(135deg,rgba(255,242,209,.32),rgba(239,190,104,.26),rgba(22,75,83,.28))!important;border-color:rgba(255,231,179,.86)!important}
+ .arrival-options{gap:12px!important}
+ .arrival-choice{padding:13px 14px!important;font-size:1rem!important}
+}
+@media(max-width:390px){.arrival-choice{min-height:68px!important;padding:11px!important}.arrival-options{gap:9px!important}}
 </style></head>
 <body>
 <header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a class="cta" href="app-fixed.html">Enter The Meltdown Room →</a></nav></div></header>
