@@ -1058,7 +1058,25 @@
 <link rel="stylesheet" href="mini-games-modern.css?v=1">
 <link rel="stylesheet" href="website-room-compat.css">
 <link rel="stylesheet" href="return-experience.css">
-</head>
+<style id="interactive-world-upgrade">
+:root{--mr-glass:rgba(17,52,62,.62);--mr-glass-warm:rgba(85,57,39,.52);--mr-line:rgba(255,225,168,.52);--mr-gold:#f1cf8b}
+#home .home-stage,#entrance .scene-wrap{position:relative;isolation:isolate;overflow:hidden}
+#home .home-stage::after,#entrance .scene-wrap::after{content:"";position:absolute;inset:0;pointer-events:none;background:linear-gradient(105deg,transparent 28%,rgba(255,241,205,.11) 48%,transparent 68%);transform:translateX(-70%);animation:mrWorldShimmer 12s ease-in-out infinite}
+@keyframes mrWorldShimmer{0%,18%{transform:translateX(-75%);opacity:.2}55%{opacity:.7}82%,100%{transform:translateX(75%);opacity:.15}}
+.home-hotspot{border:1px solid transparent!important;background:rgba(255,225,168,0)!important;border-radius:18px!important;transition:background .25s ease,border-color .25s ease,box-shadow .25s ease,transform .25s ease}
+.home-hotspot:focus-visible,.home-hotspot.mr-discover{background:rgba(30,95,101,.24)!important;border-color:rgba(255,225,168,.65)!important;box-shadow:0 0 22px rgba(246,201,119,.25),inset 0 0 18px rgba(255,255,255,.08)}
+.mr-world-guide{position:absolute;z-index:12;left:50%;bottom:5%;transform:translateX(-50%);width:min(92%,650px);padding:13px 16px;border:1px solid var(--mr-line);border-radius:20px;background:linear-gradient(135deg,var(--mr-glass),var(--mr-glass-warm));backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 16px 38px rgba(4,17,25,.3);text-align:center;color:#fff7e8;pointer-events:none;transition:opacity .35s ease,transform .35s ease}
+.mr-world-guide strong{display:block;color:var(--mr-gold);font-family:Georgia,serif;font-size:1.05rem}.mr-world-guide span{display:block;margin-top:3px;font-size:.9rem;line-height:1.35}.mr-world-guide.mr-hide{opacity:0;transform:translate(-50%,10px)}
+.screen .topbar,.screen .controls,.rd-shell header,.gm-top,.cm-header,.hm-header,.mm-top,.tm-top,.od-header{backdrop-filter:blur(15px);-webkit-backdrop-filter:blur(15px);border-color:var(--mr-line)!important}
+.controls{background:linear-gradient(180deg,rgba(16,43,52,.72),rgba(37,27,21,.82))!important}
+.controls button,.rd-shell button,.gm-shell button,.cm-content button,.hm-content button,.mm-shell button,.tm-shell button,.od-shell button{box-shadow:inset 0 1px rgba(255,255,255,.12),0 7px 18px rgba(4,16,24,.18);transition:transform .2s ease,box-shadow .2s ease,filter .2s ease}
+.controls button:active,.rd-shell button:active,.gm-shell button:active,.cm-content button:active,.hm-content button:active,.mm-shell button:active,.tm-shell button:active,.od-shell button:active{transform:scale(.97)}
+.mr-room-enter{animation:mrRoomEnter .48s ease both}@keyframes mrRoomEnter{from{opacity:.2;filter:blur(3px);transform:scale(1.008)}to{opacity:1;filter:none;transform:none}}
+.mr-tap-spark{position:fixed;z-index:9999;width:10px;height:10px;border:1px solid rgba(255,232,183,.9);border-radius:50%;pointer-events:none;transform:translate(-50%,-50%);animation:mrTapSpark .6s ease-out forwards}
+@keyframes mrTapSpark{to{width:48px;height:48px;opacity:0;border-color:rgba(128,213,216,.2)}}
+@media(max-width:600px){.mr-world-guide{bottom:3%;padding:10px 12px}.mr-world-guide strong{font-size:.96rem}.mr-world-guide span{font-size:.8rem}.home-hotspot{min-height:44px}}
+@media(prefers-reduced-motion:reduce){#home .home-stage::after,#entrance .scene-wrap::after,.mr-room-enter,.mr-tap-spark{animation:none!important}.controls button,.rd-shell button,.gm-shell button,.cm-content button,.hm-content button,.mm-shell button,.tm-shell button,.od-shell button{transition:none}}
+</style></head>
 
 <body>
 
@@ -1078,7 +1096,7 @@
 <section class="screen" id="home">
     <div class="topbar">The Meltdown Room • Home</div>
     <div class="scene-wrap">
-      <div class="home-stage">
+      <div class="home-stage"><div class="mr-world-guide" id="mrWorldGuide" role="status" aria-live="polite"><strong>Welcome in.</strong><span>Tap around the property — the rooms are yours to explore.</span></div>
         <img loading="lazy" decoding="async" class="scene" src="home.png" alt="The Meltdown Room Home">
         <div class="home-live-clock" id="homeLiveClock" aria-label="Your local date and time"><strong id="homeLiveTime">--:--</strong><small id="homeLiveDate">Local time</small></div>
         <button class="home-hotspot" style="left:0%;top:82%;width:12.4%;height:14%" data-mr-click="h14" aria-label="Enter the property"></button>
@@ -1527,7 +1545,31 @@
       </div>
 <footer class="od-footer"><button type="button" data-mr-click="h591">More ideas in Explore Near Me ↗</button><button type="button" data-mr-click="h594">Main page</button></footer></div><div hidden><button type="button" data-mr-click="h593" tabindex="-1"></button><button type="button" data-mr-click="h552" tabindex="-1"></button><button type="button" data-mr-click="h550" tabindex="-1"></button><button type="button" data-mr-click="h551" tabindex="-1"></button><button type="button" data-mr-click="h548" tabindex="-1"></button><button type="button" data-mr-click="h553" tabindex="-1"></button><button type="button" data-mr-click="h549" tabindex="-1"></button></div></section>
 
-  <script src="app.js"></script><script src="inline-handlers.js"></script>
+  <script id="interactive-world-script">
+(()=>{
+ const guide=document.getElementById('mrWorldGuide');
+ const hotspots=[...document.querySelectorAll('.home-hotspot')];
+ let pulseIndex=0,pulseTimer=null;
+ function pulse(){
+  hotspots.forEach((h,i)=>h.classList.toggle('mr-discover',i===pulseIndex));
+  pulseIndex=(pulseIndex+1)%Math.max(hotspots.length,1);
+ }
+ if(hotspots.length&&!matchMedia('(prefers-reduced-motion: reduce)').matches){pulse();pulseTimer=setInterval(pulse,2200)}
+ hotspots.forEach(h=>h.addEventListener('click',()=>{guide?.classList.add('mr-hide');if(pulseTimer)clearInterval(pulseTimer)}));
+ document.addEventListener('pointerdown',e=>{
+  const interactive=e.target.closest('button,a,[role="button"]'); if(!interactive)return;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
+  const spark=document.createElement('i');spark.className='mr-tap-spark';spark.style.left=e.clientX+'px';spark.style.top=e.clientY+'px';document.body.append(spark);setTimeout(()=>spark.remove(),650);
+ },{passive:true});
+ const observer=new MutationObserver(()=>{
+  const active=document.querySelector('.screen.active'); if(!active||active.dataset.mrEntered==='1')return;
+  document.querySelectorAll('.screen[data-mr-entered="1"]').forEach(el=>delete el.dataset.mrEntered);
+  active.dataset.mrEntered='1';active.classList.remove('mr-room-enter');void active.offsetWidth;active.classList.add('mr-room-enter');
+ });
+ observer.observe(document.body,{subtree:true,attributes:true,attributeFilter:['class']});
+ const active=document.querySelector('.screen.active');if(active){active.dataset.mrEntered='1';active.classList.add('mr-room-enter')}
+})();
+</script><script src="app.js"></script><script src="inline-handlers.js"></script>
 
 <script src="luminous.js"></script>
 <script src="great-modern.js?v=inspiration-1"></script>
