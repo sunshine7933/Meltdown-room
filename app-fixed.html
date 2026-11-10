@@ -618,9 +618,10 @@
     .learn-template-actions { display:flex; flex-wrap:wrap; gap:8px; margin-top:12px; }
     .learn-private-note { padding:9px; border-radius:8px; background:#ead8b2; }
     @media print {
+      @page{size:Letter;margin:0.45in}
       body.printing-learn-tool * { visibility:hidden !important; }
       body.printing-learn-tool #learnWorkspace, body.printing-learn-tool #learnWorkspace .learn-print-sheet, body.printing-learn-tool #learnWorkspace .learn-print-sheet * { visibility:visible !important; }
-      body.printing-learn-tool #learnWorkspace { display:block !important; position:absolute; inset:0; margin:0; padding:24px; color:#111; background:#fff; }
+      body.printing-learn-tool #learnWorkspace { display:block !important; position:static !important; inset:auto; margin:0; padding:0; width:100%; font-size:13px; line-height:1.35; color:#111; background:#fff; }
       body.printing-learn-tool .learn-template-actions { display:none !important; }
       body.printing-learn-tool .learn-template-field textarea { border:1px solid #333; background:#fff; color:#111; }
     }
@@ -928,7 +929,7 @@
     .resource-category-buttons,.resource-actions{display:flex;flex-wrap:wrap;gap:8px}
     .resource-category-buttons button,.resource-actions button,.resource-actions a{flex:1 1 150px;min-height:44px;padding:10px;border:1px solid #b99365;border-radius:10px;background:#5a3b24;color:#fff5e5;font-weight:700;text-align:center;text-decoration:none;cursor:pointer}
     .resource-printable{display:none;margin-top:14px;padding:20px;border-radius:10px;background:#fff;color:#171717}.resource-printable.open{display:block}.resource-printable h2{color:#171717;margin:0 0 4px}.resource-printable-line{margin:16px 0}.resource-printable-line strong{display:block;margin-bottom:18px}.resource-printable-line span{display:block;border-bottom:1px solid #333;height:22px}.resource-printable-actions{display:flex;gap:8px;flex-wrap:wrap;margin-top:18px}
-    @media print{body.printing-resource-sheet *{visibility:hidden!important}body.printing-resource-sheet #resourcePrintable,body.printing-resource-sheet #resourcePrintable *{visibility:visible!important}body.printing-resource-sheet #resourcePrintable{display:block!important;position:absolute;inset:0;margin:0;padding:24px;background:#fff;color:#111}.resource-printable-actions{display:none!important}}
+    @media print{@page{size:Letter;margin:0.45in}body.printing-resource-sheet *{visibility:hidden!important}body.printing-resource-sheet #resourcePrintable,body.printing-resource-sheet #resourcePrintable *{visibility:visible!important}body.printing-resource-sheet #resourcePrintable{display:block!important;position:static!important;inset:auto;margin:0;padding:0;width:100%;background:#fff;color:#111;font-size:13px;line-height:1.35}body.printing-resource-sheet #resourcePrintable h2{font-size:19px;margin:0 0 2px}body.printing-resource-sheet .resource-printable-line{margin:9px 0;page-break-inside:avoid}body.printing-resource-sheet .resource-printable-line strong{margin-bottom:8px}body.printing-resource-sheet .resource-printable-line span{height:17px}.resource-printable-actions{display:none!important}}
     .resource-category-buttons button:hover,.resource-category-buttons button[aria-pressed="true"],.resource-actions button:hover,.resource-actions a:hover{background:#176c73;border-color:#c7f3f4}
     .resource-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
     .resource-item{padding:13px;border:1px solid #80603f;border-radius:11px;background:#f4e4c9;color:#2d1d13}
