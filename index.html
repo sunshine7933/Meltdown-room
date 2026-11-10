@@ -381,4 +381,5 @@ try{var saved=localStorage.getItem('meltdown-inspiration-sign');if(SKY_SIGNS.inc
 function renderSky(){var now=new Date(),day=Math.floor(Date.UTC(now.getFullYear(),now.getMonth(),now.getDate())/86400000),index=SKY_SIGNS.indexOf(signEl.value),theme=SKY_THEMES[((day*7+index*5)%SKY_THEMES.length+SKY_THEMES.length)%SKY_THEMES.length];dateEl.textContent=new Intl.DateTimeFormat(undefined,{weekday:'long',month:'long',day:'numeric',year:'numeric'}).format(now);titleEl.textContent=signEl.value+' \u00b7 Today';reading.textContent=theme.line;document.getElementById('sky-detail-text').textContent=theme.detail;document.getElementById('sky-action').textContent=theme.action;detail.hidden=true;more.setAttribute('aria-expanded','false');more.innerHTML='Tell me more &#8599;';try{localStorage.setItem('meltdown-inspiration-sign',signEl.value)}catch(e){}}
 signEl.addEventListener('change',renderSky);more.addEventListener('click',function(){detail.hidden=!detail.hidden;more.setAttribute('aria-expanded',String(!detail.hidden));more.textContent=detail.hidden?'Tell me more \u2197':'Show less \u2191'});renderSky();})();
 </script>
+<!-- reflect-rename -->
 </body></html>
