@@ -263,14 +263,14 @@ button,input,textarea,select{font:inherit}
 #welcome-film[hidden]{display:none}
 .wf-frame{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/9;background:#0d1a20;border:1px solid rgba(255,255,255,.35);box-shadow:0 22px 55px rgba(6,30,38,.35),inset 0 1px 0 rgba(255,255,255,.35);opacity:1;transition:opacity 1.1s ease}
 #welcome-film.leaving .wf-frame{opacity:0}
-.wf-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 2.2s ease;transform:scale(1.02)}
-.wf-img.on{opacity:1;animation:wf-zoom 11s ease-out forwards}
+.wf-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 1.4s ease;transform:scale(1.02)}
+.wf-img.on{opacity:1;animation:wf-zoom 7s ease-out forwards}
 .wf-img:nth-child(odd).on{animation-name:wf-zoom-alt}
 @keyframes wf-zoom{from{transform:scale(1.02)}to{transform:scale(1.13)}}
 @keyframes wf-zoom-alt{from{transform:scale(1.13)}to{transform:scale(1.03)}}
 .wf-skip{position:absolute;top:12px;right:12px;z-index:5;cursor:pointer;border-radius:999px;padding:8px 15px;font-size:.85rem;font-weight:600;color:#fff;background:linear-gradient(160deg,rgba(20,40,50,.55),rgba(20,40,50,.35));border:1px solid rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
 .wf-skip:focus-visible{outline:3px solid #ffd98a;outline-offset:2px}
-.wf-caption{position:absolute;left:12px;bottom:10px;z-index:5;font-size:.8rem;color:#fff;background:rgba(10,24,30,.55);padding:3px 10px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.wf-caption{position:absolute;left:12px;bottom:10px;z-index:5;max-width:min(78%,430px);font-size:.85rem;line-height:1.4;color:#fff;background:rgba(10,24,30,.55);padding:7px 13px;border-radius:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:opacity .45s ease}.wf-caption strong{display:block;font-size:.95rem}.wf-caption.swap{opacity:0}
 @media (prefers-reduced-motion:reduce){.wf-img.on{animation:none}.wf-frame{transition:none}}
 </style>
 </head>
@@ -311,7 +311,7 @@ button,input,textarea,select{font:inherit}
     <img class="wf-img" src="great-room-2026.webp" alt="">
     <img class="wf-img" src="outdoor-lake-2026.webp" alt="">
     <button type="button" class="wf-skip" id="wf-skip">Skip</button>
-    <span class="wf-caption">The Meltdown Room &bull; a quiet welcome</span>
+    <span class="wf-caption" id="wf-caption"><strong>The Entrance</strong>Come in, look around, and stay as long as you need.</span>
   </div>
 </div>
 <section id="home" class="hero"><img src="website-assets/welcome-water.webp" alt="Golden arches and luminous water in The Meltdown Room" fetchpriority="high"><div class="wrap hero-copy"><h1>Having a meltdown? You’re in the right place.</h1><p>This is a free, quiet corner of the internet for overwhelmed people — parents, caregivers, anybody who just needs a minute. Come in and stay as long as you need. No account, and nobody's going to ask you what's wrong.</p><div class="buttons"><a class="btn btn-primary" href="app-fixed.html">Enter The Meltdown Room →</a><a class="btn btn-secondary" href="https://grounding-square-vr-competition.vercel.app" target="_blank" rel="noopener">Enter The Meltdown Room VR →</a></div><div class="arrival-picker" aria-labelledby="arrival-title"><h2 id="arrival-title">How are you arriving today?</h2><div class="arrival-options"><button type="button" class="arrival-choice" data-arrival-target="#ask-the-room" data-arrival-message="Okay. Let’s find you a quieter corner."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 19h21a6 6 0 1 0-6-6"/><path d="M4 27h29a6 6 0 1 1-6 6"/><path d="M8 35h13"/></svg></span><strong>Overwhelmed</strong></button><button type="button" class="arrival-choice" data-arrival-target="app-fixed.html#calm" data-arrival-message="You don’t have to rush. Let’s find somewhere quiet."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M35 30A15 15 0 1 1 18 13a12 12 0 0 0 17 17Z"/></svg></span><strong>Can’t wind down</strong></button><button type="button" class="arrival-choice" data-arrival-target="#games" data-arrival-message="Absolutely. Let’s give your brain a little break."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="10" width="28" height="28" rx="6"/><circle cx="18.5" cy="18.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="29.5" cy="29.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="29.5" cy="18.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="18.5" cy="29.5" r="2.4" fill="currentColor" stroke="none"/></svg></span><strong>Need a break</strong></button><button type="button" class="arrival-choice" data-arrival-target="#rooms" data-arrival-message="Come take a look around. No pressure."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 43V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v36"/><path d="M9 43h30"/><circle cx="28" cy="25" r="1.8" fill="currentColor" stroke="none"/></svg></span><strong>Just looking</strong></button></div><p class="arrival-response" aria-live="polite" aria-atomic="true"></p></div></div></section>
@@ -602,6 +602,14 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
     return;
   }
   var imgs=wrap.querySelectorAll(".wf-img");
+  var capEl=document.getElementById("wf-caption");
+  var CAPTIONS=[
+    ["The Entrance","Come in, look around, and stay as long as you need."],
+    ["The Sanctuary","Soft light and quiet corners — a place to sit with your thoughts."],
+    ["The Great Room","The heart of the house, where everybody gathers."],
+    ["The Outdoors","Fresh air, open water, and room to let go."]
+  ];
+  function setCaption(i){ if(!capEl||!CAPTIONS[i]) return; capEl.classList.add("swap"); setTimeout(function(){ capEl.innerHTML="<strong>"+CAPTIONS[i][0]+"</strong>"+CAPTIONS[i][1]; capEl.classList.remove("swap"); },460); }
   var idx=0, timer=null, started=false;
 
   function markSeen(){ try{ localStorage.setItem(KEY,"1"); }catch(e){} }
@@ -616,12 +624,13 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
     idx++;
     if(idx>=imgs.length){ finish(); return; }
     imgs[idx].classList.add("on");
+    setCaption(idx);
   }
   function start(){
     if(started) return; started=true;
     wrap.hidden=false;
     imgs[0].classList.add("on");
-    timer=setInterval(next, 9000);
+    timer=setInterval(next, 5000);
   }
   document.getElementById("wf-skip").addEventListener("click", finish);
 
