@@ -273,6 +273,15 @@ button,input,textarea,select{font:inherit}
 .wf-caption{position:absolute;left:12px;bottom:10px;z-index:5;max-width:min(78%,430px);font-size:.85rem;line-height:1.4;color:#fff;background:rgba(10,24,30,.55);padding:7px 13px;border-radius:14px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);transition:opacity .45s ease}.wf-caption strong{display:block;font-size:.95rem}.wf-caption.swap{opacity:0}
 @media (prefers-reduced-motion:reduce){.wf-img.on{animation:none}.wf-frame{transition:none}}
 </style>
+<style id="nav-mobile-fix">
+@media(max-width:800px){
+  .nav{flex-wrap:wrap;min-height:0;padding:10px 0}
+  .nav-links{display:flex;flex-wrap:nowrap;overflow-x:auto;width:100%;gap:16px;padding:4px 0 8px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .nav-links::-webkit-scrollbar{display:none}
+  .nav-links a:not(.cta){display:block;white-space:nowrap}
+  .nav-links .cta{white-space:nowrap}
+}
+</style>
 </head>
 <body><div id="sound-gate" hidden role="dialog" aria-modal="true" aria-labelledby="sg-title">
   <div class="sg-card">
