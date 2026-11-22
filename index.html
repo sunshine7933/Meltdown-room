@@ -277,7 +277,7 @@ button,input,textarea,select{font:inherit}
 <body><div id="sound-gate" hidden role="dialog" aria-modal="true" aria-labelledby="sg-title">
   <div class="sg-card">
     <h2 id="sg-title">Welcome to The Meltdown Room</h2>
-    <p>This corner of the internet can sound like rain on a roof, soft ocean, a singing bowl now and then, or a low calm tone — all made live, just for while you're here. Or come in quietly. Either way is fine, and you can change your mind anytime.</p>
+    <p>This corner of the internet can sound like rain on a roof, soft ocean, and a singing bowl now and then — all made live, just for while you're here. Or come in quietly. Either way is fine, and you can change your mind anytime.</p>
     <div class="sg-actions">
       <button type="button" class="sg-btn" id="sg-enter-sound">Enter with sound</button>
       <button type="button" class="sg-btn" id="sg-enter-quiet">Enter quietly</button>
@@ -291,7 +291,7 @@ button,input,textarea,select{font:inherit}
     <p>Made live in your browser. Mix them however feels right.</p>
     <div class="sd-row"><label for="sd-rain">Rain</label><input type="range" id="sd-rain" min="0" max="100" value="50"></div>
     <div class="sd-row"><label for="sd-ocean">Ocean</label><input type="range" id="sd-ocean" min="0" max="100" value="35"></div>
-    <div class="sd-row"><label for="sd-bowl">Bowl</label><input type="range" id="sd-bowl" min="0" max="100" value="40"></div><div class="sd-row"><label for="sd-tone">Tone</label><input type="range" id="sd-tone" min="0" max="100" value="0"></div>
+    <div class="sd-row"><label for="sd-bowl">Bowl</label><input type="range" id="sd-bowl" min="0" max="100" value="40"></div>
   </div>
   <div class="sd-btns">
     <button type="button" class="sd-toggle" id="sd-mix-btn" aria-expanded="false" aria-controls="sd-panel">Mix</button>
@@ -469,9 +469,9 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
   var panel=document.getElementById("sd-panel");
   var toggle=document.getElementById("sd-toggle");
   var toggleLabel=document.getElementById("sd-toggle-label");
-  var sliders={rain:document.getElementById("sd-rain"),ocean:document.getElementById("sd-ocean"),bowl:document.getElementById("sd-bowl"),tone:document.getElementById("sd-tone")};
-  var pref=null, mix={rain:50,ocean:35,bowl:40,tone:0};
-  try{ pref=localStorage.getItem(PREF_KEY); var saved=JSON.parse(localStorage.getItem(MIX_KEY)||"null"); if(saved){mix.rain=+saved.rain||0;mix.ocean=+saved.ocean||0;mix.bowl=+saved.bowl||0;mix.tone=+saved.tone||0;} }catch(e){}
+  var sliders={rain:document.getElementById("sd-rain"),ocean:document.getElementById("sd-ocean"),bowl:document.getElementById("sd-bowl")};
+  var pref=null, mix={rain:50,ocean:35,bowl:40};
+  try{ pref=localStorage.getItem(PREF_KEY); var saved=JSON.parse(localStorage.getItem(MIX_KEY)||"null"); if(saved){mix.rain=+saved.rain||0;mix.ocean=+saved.ocean||0;mix.bowl=+saved.bowl||0;} }catch(e){}
   Object.keys(sliders).forEach(function(k){ if(sliders[k]) sliders[k].value=mix[k]; });
 
   var ctx=null, master=null, gains={}, bowlTimer=null;
@@ -509,15 +509,6 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
     // Bowl: silent gain stage; strikes are scheduled into it
     var bowlGain=ctx.createGain(); bowlGain.gain.value=1; bowlGain.connect(master);
     gains.bowl=bowlGain;
-
-    // Tone: soft 432 Hz drone, two slightly detuned sines for a slow natural shimmer
-    var toneGain=ctx.createGain(); toneGain.gain.value=0; toneGain.connect(master);
-    [432,432*1.003,864].forEach(function(f,i){
-      var o=ctx.createOscillator(); o.type="sine"; o.frequency.value=f;
-      var og=ctx.createGain(); og.gain.value=(i===2)?0.12:0.5;
-      o.connect(og); og.connect(toneGain); o.start();
-    });
-    gains.tone=toneGain;
     applyMix(0);
   }
 
@@ -526,7 +517,6 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
     var t=ctx.currentTime, f=(typeof fade==="number")?fade:0.8;
     gains.rain.gain.setTargetAtTime((mix.rain/100)*0.16, t, f/3);
     gains.ocean.gain.setTargetAtTime((mix.ocean/100)*0.5, t, f/3);
-    if(gains.tone) gains.tone.gain.setTargetAtTime((mix.tone/100)*0.055, t, f/3);
   }
 
   function bowlStrike(){
@@ -591,7 +581,7 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
 <script id="welcome-film-script">
 (function(){
   "use strict";
-  var KEY="tmr-film-seen";
+  var KEY="tmr-film-seen-2";
   var wrap=document.getElementById("welcome-film");
   if(!wrap) return;
   var seen=false;
