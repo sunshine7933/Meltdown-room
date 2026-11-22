@@ -581,38 +581,27 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
 <script id="welcome-film-script">
 (function(){
   "use strict";
-  var KEY="tmr-film-seen-2";
   var wrap=document.getElementById("welcome-film");
   if(!wrap) return;
-  var seen=false;
-  try{ seen=!!localStorage.getItem(KEY); }catch(e){}
-  if(seen) return;
-  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
-    try{ localStorage.setItem(KEY,"1"); }catch(e){}
-    return;
-  }
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
   var imgs=wrap.querySelectorAll(".wf-img");
   var capEl=document.getElementById("wf-caption");
   var CAPTIONS=[
     ["The Entrance","Come in, look around, and stay as long as you need."],
-    ["The Sanctuary","Soft light and quiet corners — a place to sit with your thoughts."],
+    ["The Sanctuary","Soft light and quiet corners \u2014 a place to sit with your thoughts."],
     ["The Great Room","The heart of the house, where everybody gathers."],
     ["The Outdoors","Fresh air, open water, and room to let go."]
   ];
   function setCaption(i){ if(!capEl||!CAPTIONS[i]) return; capEl.classList.add("swap"); setTimeout(function(){ capEl.innerHTML="<strong>"+CAPTIONS[i][0]+"</strong>"+CAPTIONS[i][1]; capEl.classList.remove("swap"); },460); }
   var idx=0, timer=null, started=false;
-
-  function markSeen(){ try{ localStorage.setItem(KEY,"1"); }catch(e){} }
-  function finish(){
+  function hideForNow(){
     if(timer) clearInterval(timer);
     wrap.classList.add("leaving");
     setTimeout(function(){ wrap.hidden=true; },1150);
-    markSeen();
   }
   function next(){
     imgs[idx].classList.remove("on");
-    idx++;
-    if(idx>=imgs.length){ finish(); return; }
+    idx=(idx+1)%imgs.length;
     imgs[idx].classList.add("on");
     setCaption(idx);
   }
@@ -622,14 +611,10 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
     imgs[0].classList.add("on");
     timer=setInterval(next, 5000);
   }
-  document.getElementById("wf-skip").addEventListener("click", finish);
-
-  // If the sound gate is up, wait until it closes so the two welcomes don't collide.
+  document.getElementById("wf-skip").addEventListener("click", hideForNow);
   var gate=document.getElementById("sound-gate");
   if(gate && !gate.hidden){
-    var watcher=setInterval(function(){
-      if(gate.hidden){ clearInterval(watcher); start(); }
-    }, 400);
+    var watcher=setInterval(function(){ if(gate.hidden){ clearInterval(watcher); start(); } }, 400);
   } else { start(); }
 })();
 </script>
