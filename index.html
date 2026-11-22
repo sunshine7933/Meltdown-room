@@ -258,6 +258,21 @@ button,input,textarea,select{font:inherit}
 .sd-row input[type=range]{flex:1;accent-color:#8fd0c5;cursor:pointer}
 @media (prefers-reduced-motion:reduce){#sound-gate{transition:none}.sg-btn{transition:none}}
 </style>
+<style id="welcome-film-style">
+#welcome-film{max-width:1060px;margin:18px auto 0;padding:0 16px}
+#welcome-film[hidden]{display:none}
+.wf-frame{position:relative;border-radius:20px;overflow:hidden;aspect-ratio:16/9;background:#0d1a20;border:1px solid rgba(255,255,255,.35);box-shadow:0 22px 55px rgba(6,30,38,.35),inset 0 1px 0 rgba(255,255,255,.35);opacity:1;transition:opacity 1.1s ease}
+#welcome-film.leaving .wf-frame{opacity:0}
+.wf-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity 2.2s ease;transform:scale(1.02)}
+.wf-img.on{opacity:1;animation:wf-zoom 11s ease-out forwards}
+.wf-img:nth-child(odd).on{animation-name:wf-zoom-alt}
+@keyframes wf-zoom{from{transform:scale(1.02)}to{transform:scale(1.13)}}
+@keyframes wf-zoom-alt{from{transform:scale(1.13)}to{transform:scale(1.03)}}
+.wf-skip{position:absolute;top:12px;right:12px;z-index:5;cursor:pointer;border-radius:999px;padding:8px 15px;font-size:.85rem;font-weight:600;color:#fff;background:linear-gradient(160deg,rgba(20,40,50,.55),rgba(20,40,50,.35));border:1px solid rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.4);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+.wf-skip:focus-visible{outline:3px solid #ffd98a;outline-offset:2px}
+.wf-caption{position:absolute;left:12px;bottom:10px;z-index:5;font-size:.8rem;color:#fff;background:rgba(10,24,30,.55);padding:3px 10px;border-radius:999px;backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px)}
+@media (prefers-reduced-motion:reduce){.wf-img.on{animation:none}.wf-frame{transition:none}}
+</style>
 </head>
 <body><div id="sound-gate" hidden role="dialog" aria-modal="true" aria-labelledby="sg-title">
   <div class="sg-card">
@@ -289,6 +304,16 @@ button,input,textarea,select{font:inherit}
 
 <header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a class="cta" href="app-fixed.html">Enter The Meltdown Room →</a></nav></div></header>
 <main>
+<div id="welcome-film" hidden>
+  <div class="wf-frame">
+    <img class="wf-img" src="website-assets/welcome-water.webp" alt="">
+    <img class="wf-img" src="luminous-sanctuary.webp" alt="">
+    <img class="wf-img" src="great-room-2026.webp" alt="">
+    <img class="wf-img" src="outdoor-lake-2026.webp" alt="">
+    <button type="button" class="wf-skip" id="wf-skip">Skip</button>
+    <span class="wf-caption">The Meltdown Room &bull; a quiet welcome</span>
+  </div>
+</div>
 <section id="home" class="hero"><img src="website-assets/welcome-water.webp" alt="Golden arches and luminous water in The Meltdown Room" fetchpriority="high"><div class="wrap hero-copy"><h1>Having a meltdown? You’re in the right place.</h1><p>This is a free, quiet corner of the internet for overwhelmed people — parents, caregivers, anybody who just needs a minute. Come in and stay as long as you need. No account, and nobody's going to ask you what's wrong.</p><div class="buttons"><a class="btn btn-primary" href="app-fixed.html">Enter The Meltdown Room →</a><a class="btn btn-secondary" href="https://grounding-square-vr-competition.vercel.app" target="_blank" rel="noopener">Enter The Meltdown Room VR →</a></div><div class="arrival-picker" aria-labelledby="arrival-title"><h2 id="arrival-title">How are you arriving today?</h2><div class="arrival-options"><button type="button" class="arrival-choice" data-arrival-target="#ask-the-room" data-arrival-message="Okay. Let’s find you a quieter corner."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 19h21a6 6 0 1 0-6-6"/><path d="M4 27h29a6 6 0 1 1-6 6"/><path d="M8 35h13"/></svg></span><strong>Overwhelmed</strong></button><button type="button" class="arrival-choice" data-arrival-target="app-fixed.html#calm" data-arrival-message="You don’t have to rush. Let’s find somewhere quiet."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M35 30A15 15 0 1 1 18 13a12 12 0 0 0 17 17Z"/></svg></span><strong>Can’t wind down</strong></button><button type="button" class="arrival-choice" data-arrival-target="#games" data-arrival-message="Absolutely. Let’s give your brain a little break."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="10" width="28" height="28" rx="6"/><circle cx="18.5" cy="18.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="29.5" cy="29.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="29.5" cy="18.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="18.5" cy="29.5" r="2.4" fill="currentColor" stroke="none"/></svg></span><strong>Need a break</strong></button><button type="button" class="arrival-choice" data-arrival-target="#rooms" data-arrival-message="Come take a look around. No pressure."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 43V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v36"/><path d="M9 43h30"/><circle cx="28" cy="25" r="1.8" fill="currentColor" stroke="none"/></svg></span><strong>Just looking</strong></button></div><p class="arrival-response" aria-live="polite" aria-atomic="true"></p></div></div></section>
 <section id="welcome-story" class="section white welcome-story"><div class="wrap"><div class="eyebrow" style="color:var(--gold)">Welcome</div><p class="welcome-story-copy">I’m Sunshine — a mother of six, a Mimi, and Momma to two more who needed one. I built this room because I know what it means to be overwhelmed, and to rebuild. You don’t need to explain your whole story to spend time here.</p><a class="text-action" href="#about">Read why this room exists ↓</a></div></section>
 <section id="reflect" class="section"><div class="wrap"><article class="reflect-card" aria-labelledby="reflect-reading"><div class="eyebrow" style="color:var(--gold)">Reflect &middot; A new reading each day</div><div class="reflect-date" id="reflect-date"></div><h2 class="reflect-reading" id="reflect-reading"></h2><p class="reflect-detail" id="reflect-detail"></p><p class="reflect-try"><strong>Try this:</strong> <span id="reflect-try"></span></p><p class="reflect-note">A creative prompt for your day &mdash; not a forecast and not advice. Just a moment to check in with yourself. The full daily sky note lives in the <a href="inspiration.html" style="color:#f0d39c">Inspiration Corner</a>.</p></article></div></section>
@@ -561,6 +586,52 @@ signEl.addEventListener('change',renderSky);more.addEventListener('click',functi
       if(ctx && k!=="bowl") applyMix(0.2);
     });
   });
+})();
+</script>
+<script id="welcome-film-script">
+(function(){
+  "use strict";
+  var KEY="tmr-film-seen";
+  var wrap=document.getElementById("welcome-film");
+  if(!wrap) return;
+  var seen=false;
+  try{ seen=!!localStorage.getItem(KEY); }catch(e){}
+  if(seen) return;
+  if(window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches){
+    try{ localStorage.setItem(KEY,"1"); }catch(e){}
+    return;
+  }
+  var imgs=wrap.querySelectorAll(".wf-img");
+  var idx=0, timer=null, started=false;
+
+  function markSeen(){ try{ localStorage.setItem(KEY,"1"); }catch(e){} }
+  function finish(){
+    if(timer) clearInterval(timer);
+    wrap.classList.add("leaving");
+    setTimeout(function(){ wrap.hidden=true; },1150);
+    markSeen();
+  }
+  function next(){
+    imgs[idx].classList.remove("on");
+    idx++;
+    if(idx>=imgs.length){ finish(); return; }
+    imgs[idx].classList.add("on");
+  }
+  function start(){
+    if(started) return; started=true;
+    wrap.hidden=false;
+    imgs[0].classList.add("on");
+    timer=setInterval(next, 9000);
+  }
+  document.getElementById("wf-skip").addEventListener("click", finish);
+
+  // If the sound gate is up, wait until it closes so the two welcomes don't collide.
+  var gate=document.getElementById("sound-gate");
+  if(gate && !gate.hidden){
+    var watcher=setInterval(function(){
+      if(gate.hidden){ clearInterval(watcher); start(); }
+    }, 400);
+  } else { start(); }
 })();
 </script>
 </body></html>
