@@ -232,8 +232,61 @@ button,input,textarea,select{font:inherit}
 .sky-note-line{margin-top:18px;font-size:.82rem;color:#aebfae}
 @media(max-width:640px){.sky-card{padding:24px 20px}}
 </style>
+<style id="sound-gate-style">
+#sound-gate{position:fixed;inset:0;z-index:9990;display:flex;align-items:center;justify-content:center;padding:20px;background:rgba(10,22,28,.55);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);opacity:1;transition:opacity .6s ease}
+#sound-gate[hidden]{display:none}
+#sound-gate.leaving{opacity:0;pointer-events:none}
+.sg-card{max-width:520px;width:100%;text-align:center;padding:38px 30px 30px;border-radius:22px;background:linear-gradient(160deg,rgba(255,255,255,.16),rgba(255,255,255,.06));border:1px solid rgba(255,255,255,.35);box-shadow:0 24px 60px rgba(0,0,0,.35),inset 0 1px 0 rgba(255,255,255,.45);color:#fff}
+.sg-card h2{margin:0 0 10px;font-size:1.65rem;line-height:1.25}
+.sg-card p{margin:0 0 24px;font-size:1rem;line-height:1.55;color:rgba(255,255,255,.88)}
+.sg-actions{display:flex;flex-wrap:wrap;gap:12px;justify-content:center}
+.sg-btn{appearance:none;cursor:pointer;border-radius:999px;padding:13px 24px;font-size:1rem;font-weight:600;color:#fff;background:linear-gradient(160deg,rgba(255,255,255,.28),rgba(255,255,255,.10));border:1px solid rgba(255,255,255,.5);box-shadow:inset 0 1px 0 rgba(255,255,255,.55),0 8px 22px rgba(0,0,0,.25);transition:transform .18s ease,background .18s ease}
+.sg-btn:hover{transform:translateY(-1px);background:linear-gradient(160deg,rgba(255,255,255,.38),rgba(255,255,255,.16))}
+.sg-btn:focus-visible{outline:3px solid #ffd98a;outline-offset:2px}
+.sg-note{margin:18px 0 0;font-size:.85rem;color:rgba(255,255,255,.7)}
+#sound-dock{position:fixed;right:16px;bottom:16px;z-index:9980;font-size:15px}
+#sound-dock[hidden]{display:none}
+.sd-btns{display:flex;gap:8px;justify-content:flex-end}
+.sd-toggle{display:flex;align-items:center;gap:8px;cursor:pointer;border-radius:999px;padding:10px 16px;font-weight:600;color:#fff;background:linear-gradient(160deg,rgba(20,40,50,.82),rgba(20,40,50,.68));border:1px solid rgba(255,255,255,.35);box-shadow:0 10px 26px rgba(0,0,0,.30),inset 0 1px 0 rgba(255,255,255,.25);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px)}
+.sd-toggle:focus-visible{outline:3px solid #ffd98a;outline-offset:2px}
+.sd-panel{margin-bottom:10px;width:248px;padding:16px 16px 10px;border-radius:18px;color:#fff;background:linear-gradient(160deg,rgba(20,40,50,.88),rgba(20,40,50,.74));border:1px solid rgba(255,255,255,.30);box-shadow:0 16px 40px rgba(0,0,0,.32);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px)}
+.sd-panel[hidden]{display:none}
+.sd-panel h3{margin:0 0 4px;font-size:.95rem}
+.sd-panel p{margin:0 0 10px;font-size:.8rem;color:rgba(255,255,255,.75)}
+.sd-row{display:flex;align-items:center;gap:10px;margin:10px 0}
+.sd-row label{flex:0 0 52px;font-size:.85rem}
+.sd-row input[type=range]{flex:1;accent-color:#8fd0c5;cursor:pointer}
+@media (prefers-reduced-motion:reduce){#sound-gate{transition:none}.sg-btn{transition:none}}
+</style>
 </head>
-<body>
+<body><div id="sound-gate" hidden role="dialog" aria-modal="true" aria-labelledby="sg-title">
+  <div class="sg-card">
+    <h2 id="sg-title">Welcome to The Meltdown Room</h2>
+    <p>This corner of the internet can sound like rain on a roof, soft ocean, and a singing bowl now and then — all made live, just for while you're here. Or come in quietly. Either way is fine, and you can change your mind anytime.</p>
+    <div class="sg-actions">
+      <button type="button" class="sg-btn" id="sg-enter-sound">Enter with sound</button>
+      <button type="button" class="sg-btn" id="sg-enter-quiet">Enter quietly</button>
+    </div>
+    <p class="sg-note">No downloads, nothing plays until you say so.</p>
+  </div>
+</div>
+<div id="sound-dock" hidden>
+  <div class="sd-panel" id="sd-panel" hidden>
+    <h3>Room sounds</h3>
+    <p>Made live in your browser. Mix them however feels right.</p>
+    <div class="sd-row"><label for="sd-rain">Rain</label><input type="range" id="sd-rain" min="0" max="100" value="50"></div>
+    <div class="sd-row"><label for="sd-ocean">Ocean</label><input type="range" id="sd-ocean" min="0" max="100" value="35"></div>
+    <div class="sd-row"><label for="sd-bowl">Bowl</label><input type="range" id="sd-bowl" min="0" max="100" value="40"></div>
+  </div>
+  <div class="sd-btns">
+    <button type="button" class="sd-toggle" id="sd-mix-btn" aria-expanded="false" aria-controls="sd-panel">Mix</button>
+    <button type="button" class="sd-toggle" id="sd-toggle" aria-pressed="false">
+      <svg viewBox="0 0 48 48" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 20v8h6l10 8V12l-10 8h-6z"/><path class="sd-waves" d="M31 19a8 8 0 0 1 0 10"/><path class="sd-waves" d="M35.5 15a13 13 0 0 1 0 18"/></svg>
+      <span id="sd-toggle-label">Sound off</span>
+    </button>
+  </div>
+</div>
+
 <header class="site-header"><div class="wrap nav"><a class="logo" href="#home">The Meltdown Room</a><nav class="nav-links" aria-label="Main navigation"><a href="#rooms">Explore</a><a href="inspiration.html">Inspiration Corner</a><a href="#resources">Support</a><a href="#about">Our story</a><a href="https://payhip.com/TheMeltdownRoom" target="_blank" rel="noopener noreferrer">Shop</a><a href="https://payhip.com/TheMeltdownRoom">Sunshine’s Store</a><a class="cta" href="app-fixed.html">Enter The Meltdown Room →</a></nav></div></header>
 <main>
 <section id="home" class="hero"><img src="website-assets/welcome-water.webp" alt="Golden arches and luminous water in The Meltdown Room" fetchpriority="high"><div class="wrap hero-copy"><h1>Having a meltdown? You’re in the right place.</h1><p>This is a free, quiet corner of the internet for overwhelmed people — parents, caregivers, anybody who just needs a minute. Come in and stay as long as you need. No account, and nobody's going to ask you what's wrong.</p><div class="buttons"><a class="btn btn-primary" href="app-fixed.html">Enter The Meltdown Room →</a><a class="btn btn-secondary" href="https://grounding-square-vr-competition.vercel.app" target="_blank" rel="noopener">Enter The Meltdown Room VR →</a></div><div class="arrival-picker" aria-labelledby="arrival-title"><h2 id="arrival-title">How are you arriving today?</h2><div class="arrival-options"><button type="button" class="arrival-choice" data-arrival-target="#ask-the-room" data-arrival-message="Okay. Let’s find you a quieter corner."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 19h21a6 6 0 1 0-6-6"/><path d="M4 27h29a6 6 0 1 1-6 6"/><path d="M8 35h13"/></svg></span><strong>Overwhelmed</strong></button><button type="button" class="arrival-choice" data-arrival-target="app-fixed.html#calm" data-arrival-message="You don’t have to rush. Let’s find somewhere quiet."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M35 30A15 15 0 1 1 18 13a12 12 0 0 0 17 17Z"/></svg></span><strong>Can’t wind down</strong></button><button type="button" class="arrival-choice" data-arrival-target="#games" data-arrival-message="Absolutely. Let’s give your brain a little break."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="10" y="10" width="28" height="28" rx="6"/><circle cx="18.5" cy="18.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="29.5" cy="29.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="29.5" cy="18.5" r="2.4" fill="currentColor" stroke="none"/><circle cx="18.5" cy="29.5" r="2.4" fill="currentColor" stroke="none"/></svg></span><strong>Need a break</strong></button><button type="button" class="arrival-choice" data-arrival-target="#rooms" data-arrival-message="Come take a look around. No pressure."><span aria-hidden="true"><svg viewBox="0 0 48 48" width="26" height="26" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 43V7a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v36"/><path d="M9 43h30"/><circle cx="28" cy="25" r="1.8" fill="currentColor" stroke="none"/></svg></span><strong>Just looking</strong></button></div><p class="arrival-response" aria-live="polite" aria-atomic="true"></p></div></div></section>
@@ -382,4 +435,122 @@ function renderSky(){var now=new Date(),day=Math.floor(Date.UTC(now.getFullYear(
 signEl.addEventListener('change',renderSky);more.addEventListener('click',function(){detail.hidden=!detail.hidden;more.setAttribute('aria-expanded',String(!detail.hidden));more.textContent=detail.hidden?'Tell me more \u2197':'Show less \u2191'});renderSky();})();
 </script>
 <!-- reflect-rename -->
-<!-- deploy touch: planner img retry --></body></html>
+<!-- deploy touch: planner img retry --><script id="sound-gate-script">
+(function(){
+  "use strict";
+  var PREF_KEY="tmr-sound-pref", MIX_KEY="tmr-sound-mix";
+  var gate=document.getElementById("sound-gate");
+  var dock=document.getElementById("sound-dock");
+  var panel=document.getElementById("sd-panel");
+  var toggle=document.getElementById("sd-toggle");
+  var toggleLabel=document.getElementById("sd-toggle-label");
+  var sliders={rain:document.getElementById("sd-rain"),ocean:document.getElementById("sd-ocean"),bowl:document.getElementById("sd-bowl")};
+  var pref=null, mix={rain:50,ocean:35,bowl:40};
+  try{ pref=localStorage.getItem(PREF_KEY); var saved=JSON.parse(localStorage.getItem(MIX_KEY)||"null"); if(saved){mix.rain=+saved.rain||0;mix.ocean=+saved.ocean||0;mix.bowl=+saved.bowl||0;} }catch(e){}
+  Object.keys(sliders).forEach(function(k){ if(sliders[k]) sliders[k].value=mix[k]; });
+
+  var ctx=null, master=null, gains={}, bowlTimer=null;
+  var BOWL_NOTES=[220,261.63,293.66,329.63,392,440];
+
+  function noiseBuffer(type){
+    var len=ctx.sampleRate*2, buf=ctx.createBuffer(1,len,ctx.sampleRate), d=buf.getChannelData(0), last=0;
+    for(var i=0;i<len;i++){ var w=Math.random()*2-1;
+      if(type==="brown"){ last=(last+0.02*w)/1.02; d[i]=last*3.5; } else { d[i]=w; } }
+    return buf;
+  }
+  function loopSource(type){ var s=ctx.createBufferSource(); s.buffer=noiseBuffer(type); s.loop=true; return s; }
+
+  function buildAudio(){
+    if(ctx) return;
+    ctx=new (window.AudioContext||window.webkitAudioContext)();
+    master=ctx.createGain(); master.gain.value=0; master.connect(ctx.destination);
+
+    // Rain: white noise through a soft lowpass, gentle slow shimmer
+    var rainGain=ctx.createGain(); rainGain.gain.value=0;
+    var rainFilter=ctx.createBiquadFilter(); rainFilter.type="lowpass"; rainFilter.frequency.value=1100; rainFilter.Q.value=0.4;
+    var rainSrc=loopSource("white"); rainSrc.connect(rainFilter); rainFilter.connect(rainGain); rainGain.connect(master); rainSrc.start();
+    var rainLfo=ctx.createOscillator(); rainLfo.frequency.value=0.07; var rainLfoGain=ctx.createGain(); rainLfoGain.gain.value=140;
+    rainLfo.connect(rainLfoGain); rainLfoGain.connect(rainFilter.frequency); rainLfo.start();
+    gains.rain=rainGain;
+
+    // Ocean: brown noise, low filter and gain breathing on a ~12s swell
+    var oceanGain=ctx.createGain(); oceanGain.gain.value=0;
+    var oceanFilter=ctx.createBiquadFilter(); oceanFilter.type="lowpass"; oceanFilter.frequency.value=420; oceanFilter.Q.value=0.6;
+    var oceanSrc=loopSource("brown"); oceanSrc.connect(oceanFilter); oceanFilter.connect(oceanGain); oceanGain.connect(master); oceanSrc.start();
+    var swell=ctx.createOscillator(); swell.frequency.value=0.083;
+    var swellDepth=ctx.createGain(); swellDepth.gain.value=150; swell.connect(swellDepth); swellDepth.connect(oceanFilter.frequency); swell.start();
+    gains.ocean=oceanGain; gains._oceanBase=oceanGain;
+
+    // Bowl: silent gain stage; strikes are scheduled into it
+    var bowlGain=ctx.createGain(); bowlGain.gain.value=1; bowlGain.connect(master);
+    gains.bowl=bowlGain;
+    applyMix(0);
+  }
+
+  function applyMix(fade){
+    if(!ctx) return;
+    var t=ctx.currentTime, f=(typeof fade==="number")?fade:0.8;
+    gains.rain.gain.setTargetAtTime((mix.rain/100)*0.16, t, f/3);
+    gains.ocean.gain.setTargetAtTime((mix.ocean/100)*0.5, t, f/3);
+  }
+
+  function bowlStrike(){
+    if(!ctx) return;
+    if(mix.bowl>0 && soundOn){
+      var f=BOWL_NOTES[Math.floor(Math.random()*BOWL_NOTES.length)];
+      var vol=(mix.bowl/100)*0.14;
+      var t=ctx.currentTime;
+      [[f,1],[f*2.76,0.32],[f*5.4,0.1]].forEach(function(part){
+        var o=ctx.createOscillator(); o.type="sine"; o.frequency.value=part[0];
+        var g=ctx.createGain(); g.gain.setValueAtTime(0,t);
+        g.gain.linearRampToValueAtTime(vol*part[1],t+0.02);
+        g.gain.exponentialRampToValueAtTime(0.0001,t+6);
+        o.connect(g); g.connect(gains.bowl); o.start(t); o.stop(t+6.2);
+      });
+    }
+    bowlTimer=setTimeout(bowlStrike, 9000+Math.random()*11000);
+  }
+
+  var soundOn=false;
+  function setSound(on, instant){
+    soundOn=on;
+    toggleLabel.textContent=on?"Sound on":"Sound off";
+    toggle.setAttribute("aria-pressed", on?"true":"false");
+    if(on){
+      buildAudio();
+      if(ctx.state==="suspended") ctx.resume();
+      master.gain.setTargetAtTime(0.9, ctx.currentTime, instant?0.05:0.6);
+      applyMix(1.2);
+      if(!bowlTimer) bowlStrike();
+    } else if(ctx){
+      master.gain.setTargetAtTime(0, ctx.currentTime, 0.25);
+    }
+    try{ localStorage.setItem(PREF_KEY, on?"on":"off"); }catch(e){}
+  }
+
+  function closeGate(){ if(!gate) return; gate.classList.add("leaving"); setTimeout(function(){ gate.hidden=true; },650); dock.hidden=false; }
+
+  if(pref===null){ gate.hidden=false; }
+  else { dock.hidden=false; if(pref==="on"){ /* sound starts on first tap of the dock, per browser rules */ toggleLabel.textContent="Sound off"; } }
+
+  document.getElementById("sg-enter-sound").addEventListener("click",function(){ setSound(true); closeGate(); });
+  document.getElementById("sg-enter-quiet").addEventListener("click",function(){ setSound(false); closeGate(); });
+  gate.addEventListener("keydown",function(e){ if(e.key==="Escape"){ setSound(false); closeGate(); } });
+
+  toggle.addEventListener("click",function(){ setSound(!soundOn); });
+  var mixBtn=document.getElementById("sd-mix-btn");
+  mixBtn.addEventListener("click",function(){
+    var open=panel.hidden;
+    panel.hidden=!open;
+    mixBtn.setAttribute("aria-expanded", open?"true":"false");
+  });
+  Object.keys(sliders).forEach(function(k){
+    sliders[k].addEventListener("input",function(){
+      mix[k]=+sliders[k].value;
+      try{ localStorage.setItem(MIX_KEY, JSON.stringify(mix)); }catch(e){}
+      if(ctx && k!=="bowl") applyMix(0.2);
+    });
+  });
+})();
+</script>
+</body></html>
